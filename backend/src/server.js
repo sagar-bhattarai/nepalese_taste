@@ -21,15 +21,15 @@ server.use(logger);
 
 server.get('/', (req, res) => { res.send(config.api) });
 import userRouter from "./routes/user.route.js"
-// import productRouter from "./routes/product.route.js";
-// import categoryRouter from "./routes/category.route.js";
-// import orderRouter from "./routes/order.route.js";
-// import paymentRouter from "./routes/payment.route.js";
+import productRouter from "./routes/product.route.js";
+import categoryRouter from "./routes/category.route.js";
+import orderRouter from "./routes/order.route.js";
+import paymentRouter from "./routes/payment.route.js";
 
 server.use("/api/v1/users", userRouter);
-// server.use("/api/v1/products", productRouter);
-// server.use("/api/v1/categories", auth , roleBasedAuth(MERCHANT), categoryRouter);
-// server.use("/api/v1/orders", auth , orderRouter);
-// server.use("/api/v1/payments", auth , paymentRouter);
+server.use("/api/v1/products", productRouter);
+server.use("/api/v1/categories", auth , roleBasedAuth(MERCHANT), categoryRouter);
+server.use("/api/v1/orders", auth , orderRouter);
+server.use("/api/v1/payments", auth , paymentRouter);
 
 export { server };

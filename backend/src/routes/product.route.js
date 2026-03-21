@@ -6,8 +6,8 @@ import { CUSTOMER, MERCHANT, ADMIN, STAFF } from "../constants/roles.constant.js
 ;import {upload} from "../middlewares/multer.middleware.js";
 
 import zodValidator from "../middlewares/zod.validator.middleware.js";
-import productSchema from "../library/schema/product/addProduct.schema.js";
-import updateProductSchema from "../library/schema/product/updateProduct.schema.js";
+import productSchema from "../zod/product/addProduct.schema.js";
+import updateProductSchema from "../zod/product/updateProduct.schema.js";
 
 const router = express.Router();
 

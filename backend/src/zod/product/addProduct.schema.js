@@ -19,8 +19,6 @@ const productSchema = z.object({
         .string({ required_error: "productDescription is required" })
         .toLowerCase()
         .min(3, "productDescription must be at least 3 characters"),
-    categoryId: z.string({ required_error: "categoryId is required" }),
-    supplierId: z.string({ required_error: "supplierId is required" }),
     // attributes: attributesSchema,
     productStock: z
         .coerce.number({ required_error: "productStock is required" }),
@@ -30,6 +28,7 @@ const productSchema = z.object({
         .coerce.number({ required_error: "productPrice is required" }),
     // .number({ required_error: "productPrice is required" }),
     // .refine(val => val > 0, { message: "productPrice must be greater than 0" }),
+    oldPrice: z.coerce.number().optional(),
     brand: z
         .string({ required_error: "brand is required" })
         .toLowerCase(),
