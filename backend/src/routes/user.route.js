@@ -7,10 +7,10 @@ import {upload} from "../middlewares/multer.middleware.js";
 import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
 import { ADMIN } from "../constants/roles.constant.js";
 
-import zodValidator from "../middlewares/zod.validator.middleware.js";
-import registerSchema from "../library/schema/user/register.schema.zod.js";
-import loginSchema from "../library/schema/user/login.schema.zod.js";
-import resetSchema from "../library/schema/user/reset-password.zod.js";
+import zodValidator from "../middlewares/zodValidator.middleware.js";
+import registerSchema from "../zod/users/register.schema.zod.js";
+import loginSchema from "../zod/users/login.schema.zod.js";
+import resetSchema from "../zod/users/reset-password.zod.js";
 
 const router = express.Router();
 

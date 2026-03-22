@@ -5,9 +5,9 @@ import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
 import { CUSTOMER, MERCHANT, ADMIN, STAFF } from "../constants/roles.constant.js"
 ;import {upload} from "../middlewares/multer.middleware.js";
 
-import zodValidator from "../middlewares/zod.validator.middleware.js";
-import productSchema from "../zod/product/addProduct.schema.js";
-import updateProductSchema from "../zod/product/updateProduct.schema.js";
+import zodValidator from "../middlewares/zodValidator.middleware.js";
+import productSchema from "../zod/products/addProduct.schema.js";
+import updateProductSchema from "../zod/products/updateProduct.schema.js";
 
 const router = express.Router();
 
