@@ -1,9 +1,9 @@
-import ProductModel from "../models/product/Product.model.js";
+import ProductModel from "../models/Product.model.js";
 import CategoryModel from "../models/Category.model.js";
-import { cloudinary } from "../utility/cloudinary.js"
+import uploadOnCloudinary from "../utility/cloudinary.js"
 
 const findProductOnDb = async (productIdOrName, searchType) => {
- if (searchType === "name") {
+  if (searchType === "name") {
     return await ProductModel.findOne({ ProductName: productIdOrName }).select("-createdAt -updatedAt -__v");
   } else {
     return await ProductModel.findById(productIdOrName).select("-createdAt -updatedAt -__v");
@@ -48,26 +48,24 @@ const create = async (req) => {
   }
 
   const imagePath = req.files?.productImage?.[0]?.path;
-
   let imageUploaded = null;
   if (imagePath) {
-    imageUploaded = await cloudinary(imagePath);
-  }
+    imageUploaded = await uploadOnCloudinary(imagePath);
 
-  if (!imageUploaded) {
-    throw {
-      statusFromService: 409,
-      msgFromService: "Error while image upload.",
-    };
+    // console.log("imageUploaded", imageUploaded)
+
+    if (!imageUploaded) {
+      throw {
+        statusFromService: 409,
+        msgFromService: "Error while image upload.",
+      };
+    }
   }
 
   const newProduct = await ProductModel({
     ...req.body,
     productImage: imageUploaded?.url || null,
   });
-
-
-
 
   return await newProduct.save();
 };
@@ -97,39 +95,39 @@ const single = async (id) => {
 const edit = async (req, res) => {   // adminUpdateProduct
   const productOnDb = await findProductOnDb(req.params.id, "id");
 
-    if (!productOnDb) {
-        throw {
-            statusFromService: 400,
-            msgFromService: "product does not exist",
-        };
+  if (!productOnDb) {
+    throw {
+      statusFromService: 400,
+      msgFromService: "product does not exist",
+    };
+  }
+
+  const { productName, productDescription, price, stock, supplierId, categoryId } = req.body;
+
+  const updateThis = {
+    productName: productName || productOnDb.productName,
+    productDescription: productDescription || productOnDb.productDescription,
+    price: price || productOnDb.price,
+    stock: stock || productOnDb.stock,
+    supplierId: supplierId || productOnDb.supplierId,
+    categoryId: categoryId || productOnDb.categoryId
+  }
+
+  const edited = await ProductModel.findByIdAndUpdate(
+    req.params.id,
+    updateThis,
+    { new: true }
+  );
+
+
+
+  if (!edited) {
+    throw {
+      statusFromService: 400,
+      msgFromService: "could not update Product"
     }
-
-    const { productName, productDescription, price, stock, supplierId, categoryId } = req.body;
-
-    const updateThis = {
-        productName: productName || productOnDb.productName,
-        productDescription: productDescription || productOnDb.productDescription,
-        price: price || productOnDb.price,
-        stock: stock || productOnDb.stock,
-        supplierId: supplierId || productOnDb.supplierId,
-        categoryId: categoryId || productOnDb.categoryId
-    }
-
-    const edited = await ProductModel.findByIdAndUpdate(
-        req.params.id,
-        updateThis,
-        { new: true }
-    );
-
-
-
-    if (!edited) {
-        throw {
-            statusFromService: 400,
-            msgFromService: "could not update Product"
-        }
-    }
-    return edited;
+  }
+  return edited;
 };
 
 
@@ -146,9 +144,8 @@ const getProducts = async (req) => {
   const skip = (page - 1) * size;
 
   const [products, total] = await Promise.all([
-    ProductModel.find({}, { createdAt: 0, updatedAt: 0 })
+    ProductModel.find()
       .populate("categoryId")
-      .populate("supplierId")
       .skip(skip)
       .limit(size),
 
@@ -156,35 +153,33 @@ const getProducts = async (req) => {
   ]);
 
   const categories = await CategoryModel.find({}, { createdAt: 0, updatedAt: 0 });
-  const suppliers = await SupplierModel.find({}, { createdAt: 0, updatedAt: 0 });
-
-  return { products: [...products], total: total, categories, suppliers };
+  return { products: [...products], total: total, categories };
 
 };
 
 const remove = async (id) => {
 
-    /*     
-        // enable this to make temporary delete , make change on  model as well as above add function
-        
-        const existingProduct = await findProductOnDb(id, "id");
-         if(!existingProduct){
-            return res.statusFromService(404).json({success: false, msgFromService: "Product not found"});
-         }
-         if(existingProduct.isDeleted){
-             return res.statusFromService(404).json({success: false, msgFromService: "Product already removed"});
-         }
-         await ProductModel.findByIdAndUpdate(id, {isDeleted:true}, {new: true})
-    */
+  /*     
+      // enable this to make temporary delete , make change on  model as well as above add function
+      
+      const existingProduct = await findProductOnDb(id, "id");
+       if(!existingProduct){
+          return res.statusFromService(404).json({success: false, msgFromService: "Product not found"});
+       }
+       if(existingProduct.isDeleted){
+           return res.statusFromService(404).json({success: false, msgFromService: "Product already removed"});
+       }
+       await ProductModel.findByIdAndUpdate(id, {isDeleted:true}, {new: true})
+  */
 
-    const deleted = await ProductModel.findByIdAndDelete(id);
-    if (!deleted) {
-        throw {
-            statusFromService: 400,
-            msgFromService: "could not delete Product"
-        }
+  const deleted = await ProductModel.findByIdAndDelete(id);
+  if (!deleted) {
+    throw {
+      statusFromService: 400,
+      msgFromService: "could not delete Product"
     }
-    return deleted;
+  }
+  return deleted;
 }
 
 

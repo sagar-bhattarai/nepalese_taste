@@ -1,7 +1,7 @@
 // import * as z from "zod";
 import { z } from "zod";
-import { CARD, ONLINE, CASH } from "../../../constants/paymentMethod.js";
-import { PENDING, SUCCESS, FAILED } from "../../../constants/paymentStatus.js";
+import { CARD, ONLINE, CASH } from "../../constants/paymentMethod.js";
+import { PENDING, SUCCESS, FAILED } from "../../constants/paymentStatus.js";
 
 const paymentMethodSchema = z.enum([CARD, ONLINE, CASH], {
     errorMap: () => ({ message: "Methods not found/invalid." }),

@@ -3,9 +3,9 @@ import { addPayment, getAllPayment, updatePayment, getPaymentById, deletePayment
 import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
 import { CUSTOMER, MERCHANT, ADMIN } from "../constants/roles.constant.js";
 
-import zodValidator from "../middlewares/zod.validator.middleware.js";
-import paymentSchema from "../zod/payment/addPayment.schema.js";
-import updatePaymentSchema from "../zod/payment/updatePayment.schema.js";
+import zodValidator from "../middlewares/zodValidator.middleware.js";
+import paymentSchema from "../zod/payments/addPayment.schema.js";
+import updatePaymentSchema from "../zod/payments/updatePayment.schema.js";
 
 const router = express.Router();
 

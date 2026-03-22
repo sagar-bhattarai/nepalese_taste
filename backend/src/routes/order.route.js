@@ -7,8 +7,8 @@ import {
   cancelOrder,
   confirmOrder
 }from "../controllers/order.controller.js";
-import zodValidation from "../middlewares/validator/zod.validator.js";
-import addOrderSchema from "../zod/orders/addOrders.schema.zod.js";
+import zodValidation from "../middlewares/zodValidator.middleware.js";
+import addOrderSchema from "../zod/orders/addOrders.schema.js";
 
 const router = express.Router();
 
