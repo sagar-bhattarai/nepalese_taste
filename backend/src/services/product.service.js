@@ -72,11 +72,9 @@ const create = async (req) => {
 
 
 const single = async (id) => {
-
-  // 1️⃣ Product + category
   const product = await ProductModel.findOne({
     _id: id,
-    isActive: true
+    // isActive: true
   })
     .populate("categoryId") // include category details
     .lean();
@@ -85,10 +83,7 @@ const single = async (id) => {
     throw new Error("Product not found");
   }
 
-  return {
-    ...product,
-    variants: finalVariants
-  };
+   return { ...product };
 };
 
 
@@ -102,24 +97,23 @@ const edit = async (req, res) => {   // adminUpdateProduct
     };
   }
 
-  const { productName, productDescription, price, stock, supplierId, categoryId } = req.body;
+  // const { productName, productDescription, productPrice, productStock, categoryId } = req.body;
+  const {productData} = req.body;
+  const parsedProductData = JSON.parse(productData);
 
   const updateThis = {
-    productName: productName || productOnDb.productName,
-    productDescription: productDescription || productOnDb.productDescription,
-    price: price || productOnDb.price,
-    stock: stock || productOnDb.stock,
-    supplierId: supplierId || productOnDb.supplierId,
-    categoryId: categoryId || productOnDb.categoryId
+    productName: parsedProductData.productName || productOnDb.productName,
+    productDescription: parsedProductData.productDescription || productOnDb.productDescription,
+    productPrice: parsedProductData.productPrice || productOnDb.productPrice,
+    productStock: parsedProductData.productStock || productOnDb.productStock,
+    categoryId: parsedProductData.categoryId || productOnDb.categoryId,
+    isActive: parsedProductData.isActive || productOnDb.isActive
   }
-
   const edited = await ProductModel.findByIdAndUpdate(
     req.params.id,
     updateThis,
-    { new: true }
+    { returnDocument: 'after' }
   );
-
-
 
   if (!edited) {
     throw {
@@ -143,17 +137,18 @@ const getProducts = async (req) => {
   const size = Number(req.query.size) || 10;
   const skip = (page - 1) * size;
 
-  const [products, total] = await Promise.all([
+  const [products, total, inActive] = await Promise.all([
     ProductModel.find()
       .populate("categoryId")
       .skip(skip)
       .limit(size),
 
-    ProductModel.countDocuments({}),
+    ProductModel.countDocuments(),
+    ProductModel.countDocuments({isActive: false}),
   ]);
 
   const categories = await CategoryModel.find({}, { createdAt: 0, updatedAt: 0 });
-  return { products: [...products], total: total, categories };
+  return { products: [...products], total: total, inActive,  categories };
 
 };
 

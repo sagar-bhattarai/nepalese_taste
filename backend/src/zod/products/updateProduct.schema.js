@@ -24,6 +24,7 @@ const updateProductSchema = z.object({
     productPrice: z
         .coerce.number({ required_error: "productPrice is required" }),
     oldPrice: z.coerce.number().optional(),
+    isActive: z.boolean().optional(),
     brand: z
         .string({ required_error: "brand is required" })
         .toLowerCase(),

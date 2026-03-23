@@ -14,7 +14,7 @@ const router = express.Router();
 /** 
  * POST /api/products/add
 */
-router.post("/add", auth, roleBasedAuth(MERCHANT), upload.array("images"), zodValidator(productSchema), addProduct);
+router.post("/add", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(productSchema), addProduct);
 
 
 /** 
@@ -35,15 +35,15 @@ router.get("/product/:id", getProductById);
 /** 
  * GET /api/products/toggleStatus/:internalSku
 */
-router.get("/toggleStatus/:internalSku", auth, roleBasedAuth(MERCHANT), toggleActiveStatus);
+router.get("/toggleStatus/:id", auth, roleBasedAuth(ADMIN), toggleActiveStatus);
 
 /** 
  * PATCH /api/products/update/:id
  *       /api/products/:id/admin-update
 */
-router.patch("/update/:id", auth, roleBasedAuth(MERCHANT), upload.array("images"), updateProduct);   
-// router.patch("/:id/update", auth, roleBasedAuth(MERCHANT, ADMIN), zodValidator(updateProductSchema), updateProduct);
-// router.patch("/update/:id", auth, roleBasedAuth(MERCHANT, ADMIN), upload.array("images"), zodValidator(updateProductSchema), updateProduct);
+router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), updateProduct);   
+// router.patch("/:id/update", auth, roleBasedAuth(ADMIN), zodValidator(updateProductSchema), updateProduct);
+// router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(updateProductSchema), updateProduct);
 
 /** 
  * GET /api/products/delete/:id

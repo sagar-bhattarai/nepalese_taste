@@ -22,7 +22,21 @@ const addCategory = async (req, res) => {
   }
 };
 
-const getCategoryById = async (req, res) => { };
+const getCategoryById = async (req, res) => { 
+    try {
+    const result = await categoryService.single(req);
+
+    return res
+      .status(200)
+      .json({ api: config.api, result, message: "Category fetched successfully." });
+  } catch (error) {
+    console.log(error)
+    return res
+      .status(error.statusFromService || 500)
+      .json({ message: error.msgFromService || "server error while fetching all category." })
+
+  }
+};
 
 const getAllCategories = async (req, res) => {
   try {
