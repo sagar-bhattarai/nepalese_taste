@@ -1,14 +1,17 @@
 import express from "express";
-import authMiddleWare from "../middlewares/auth.middleware.js"
+import auth from "../middlewares/auth.middleware.js"
 import {addCategory, getCategoryById, getAllCategories, updateCategory, deleteCategory} from "../controllers/category.controller.js";
 import zodValidation from "../middlewares/zodValidator.middleware.js";
 import addCategorySchema from "../zod/categories/addCategory.schema.js";
+import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
+import { STAFF, ADMIN } from "../constants/roles.constant.js";
+
 const router = express.Router();
 
-router.post("/add", authMiddleWare, zodValidation(addCategorySchema), addCategory);
-router.get("/all", getAllCategories);
-router.delete("/delete/:id", authMiddleWare, deleteCategory);
-router.put("/update/:id", authMiddleWare, updateCategory);
-// router.get("/:id", getCategoryById);
+router.get("/", getAllCategories);
+router.post("/add", auth, roleBasedAuth(ADMIN), zodValidation(addCategorySchema), addCategory);
+router.patch("/update/:id", auth, roleBasedAuth(ADMIN), updateCategory);
+router.delete("/delete/:id", auth,roleBasedAuth(ADMIN), deleteCategory);
+router.get("/:id", getCategoryById);
 
 export default router;

@@ -3,8 +3,8 @@ import config from "./configs/config.js";
 import cookieParser from "cookie-parser";
 import logger from "./middlewares/log.middleware.js";
 import auth from "./middlewares/auth.middleware.js";
-import roleBasedAuth from "./middlewares/roleBasedAuth.middleware.js";
-import { CUSTOMER, MERCHANT, STAFF, ADMIN } from "./constants/roles.constant.js";
+// import roleBasedAuth from "./middlewares/roleBasedAuth.middleware.js";
+// import { CUSTOMER, MERCHANT, STAFF, ADMIN } from "./constants/roles.constant.js";
 import cors from "cors";
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -28,7 +28,8 @@ import paymentRouter from "./routes/payment.route.js";
 
 server.use("/api/v1/users", userRouter);
 server.use("/api/v1/products", productRouter);
-server.use("/api/v1/categories", auth , roleBasedAuth(MERCHANT), categoryRouter);
+// server.use("/api/v1/categories", auth , roleBasedAuth(ADMIN), categoryRouter);
+server.use("/api/v1/categories", categoryRouter);
 server.use("/api/v1/orders", auth , orderRouter);
 server.use("/api/v1/payments", auth , paymentRouter);
 

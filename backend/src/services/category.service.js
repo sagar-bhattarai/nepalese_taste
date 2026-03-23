@@ -11,6 +11,7 @@ const findCategoryOnDb = async (catIdOrName, searchType) => {
 
 const add = async (req) => {
   const { categoryName, categoryDescription } = req;
+
   if (categoryName == "" || categoryDescription == "") {
     throw {
       statusFromService: 400,
@@ -38,19 +39,15 @@ const add = async (req) => {
 const all = async (req) => {
   // const categories = await CategoryModel.find({}, { _id: 1, categoryName: 1, categoryDescription: 1 }).limit(10);
   //  const categories = await CategoryModel.find().select("categoryName categoryDescription -_id").limit(5);
-  
+
   const page = Number(req.query.page) || 1;
   const size = Number(req.query.size) || 3;
   const skip = (page - 1) * size;
 
   const [categories, total] = await Promise.all([
-    CategoryModel.find(
-      {},
-      { _id: 1, categoryName: 1, categoryDescription: 1 }
-    )
+    CategoryModel.find()
       .limit(size)
       .skip(skip),
-
     CategoryModel.countDocuments(),
   ]);
 
@@ -63,14 +60,23 @@ const all = async (req) => {
   }
 
   return { categories: [...categories], total: total };
-  // return categories;
-};
 
+};
+const single = async (req) => {
+  const category = await CategoryModel.findById(req.params.id);
+  if (!category) {
+    throw {
+      statusFromService: 400,
+      msgFromService: "could not find category"
+    }
+  }
+  return category
+}
 const update = async (req) => {
   const updated = await CategoryModel.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true }
+    { returnDocument: 'after' }
   );
   if (!updated) {
     throw {
@@ -91,4 +97,4 @@ const remove = async (req) => {
   }
   return deleted;
 }
-export default { add, all, update, remove };
+export default { single, add, all, update, remove };

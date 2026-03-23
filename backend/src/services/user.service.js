@@ -5,8 +5,29 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import sendMail from "../utility/mail.js";
 
-const all = async () => {
-    return await UserModel.find();
+const all = async (req) => {
+      const page = Number(req.query.page) || 1;
+      const size = Number(req.query.size) || 3;
+      const skip = (page - 1) * size;
+    
+      const [users, total, Active, Verified] = await Promise.all([
+        UserModel.find()
+          .limit(size)
+          .skip(skip),
+        UserModel.countDocuments(),
+        UserModel.countDocuments({ isActive: true }),
+        UserModel.countDocuments({ isEmailVerified: true }),
+      ]);
+    
+    
+      if (!users) {
+        throw {
+          statusFromService: 404,
+          msgFromService: "no any users found",
+        };
+      }
+    
+      return { users: [...users], total: total, active: Active, verified: Verified };
 }
 
 const single = async (id) => {

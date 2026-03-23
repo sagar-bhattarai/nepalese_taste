@@ -30,6 +30,7 @@ const productSchema = z.object({
     // .number({ required_error: "productPrice is required" }),
     // .refine(val => val > 0, { message: "productPrice must be greater than 0" }),
     oldPrice: z.coerce.number().optional(),
+    isActive: z.boolean().optional(),
     brand: z
         .string({ required_error: "brand is required" })
         .toLowerCase(),
