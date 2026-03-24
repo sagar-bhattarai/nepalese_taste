@@ -41,7 +41,7 @@ router.get("/toggleStatus/:id", auth, roleBasedAuth(ADMIN), toggleActiveStatus);
  * PATCH /api/products/update/:id
  *       /api/products/:id/admin-update
 */
-router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), updateProduct);   
+router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(updateProductSchema), updateProduct);   
 // router.patch("/:id/update", auth, roleBasedAuth(ADMIN), zodValidator(updateProductSchema), updateProduct);
 // router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(updateProductSchema), updateProduct);
 

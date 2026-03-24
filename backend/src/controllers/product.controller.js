@@ -57,7 +57,7 @@ const updateProduct = async (req, res) => {
             .json({ api: config.api, result, message: "product updated successfully." });
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         return res
             .status(500)
             .json({ error: true, message: "server error while updating product." });
