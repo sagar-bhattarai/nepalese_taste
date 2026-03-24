@@ -19,12 +19,14 @@ const updateProductSchema = z.object({
         .toLowerCase()
         .min(3, "productDescription must be at least 3 characters").optional(),
     // attributes: attributesSchema,
+    categoryId: z.string({ required_error: "categoryId is required" }),
     productStock: z
         .coerce.number().optional(),
     productPrice: z
         .coerce.number({ required_error: "productPrice is required" }),
     oldPrice: z.coerce.number().optional(),
-    isActive: z.boolean().optional(),
+    // isActive: z.boolean().optional(),
+    isActive: z.string().optional(),
     brand: z
         .string({ required_error: "brand is required" })
         .toLowerCase(),
