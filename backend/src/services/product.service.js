@@ -97,19 +97,6 @@ const edit = async (req, res) => {   // adminUpdateProduct
     };
   }
 
-  // const { productName, productDescription, productPrice, productStock, categoryId } = req.body;
-  // const {productData} = req.body;
-  // const parsedProductData = JSON.parse(productData);
-
-  // const updateThis = {
-  //   productName: parsedProductData.productName || productOnDb.productName,
-  //   productDescription: parsedProductData.productDescription || productOnDb.productDescription,
-  //   productPrice: parsedProductData.productPrice || productOnDb.productPrice,
-  //   productStock: parsedProductData.productStock || productOnDb.productStock,
-  //   categoryId: parsedProductData.categoryId || productOnDb.categoryId,
-  //   isActive: parsedProductData.isActive || productOnDb.isActive
-  // }
-
   const { productName, productDescription, productPrice, productStock, categoryId, isActive } = req.body;
   const updateThis = {
     productName: productName || productOnDb.productName,
