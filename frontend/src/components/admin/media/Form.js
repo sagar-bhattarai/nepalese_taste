@@ -1,0 +1,348 @@
+"use client";
+import { useCallback, useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import { FaTimes, FaSpinner } from "react-icons/fa";
+import { addUser, updateUser } from "@/apis/user.api";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { getUserById } from "@/apis/user.api";
+
+const UserForm = (id) => {
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const data = await getUserById(id);
+      setUser(data.result)
+    }
+    fetchUser();
+  }, []);
+
+  const state = useSelector((state) => state);
+  // const user = state.auth.user?.data.data || state.auth.user?.data.loggedInUser;
+
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const { register, handleSubmit, reset } = useForm();
+  useEffect(() => {
+    if (user) {
+      reset({
+        // name: user.userName || "",
+        // email: user.userEmail || "",
+        // address: user.userAddress || "",
+        // roles: user.userRoles.map(role => role) || "",
+        // active: user.isActive || "",
+        // verified: user.isEmailVerified || "",
+        // code: user.userCode || "",
+        // password: user.userPassword || "",
+        name: user.userName ?? "",
+        email: user.userEmail ?? "",
+        address: user.userAddress ?? "",
+        roles: user.userRoles ?? [],
+        active: user.isActive ?? "",
+        verified: user.isEmailVerified ?? "",
+        // code: user.userCode ?? "",
+        password: user.userPassword ?? "",
+      });
+    }
+  }, [user, reset]);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    const images = acceptedFiles.map((file) => ({
+      file, // keep original File
+      // ...file,
+      url: URL.createObjectURL(file),
+      name: file.name,
+      size: file.size,
+    }));
+    setSelectedImages((prev) => [...prev, ...images]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const removeImage = (index) => {
+    setSelectedImages((prev) => prev.filter((_, i) => i != index));
+  };
+
+  const submitForm = (data) => {
+    console.log("data",data)
+    setLoading(true);
+    const formData = new FormData();
+
+    formData.append("userName", data.name);
+    formData.append("userAddress", data?.address);
+    const roles = data?.roles[0].split(",").map(role => role.trim());
+    roles.forEach(role => {
+      formData.append("userRoles[]", role);
+    });
+    // formData.append("userRoles", data?.roles);
+    formData.append("isActive", data?.active);
+    formData.append("isEmailVerified", data?.verified);
+
+    if (selectedImages.length > 0) {
+      selectedImages.forEach((image) => {
+        formData.append("profileImage", image);
+      });
+    }
+
+    if (user) {
+      updateUser(user._id, formData)
+        .then((res) => {
+          toast.success("user updated successfully");
+          router.back();
+        })
+        .catch((error) => {
+          // toast.error(error.message);
+          toast.error("could not update user");
+        })
+        .finally(() => setLoading(false));
+    } else {
+      addUser(formData)
+        .then((res) => {
+          toast.success("user created successfully");
+          router.back();
+        })
+        .catch((error) => {
+          if (error.message == "Request failed with status code 401") {
+            toast.error("please login");
+          } else {
+            // console.log("error", error);
+            toast.error(error.message);
+          }
+        })
+        .finally(() => setLoading(false));
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(submitForm)}>
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+        <div className="w-full">
+          <label
+            htmlFor="name"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            User Name *
+          </label>
+          <input
+            type="text"
+            id="name"
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="Type user name"
+            required
+            {...register("name")}
+          />
+        </div>
+        <div className="w-full">
+          <label
+            htmlFor="email"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Email *
+          </label>
+          <input
+            disabled={user && true}
+            type="text"
+            name="email"
+            id="email"
+            className={`${user && 'disabled:text-gray-100/20'} bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary`}
+            placeholder="User email"
+            required
+            {...register("email")}
+          />
+        </div>
+        <div className="w-full">
+          <label
+            htmlFor="address"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Address *
+          </label>
+          <input
+            type="text"
+            id="address"
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="Rs.2999"
+            min="0"
+            required
+            {...register("address")}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="roles"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Roles *
+          </label>
+          <input
+            type="text"
+            id="roles"
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="CUSTOMER, STAFF"
+            required
+            {...register("roles")}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="active"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Active
+          </label>
+          <input
+            type="text"
+            id="active"
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="false"
+            {...register("active")}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="verified"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Email verification
+          </label>
+          <input
+            type="text"
+            id="verified"
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="false"
+            {...register("verified")}
+          />
+        </div>
+        {/* <div>
+          <label
+            htmlFor="code"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            User code
+          </label>
+          <input
+            disabled={user && true}
+            type="text"
+            id="code"
+            className={`${user && 'disabled:text-gray-100/20'} bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary`}
+            placeholder="usr-012"
+            {...register("code")}
+          />
+        </div> */}
+        <div className="sm:col-span-2">
+          <label
+            htmlFor="password"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Password
+          </label>
+          <input
+            disabled={user && true}
+            type="text"
+            id="password"
+            className={`${user && 'disabled:text-gray-100/20'} bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary`}
+            placeholder="********"
+            {...register("password")}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <div
+            {...getRootProps()}
+            htmlFor="dropzone-file"
+            className="flex flex-col items-center justify-center w-full h-28 bg-[#07070729] dark:bg-gray-700 border border-dashed border-default-strong  dark:border-none border-gray-300 focus:ring-purple-600 focus:border-purple-600 rounded-lg cursor-pointer"
+          >
+            <div className="flex flex-col items-center justify-center text-body pt-5 pb-6">
+              <svg
+                className="w-8 h-8 mb-1"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2"
+                />
+              </svg>
+              <p className="mb-2 text-sm">
+                <span className="font-semibold">Click to upload</span> or drag
+                and drop
+              </p>
+              <p className="text-xs">.png, .jpg, .jpeg (MAX. 5MB)</p>
+            </div>
+            <input
+              {...getInputProps({
+                accept: ".png,.jpg,.jpeg",
+              })}
+            />
+          </div>
+          {selectedImages.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2 p-2 border rounded-lg border-gray-300 bg-[#07070729] dark:bg-gray-700 dark:border-gray-600 min-h-28">
+              {selectedImages.map((image, index) => (
+                <div className="p-1 relative max-w-20" key={index}>
+                  <Image
+                    src={image.url}
+                    alt="uploads"
+                    height={70}
+                    width={70}
+                    className="border border-gray-600 rounded-lg h-16 object-cover"
+                  />
+                  <p className="text-xs mt-1">{image.name}</p>
+                  <button
+                    onClick={() => removeImage(index)}
+                    className="flex items-center justify-center hover:text-white dark:hover:text-black bg-red-600 hover:bg-red-700 absolute right-0 top-0 text-xs h-4 w-4 border border-red-600 rounded-full cursor-pointer"
+                  >
+                    <FaTimes />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* <div className="sm:col-span-2">
+          <label
+            htmlFor="description"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Description
+          </label>
+          <textarea
+            id="description"
+            rows="5"
+            className="block p-2.5 w-full text-sm text-gray-900 bg-[#07070729] rounded-lg border border-gray-300 focus:ring-purple-600 focus:border-purple-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="Your description here"
+            {...register("description")}
+          ></textarea>
+        </div> */}
+      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="disabled:opacity-50 flex w-full items-center justify-center gap-2 cursor-pointer px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary rounded-lg focus:ring-2 focus:ring-primary dark:focus:ring-primary hover:bg-primary"
+      >
+        {loading ? (
+          <>
+            {" "}
+            {user ? "Updating User" : "Adding User"}{" "}
+            <FaSpinner className="animate-spin" />{" "}
+          </>
+        ) : (
+          <> {user ? "Update User" : "Add User"}</>
+        )}
+      </button>
+    </form>
+  );
+};
+
+export default UserForm;
