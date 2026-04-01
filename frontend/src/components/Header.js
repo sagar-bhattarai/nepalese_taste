@@ -1,16 +1,17 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { HOME_ROUTE, LOGIN_ROUTE, SIGN_UP_ROUTE, CART_ROUTE } from "../constants/routes";
+import { HOME_ROUTE, LOGIN_ROUTE, SIGN_UP_ROUTE } from "../constants/routes";
 import navlinks from "@/constants/navlinks";
 import { WiDaySunny } from "react-icons/wi";
 import { GiNightSky } from "react-icons/gi";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "@/redux/userPreference/userPreferencesSlice";
-import { FaShoppingCart, FaUser } from "react-icons/fa";
+import {FaUser } from "react-icons/fa";
 import User from "./User";
 import logo from "../../public/logo.png";
 import Image from "next/image";
+import CartTotal from "./CartTotal";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -411,9 +412,7 @@ const Header = () => {
           </div>
 
           <div className="ml-auto flex items-center justify-center gap-2">
-            <Link href={CART_ROUTE}>
-              <FaShoppingCart className="cursor-pointer hover:text-primary" />
-            </Link>
+            <CartTotal />
             <div className="flex items-center cursor-pointer border-none rounded-full shadow hover:shadow-purple-600">
               {state.userPreferences.theme == "dark" ? (
                 <WiDaySunny onClick={toggleMode} className="w-6 h-6" />

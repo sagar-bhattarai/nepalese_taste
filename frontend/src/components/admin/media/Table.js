@@ -78,8 +78,8 @@ const MediaTable = ({ medias }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {medias?.map((media) => (
-                        <tr key={media._id} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                    {medias?.map((media, index) => (
+                        <tr key={index} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td className="w-4 px-4 py-3">
                                 <div className="flex items-center">
                                     <input

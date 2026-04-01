@@ -1,10 +1,35 @@
+"use client"
 import Link from "next/link"
 import Table from "@/components/admin/products/Table"
 import Pagination from "@/components/admin/products/Pagination"
-import { fetchAllProducts } from "@/apis/product.api"
-const productManagementPage = async () => {
-  const products = await fetchAllProducts();
-    // console.log("products",products)
+import { fetchAllProducts } from "@/apis/product.api";
+import { useState, useEffect } from "react";
+
+const productManagementPage = () => {
+  const limit = 10;
+  const [productsData, setProductsData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const loadProducts = async (reset = false) => {
+    const res = await fetchAllProducts({
+      page,
+      search
+    });
+
+    if (res) {
+      if (reset) {
+        setProductsData(res);
+      } else {
+        setProductsData((prev) => [...prev, ...res.data]);
+      }
+    }
+  };
+
+  useEffect(() => {
+    setSearch("");
+    loadProducts(true);
+  }, [search, page]);
 
   return (
     <>
@@ -15,11 +40,11 @@ const productManagementPage = async () => {
               <div className="flex items-center flex-1 space-x-4">
                 <h5>
                   <span className="text-gray-500">All Products: </span>
-                  <span className="dark:text-white">{products?.total}</span>
+                  <span className="dark:text-white">{productsData?.total}</span>
                 </h5>
                 <h5>
                   <span className="text-gray-500">InActive Products: </span>
-                  <span className="dark:text-white">{products?.inActive}</span>
+                  <span className="dark:text-white">{productsData?.inActive}</span>
                 </h5>
                 <h5>
                   <span className="text-gray-500">Total sales:</span>
@@ -44,9 +69,9 @@ const productManagementPage = async () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <Table products={products.products}/>
+              <Table products={productsData?.products} />
             </div>
-            <Pagination />
+            <Pagination page={page} setPage={setPage} overAllTotal={productsData?.total} LIMIT={limit} />
           </div>
         </div>
       </section>

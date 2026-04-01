@@ -49,7 +49,7 @@ const ProductTable = ({ orders }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {orders.map((order) => (
+                    {orders?.map((order) => (
                         <tr key={order?._id} className="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td className="w-4 px-4 py-3">
                                 <div className="flex items-center">

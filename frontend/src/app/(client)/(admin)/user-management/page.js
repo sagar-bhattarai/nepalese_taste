@@ -6,16 +6,30 @@ import { fetchAllUsers } from "@/apis/user.api";
 import { useState, useEffect } from "react";
 
 const userManagementPage = () => {
+  const limit = 10;
   const [usersData, setUsersData] = useState();
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const loadUsers = async (reset = false) => {
+    const res = await fetchAllUsers({
+      page,
+      search
+    });
+
+    if (res) {
+      if (reset) {
+        setUsersData(res);
+      } else {
+        setUsersData((prev) => [...prev, ...res.data]);
+      }
+    }
+  };
 
   useEffect(() => {
-    const loadUsers = async () => {
-      const response = await fetchAllUsers();
-      setUsersData(response);
-    };
-
-    loadUsers();
-  }, []);
+    setSearch("");
+    loadUsers(true);
+  }, [search, page]);
 
   return (
     <>
@@ -55,9 +69,9 @@ const userManagementPage = () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-              {usersData &&  <Table users={usersData?.users} />}
+              {usersData && <Table users={usersData?.users} />}
             </div>
-            <Pagination />
+            <Pagination page={page} setPage={setPage} overAllTotal={usersData?.total} LIMIT={limit} />
           </div>
         </div>
       </section>

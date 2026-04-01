@@ -1,9 +1,9 @@
 "use client"
 import Link from "next/link";
-import { getProductById } from "../../../apis/product.api"
+import { getProductById } from "../../../apis/product.api";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, increaseQuantity, decreaseQuantity } from "@/redux/cart/cartSlice";
-// import { useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 
 // export const generateMetadata = async ({ params }) => {
@@ -14,14 +14,13 @@ import { toast } from "react-toastify";
 //     }
 // }
 
-const productPageById = async ({ params }) => {
-    const id = (await params).id;
-    const { loading, error, user } = useSelector(state => state.cart);
+const productPageById =  ({ params }) => {
+    // const id = (await params).id;
+    const { loading, error, products } = useSelector(state => state.cart); 
 
-
-    const response = await getProductById(id)
-    const product = response.result
-    console.log(product)
+    // const response = await getProductById(id);
+    // const product = response
+    console.log(products)
 
     useEffect(() => {
         if (error) {
