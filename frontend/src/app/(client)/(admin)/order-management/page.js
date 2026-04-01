@@ -1,21 +1,33 @@
 "use client"
-import Link from "next/link";
+// import Link from "next/link";
 import Table from "@/components/admin/orders/Table";
 import Pagination from "@/components/admin/orders/Pagination";
 import { fetchAllOrders } from "@/apis/order.api";
 import { useState, useEffect } from "react";
 
 const orderManagementPage = () => {
-  const [orders, setOrders] = useState([]);
+  const limit = 10;
+  const [ordersData, setOrdersData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const loadOrdersData = async (reset = false) => {
+    const res = await fetchAllOrders({ page, search });
+
+    if (res) {
+      if (reset) {
+        setOrdersData(res);
+      } else {
+        setOrdersData((prev) => [...prev, ...res.data]);
+      }
+    }
+  };
 
   useEffect(() => {
-    const loadOrders = async () => {
-      const data = await fetchAllOrders({});
-      setOrders(data);
-    };
+    setSearch("");
+    loadOrdersData(true);
+  }, [search, page]);
 
-    loadOrders();
-  }, []);
 
   return (
     <>
@@ -25,20 +37,20 @@ const orderManagementPage = () => {
             <div className="flex flex-col px-4 py-3 space-y-3 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 lg:space-x-4">
               <div className="flex items-center flex-1 space-x-4">
                 <h5>
-                  <span className="text-purple-900">All Orders: </span>
-                  <span className="dark:text-white">123456</span>
+                  <span className="text-purple-900">All orders: </span>
+                  <span className="dark:text-white">{ordersData?.total || "N/A"}</span>
                 </h5>
                 <h5>
                   <span className="text-yellow-800">Total Pending: </span>
-                  <span className="dark:text-white">49,212</span>
+                  <span className="dark:text-white">{ordersData?.pendings || "N/A"}</span>
                 </h5>
                 <h5>
                   <span className="text-blue-800">Total Processing: </span>
-                  <span className="dark:text-white">32,782</span>
+                  <span className="dark:text-white">{ordersData?.processing || "N/A"}</span>
                 </h5>
                 <h5>
                   <span className="text-green-800">Total Delivered: </span>
-                  <span className="dark:text-white">40,887</span>
+                  <span className="dark:text-white">{ordersData?.delivered || "N/A"}</span>
                 </h5>
               </div>
               <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
@@ -51,10 +63,9 @@ const orderManagementPage = () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-               -------- table commented --------
-              {/* <Table orders={orders} /> */}
+              <Table orders={ordersData?.orders} />
             </div>
-            <Pagination />
+            <Pagination page={page} setPage={setPage} overAllTotal={ordersData?.total} LIMIT={limit} />
           </div>
         </div>
       </section>

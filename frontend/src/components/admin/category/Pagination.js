@@ -1,45 +1,49 @@
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
+"use client"
+const Pagination = ({ page, setPage, overAllTotal, LIMIT }) => {
 
-const Pagination = () => {
+    const totalPagesCalculator = (total, limit) => {
+        const pages = [];
+        for (let x = 1; x <= Math.ceil(total / limit); x++) {
+            pages.push(x);
+        }
+        return pages;
+    };
+
     return (
-        <nav className="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0" aria-label="Table navigation">
+       <nav className="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0" aria-label="Table navigation">
             <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
                 Showing
-                <span className="font-semibold text-gray-900 dark:text-white">1-10</span>
+                <span className="font-semibold text-gray-900 dark:text-white"> 1 - {LIMIT > overAllTotal ? overAllTotal : LIMIT } </span>
                 of
-                <span className="font-semibold text-gray-900 dark:text-white">1000</span>
+                <span className="font-semibold text-gray-900 dark:text-white"> {overAllTotal}</span>
             </span>
-            <ul className="inline-flex items-stretch -space-x-px">
-                <li>
-                    <a href="#" className="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                        <span className="sr-only">Previous</span>
-                        <FaAngleLeft/>
-                    </a>
+            <ul className="flex items-center gap-3 cursor-pointer ">
+                <li
+                    className={`${page == 1 ? "text-gray-500" : "hover:text-primary"}`}
+                    onClick={page != 1 ? () => setPage(page - 1) : null}
+                >
+                    {`<< `}Prev
                 </li>
-                <li>
-                    <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-                </li>
-                <li>
-                    <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-                </li>
-                <li>
-                    <a href="#" aria-current="page" className="z-10 flex items-center justify-center px-3 py-2 text-sm leading-tight border text-primary-600 bg-primary-50 border-primary-300 hover:bg-primary-100 hover:text-primary-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-                </li>
-                <li>
-                    <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">...</a>
-                </li>
-                <li>
-                    <a href="#" className="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">100</a>
-                </li>
-                <li>
-                    <a href="#" className="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                        <span className="sr-only">Next</span>
-                        <FaAngleRight />
-                    </a>
+                {totalPagesCalculator(overAllTotal, LIMIT).map((pageNo) => (
+                    <li
+                        className={`${page == pageNo ? "text-primary" : "hover:text-primary"}`}
+                        key={pageNo}
+                        onClick={() => setPage(pageNo)}
+                    >
+                        {pageNo}
+                    </li>
+                ))}
+                <li
+                    className={`${page == Math.ceil(overAllTotal / LIMIT) ? "text-gray-500" : "hover:text-primary"}`}
+                    onClick={() =>
+                        page == Math.ceil(overAllTotal / LIMIT) ? null : setPage(page + 1)
+                    }
+                >
+                    Next{` >>`}
                 </li>
             </ul>
         </nav>
-    )
-}
+    );
+};
 
-export default Pagination
+export default Pagination;

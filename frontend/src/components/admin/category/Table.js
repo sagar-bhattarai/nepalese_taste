@@ -4,7 +4,6 @@ import category_placeholder from "../../../../public/category_placeholder.jpg";
 import { FaPencilAlt, FaTrash } from "react-icons/fa";
 
 const CategoryTable = ({ categories }) => {
-    // console.log("categories", categories)
     return (
         <div>
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">

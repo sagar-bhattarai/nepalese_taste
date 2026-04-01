@@ -1,10 +1,37 @@
+"use client"
 import Link from "next/link";
 import Table from "@/components/admin/category/Table";
 import Pagination from "@/components/admin/category/Pagination";
 import { fetchAllCategories } from "@/apis/category.api";
+import { useState, useEffect } from "react";
 
-const categoryManagementPage = async () => {
-  const categories = await fetchAllCategories();
+const categoryManagementPage =  () => {
+  const limit = 10;
+  const [categoryData, setCategoriessData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const loadCategries = async (reset = false) => {
+    const res = await fetchAllCategories({
+      page,
+      search
+    });
+
+    if (res) {
+      if (reset) {
+        setCategoriessData(res);
+      } else {
+        setCategoriessData((prev) => [...prev, ...res.data]);
+      }
+
+    }
+  };
+
+  useEffect(() => {
+    setSearch("");
+    loadCategries(true);
+  }, [search, page]);
+
   return (
     <>
       <section className="">
@@ -14,7 +41,7 @@ const categoryManagementPage = async () => {
               <div className="flex items-center flex-1 space-x-4">
                 <h5>
                   <span className="text-gray-500">All Categories: </span>
-                  <span className="dark:text-white">{categories?.total}</span>
+                  <span className="dark:text-white">{categoryData.total}</span>
                 </h5>
               </div>
               <div className="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
@@ -35,9 +62,9 @@ const categoryManagementPage = async () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-                <Table categories={categories.categories}/>
+              <Table categories={categoryData?.categories} />
             </div>
-                <Pagination/>
+            <Pagination page={page} setPage={setPage} overAllTotal={categoryData?.total} LIMIT={limit} />
           </div>
         </div>
       </section>
