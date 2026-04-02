@@ -16,7 +16,7 @@ const cartSlice = createSlice({
             );
 
             if (existingProduct) {
-               state.products = state.products.map(item => {
+                state.products = state.products.map(item => {
                     if (item._id != product._id) return item;
 
                     return {
@@ -90,6 +90,11 @@ const cartSlice = createSlice({
                 };
             });
         },
+        clearCart: (state) => {
+                state.products = [];
+                state.totalPrice = 0.00;
+                state.totalCount = 0;
+        }
     }
 })
 

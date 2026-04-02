@@ -25,3 +25,5 @@ export const MEDIA_MANAGEMENT_ROUTE = "/media-management";
 export const SETTING_MANAGEMENT_ROUTE = "/setting-management";
 
 export const CART_ROUTE = "/cart";
+export const CHECKOUT_ROUTE = "/checkout";
+export const ORDERS_ROUTE = "/orders";
