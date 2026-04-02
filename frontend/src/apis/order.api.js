@@ -3,6 +3,7 @@ import config from "@/config/config";
 import api from "."
 
 /*    suggestion from Ai */
+// api for client component
 export const fetchAllOrders = async (searchParams) => {
     const sort = searchParams?.sort ?? "";
     const min = searchParams?.min ?? "";
@@ -14,12 +15,26 @@ export const fetchAllOrders = async (searchParams) => {
     return response.data.result;
 };
 
+// api for server component
+export const addOrder = async (data) => {
+
+    try {
+        const response = await api.post(`/orders/add`, data);
+        return response.data?.result?.data;
+    } catch (error) {
+        // console.error("API ERROR:", error);
+        throw error.response?.data || error;
+    }
+};
+
+// api for client component
 export const getOrderById = async ({ id }) => {
-    const response = await api.get(`/orders/order/${id}`)
+    const response = await axios.get(`${config.apiUrl}/orders/order/${id}`)
     return response.data;
 };
 
+// api for server component
 export const updateOrder = async (id, data) => {
-    const response = await api.patch(`/orders/update/${id}`, data );
+    const response = await api.patch(`/orders/update/${id}`, data);
     return response.data.data;
 };

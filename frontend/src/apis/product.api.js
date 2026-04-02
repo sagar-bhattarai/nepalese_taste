@@ -1,19 +1,11 @@
 import axios from "axios";
 import config from "@/config/config";
+import api from "."
 
+// api for server component
 export const addProduct = async (data) => {
-    const authToken = localStorage.getItem("accessToken");
-
     try {
-        const response = await axios.post(
-            `${config.apiUrl}/products/add`,
-            data,
-            {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            }
-        );
+        const response = await api.post( `/products/add`, data);
 
         return response.data?.result?.data;
     } catch (error) {
@@ -22,6 +14,7 @@ export const addProduct = async (data) => {
     }
 };
 
+// api for client component
 export const fetchAllProducts = async (searchParams) => {
     const sort = (await searchParams)?.sort ?? ""
     const min = (await searchParams)?.min ?? ""
@@ -34,6 +27,7 @@ export const fetchAllProducts = async (searchParams) => {
     return response.data.result;
 };
 
+// api for client component
 export const getProductById = async (id) => {
 
     const response = await axios.get(`${config.apiUrl}/products/product/${id}`);
@@ -41,18 +35,10 @@ export const getProductById = async (id) => {
     return response.data;
 };
 
+// api for server component
 export const updateProduct = async (id, data) => {
-    const authToken = localStorage.getItem("accessToken");
     try {
-    const response = await axios.patch(
-        `${config.apiUrl}/products/update/${id}`,
-        data,
-        {
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-        }
-    );
+    const response = await api.patch(`/products/update/${id}`, data );
 
     return response.data.result.data;
         } catch (error) {

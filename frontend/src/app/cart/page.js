@@ -1,16 +1,22 @@
 "use client"
 import { useDispatch, useSelector } from "react-redux";
 import { decreaseQuantity, removeFromCart, increaseQuantity } from "../../redux/cart/cartSlice"
+import { addOrder } from "@/apis/order.api";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { ORDERS_ROUTE } from "@/constants/routes";
 
-const Cart = () => {
+const CartPage = () => {
+  const router = useRouter();
   const state = useSelector((state) => state);
-  const {products, totalPrice} = state.cart;
+  const { products, totalPrice } = state.cart;
+  const { user } = state.auth;
   const discount = Math.ceil(totalPrice * 0.05);
   const tax = Math.ceil(totalPrice * 0.13);
   const Shipping = 10;
   const finalCost = (totalPrice - discount) + tax + Shipping;
 
-// console.log(products)
+  // console.log(products)
 
   const dispatch = useDispatch();
 
@@ -20,7 +26,32 @@ const Cart = () => {
     }
   }
 
-  // console.log(products)
+  const checkout = () => {
+    const orderItem = products.map((product) => ({
+      productId: product._id,
+      quantity: product.quantity
+    }));
+
+    const totalPrice = finalCost;
+    const shippingAddress = user.data.loggedInUser.userAddress;
+    const data = {
+      orderItem,
+      totalPrice,
+      shippingAddress
+    }
+    console.log("data  >>>>>>>", data)
+    router.push(ORDERS_ROUTE)
+    addOrder(data).then(() => {
+      toast.success("Order created successfully", {
+        onClose: () => {
+
+        }
+      })
+    }).catch(error => {
+      toast.error(error?.errors?.requestData);
+    });
+
+  }
 
   return (
     <>
@@ -28,8 +59,6 @@ const Cart = () => {
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-500">Shopping Cart</h1>
         <div className="grid lg:grid-cols-3 lg:gap-x-8 gap-x-6 gap-y-8 mt-6">
           <div className="lg:col-span-2 space-y-6">
-
-
             {products?.map((product) => (
               <div key={product._id} className="flex gap-4 bg-[#ffffff38] dark:bg-[#2e2e2e4a] px-4 py-6 rounded-md shadow-sm border border-gray-200 dark:border-[#e5e7eb2e]">
                 <div className="flex gap-6 sm:gap-4 max-sm:flex-col">
@@ -82,9 +111,6 @@ const Cart = () => {
                 </div>
               </div>
             ))}
-
-
-
           </div>
 
           {/* sidebar */}
@@ -98,7 +124,7 @@ const Cart = () => {
               <li className="flex flex-wrap gap-4 text-sm font-semibold text-slate-900 dark:text-slate-500 ">Total <span className="ml-auto">Rs. {finalCost}</span></li>
             </ul>
             <div className="mt-8 space-y-4">
-              <button type="button" className="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-slate-800 hover:bg-primary  text-white rounded-md cursor-pointer">Checkout</button>
+              <button onClick={checkout} type="button" className="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-slate-800 hover:bg-primary  text-white rounded-md cursor-pointer">Checkout</button>
               <button type="button" className="text-sm px-4 py-2.5 w-full font-medium tracking-wide bg-[#f8fafc82] dark:bg-[#58585882] hover:bg-primary hover:text-white text-slate-900 dark:text-slate-300 border border-gray-300 dark:border-[#e5e7eb2e] rounded-md cursor-pointer">Continue Shopping</button>
             </div>
             <div className="mt-5 flex flex-wrap justify-center gap-4">
@@ -113,4 +139,4 @@ const Cart = () => {
   )
 }
 
-export default Cart
+export default CartPage

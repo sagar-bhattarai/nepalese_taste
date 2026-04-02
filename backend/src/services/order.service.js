@@ -15,8 +15,9 @@ const findOrderOnDb = async (orderIdOrTrackingId, searchType) => {
 };
 
 const add = async (req) => {
+    console.log(req.body)
     // const { return_url, totalPrice, purchase_order_id, purchase_order_name, name, email, phone } = data;
-    const items = req.body.requestData;
+    const items = req.body.orderItem;
 
     items.map(async (item) => {
         const product = await productService.findProductOnDb(item.productId, "id");
@@ -39,16 +40,16 @@ const add = async (req) => {
     let grandTotal = 0;
     let requestFrom = '';
 
-    const orders = items.map((item) => {
-        grandTotal += item.totalPrice;
-        requestFrom = item.requestFrom;
+    // const orders = items.map((item) => {
+    //     grandTotal += item.totalPrice;
+    //     requestFrom = item.requestFrom;
 
-        return {
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.totalPrice,
-        };
-    });
+    //     return {
+    //         productId: item.productId,
+    //         quantity: item.quantity,
+    //         price: item.totalPrice,
+    //     };
+    // });
 
 
     const customerId = req.user._id;
@@ -70,6 +71,8 @@ const add = async (req) => {
     //     trackingId: purchase_order_id
     // }
 
+
+    grandTotal = req.body.totalPrice;
 
     if (requestFrom === "cash") {
         grandTotal += 15;
@@ -117,7 +120,7 @@ const add = async (req) => {
 };
 
 const all = async (req) => {
-   const userId = new mongoose.Types.ObjectId(req.user._id);
+    const userId = new mongoose.Types.ObjectId(req.user._id);
 
     // role-based match
     let matchStage = {};
