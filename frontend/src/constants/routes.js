@@ -26,4 +26,5 @@ export const SETTING_MANAGEMENT_ROUTE = "/setting-management";
 
 export const CART_ROUTE = "/cart";
 export const CHECKOUT_ROUTE = "/checkout";
+export const PAYMENT_ROUTE = "/payment";
 export const ORDERS_ROUTE = "/orders";
