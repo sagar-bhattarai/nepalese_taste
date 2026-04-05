@@ -15,9 +15,9 @@ const findOrderOnDb = async (orderIdOrTrackingId, searchType) => {
 };
 
 const add = async (req) => {
-    console.log(req.body)
     // const { return_url, totalPrice, purchase_order_id, purchase_order_name, name, email, phone } = data;
     const items = req.body.orderItem;
+    // console.log(items)
 
     items.map(async (item) => {
         const product = await productService.findProductOnDb(item.productId, "id");
@@ -38,18 +38,20 @@ const add = async (req) => {
     });
 
     let grandTotal = 0;
-    let requestFrom = '';
+    let requestFrom = req.body.requestedFrom;
 
-    // const orders = items.map((item) => {
-    //     grandTotal += item.totalPrice;
-    //     requestFrom = item.requestFrom;
+    const orders = items.map((item) => {
+        // grandTotal += item.totalPrice;
+        // requestFrom = item.requestFrom;
 
-    //     return {
-    //         productId: item.productId,
-    //         quantity: item.quantity,
-    //         price: item.totalPrice,
-    //     };
-    // });
+        return {
+            productId: item.productId,
+            quantity: item.quantity,
+            // price: item.totalPrice,
+            price: item.price,
+        };
+    });
+
 
 
     const customerId = req.user._id;
@@ -86,7 +88,6 @@ const add = async (req) => {
         trackingId: purchase_order_id
     });
 
-
     if (!orderCreated) {
         throw {
             serviceserviceStatus: 409,
@@ -96,7 +97,7 @@ const add = async (req) => {
 
     // console.log("orderCreated", orderCreated) 
 
-    const result = null;
+    let result = null;
 
     switch (requestFrom) {
         case "card": {
@@ -108,7 +109,7 @@ const add = async (req) => {
             break;
         }
         case "khalti": {
-            result = await orderPaymentviaKhalti(orderCreated._id, purchase_order_id, grandTotal, req.user);
+            // result = await orderPaymentviaKhalti(orderCreated._id, purchase_order_id, grandTotal, req.user);
             break;
         }
         default: { // cash on delivery  
@@ -138,7 +139,7 @@ const all = async (req) => {
 
         customerId: "$customer._id",
         customerName: "$customer.userName",
-        customerEmail: "$customer.customerEmail",
+        customerEmail: "$customer.userEmail",
         customerRole: "$customer.userRole",
 
         productId: "$product._id",
@@ -146,7 +147,7 @@ const all = async (req) => {
         productImage: "$product.productImage",
         productDescription: "$product.productDescription",
         categoryName: "$product.category.categoryName",
-        supplierName: "$product.supplier.supplierName",
+        // supplierName: "$product.supplier.supplierName",
 
         quantity: "$items.quantity",
         totalPrice: "$totalPrice", // order model attribute
@@ -165,15 +166,15 @@ const all = async (req) => {
         productImage: "$product.productImage",
         productDescription: "$product.productDescription",
         categoryName: "$product.category.categoryName",
-        supplierName: "$product.supplier.supplierName",
+        // supplierName: "$product.supplier.supplierName",
 
         quantity: "$items.quantity",
         totalPrice: "$totalPrice",  // order model attribute
     };
 
-
-
-    const projection = req.user.userRole === "admin" ? adminProjection : customerProjection;
+    const isAdmin = req.user.userRoles.some(r => r == "ADMIN");
+    
+    const projection = isAdmin ? adminProjection : customerProjection;
 
     const page = Number(req.query.page) || 1;
     const size = Number(req.query.size) || 3;
@@ -191,8 +192,8 @@ const all = async (req) => {
                     { $match: { $expr: { $eq: ["$_id", "$$productId"] } } },
                     { $lookup: { from: "categories", localField: "categoryId", foreignField: "_id", as: "category" } },
                     { $unwind: "$category" },
-                    { $lookup: { from: "suppliers", localField: "supplierId", foreignField: "_id", as: "supplier" } },
-                    { $unwind: "$supplier" },
+                    // { $lookup: { from: "suppliers", localField: "supplierId", foreignField: "_id", as: "supplier" } },
+                    // { $unwind: "$supplier" },
                 ],
                 as: "product",
             }
@@ -221,6 +222,9 @@ const all = async (req) => {
             msgFromService: "No Any Order Found",
         };
     }
+
+
+    // console.log(result[0].data);
 
     const orders = result[0].data;
     const total = result[0].totalCount[0] ? result[0].totalCount[0].count : 0;
@@ -297,7 +301,6 @@ const merchantOrders = async (merchantId) => {
 
     return orders;
 };
-
 
 const update = async (id, status) => {
     const updated = await OrderModel.findByIdAndUpdate(id, { orderStatus: status }, { new: true });

@@ -10,19 +10,24 @@ export const fetchAllOrders = async (searchParams) => {
     const max = searchParams?.max ?? "";
 
     const queryParams = new URLSearchParams({ sort, min, max }).toString();
+    const authToken = localStorage.getItem("accessToken");
 
-    const response = await axios.get(`${config.apiUrl}/orders/all`);
+    const response = await axios.get(`${config.apiUrl}/orders/all?${queryParams}`,
+        {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            }
+        },
+    );
     return response.data.result;
 };
 
 // api for server component
 export const addOrder = async (data) => {
-
     try {
         const response = await api.post(`/orders/add`, data);
         return response.data?.result?.data;
     } catch (error) {
-        // console.error("API ERROR:", error);
         throw error.response?.data || error;
     }
 };

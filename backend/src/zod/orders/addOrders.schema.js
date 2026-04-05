@@ -10,13 +10,17 @@ const orderItemSchema = z.array(
       .number()
       .int("Quantity must be an integer")
       .positive("Quantity must be greater than 0"),
-  })
+    price: z
+      .number()
+      .int("Price must be an integer")
+      .positive("Price must be greater than 0"),
+  }),
 ).min(1, "At least one order item is required");
 
 
 const addOrderSchema = z.object({
   orderItem: orderItemSchema,
-  requestFrom: z.string().min(4),
+  requestedFrom: z.string().min(4),
   totalPrice: z
     .number()
     .positive("Total price must be greater than 0"),
