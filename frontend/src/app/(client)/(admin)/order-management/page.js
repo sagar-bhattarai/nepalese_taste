@@ -1,6 +1,6 @@
 "use client"
 // import Link from "next/link";
-import Table from "@/components/admin/orders/Table";
+import OrderBlock from "@/components/admin/orders/OrderBlock";
 import Pagination from "@/components/admin/orders/Pagination";
 import { fetchAllOrders } from "@/apis/order.api";
 import { useState, useEffect } from "react";
@@ -13,6 +13,8 @@ const orderManagementPage = () => {
 
   const loadOrdersData = async (reset = false) => {
     const res = await fetchAllOrders({ page, search });
+
+    console.log(res)
 
     if (res) {
       if (reset) {
@@ -63,7 +65,7 @@ const orderManagementPage = () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <Table orders={ordersData?.orders} />
+              <OrderBlock orders={ordersData?.orders} />
             </div>
             <Pagination page={page} setPage={setPage} overAllTotal={ordersData?.total} LIMIT={limit} />
           </div>

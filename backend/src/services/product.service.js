@@ -208,4 +208,4 @@ const remove = async (id) => {
 }
 
 
-export default { create, single, edit, remove, getProducts };
+export default { create, single, edit, remove, getProducts, findProductOnDb };
