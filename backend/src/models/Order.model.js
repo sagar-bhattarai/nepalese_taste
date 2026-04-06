@@ -3,7 +3,7 @@
 *
   for multiple order
 *
-*/ 
+*/
 
 
 import mongoose from "mongoose";
@@ -31,6 +31,11 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
         },
+        itemOrderStatus: {
+          type: String,
+          enum: ["PENDING", "CONFIRMED", "CANCELLED", "SHIPPED", "DELIVERED"],
+          default: "PENDING",
+        },
       },
     ],
 
@@ -41,7 +46,7 @@ const orderSchema = new mongoose.Schema(
 
     orderStatus: {
       type: String,
-      enum: ["PENDING", "CONFIRMED", "CANCELLED", "SHIPPED", "DELIVERED"],
+      enum: ["CASH_PENDING", "ALL_PENDING", "ALL_CONFIRMED", "ALL_CANCELLED", "ALL_SHIPPED", "ALL_DELIVERED"],
       default: "PENDING",
     },
 
@@ -50,6 +55,9 @@ const orderSchema = new mongoose.Schema(
       unique: true,
     },
 
+    deliveryType: {
+      type: String,
+    },
     payment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payment",

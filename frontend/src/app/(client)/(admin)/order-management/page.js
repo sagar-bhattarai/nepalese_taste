@@ -14,7 +14,7 @@ const orderManagementPage = () => {
   const loadOrdersData = async (reset = false) => {
     const res = await fetchAllOrders({ page, search });
 
-    console.log(res)
+    console.log(">>>>>>>>>>",res)
 
     if (res) {
       if (reset) {
