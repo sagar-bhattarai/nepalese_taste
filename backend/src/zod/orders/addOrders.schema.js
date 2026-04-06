@@ -27,6 +27,9 @@ const addOrderSchema = z.object({
   shippingAddress: z
     .string()
     .min(10, "Shipping address is too short"),
+  deliveryPrice: z
+    .number()
+    .nonnegative("Total price must be greater than 0"),
 });
 
 export default addOrderSchema;
