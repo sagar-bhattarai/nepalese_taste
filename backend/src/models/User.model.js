@@ -46,6 +46,23 @@ const userSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        // for Recommendation system
+        viewedProducts: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product"
+            }
+        ],
+        orders: [
+            {
+                products: [
+                    {
+                        type: mongoose.Schema.Types.ObjectId,
+                        ref: "Product"
+                    }
+                ]
+            }
+        ]
     },
     { timestamps: true },
 );
