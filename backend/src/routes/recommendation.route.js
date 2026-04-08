@@ -6,7 +6,8 @@ import auth from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/all", getRecommendations);
+// router.get("/all", getRecommendations);
+router.post("/all", auth, getRecommendations);
 router.post("/add/:id", auth, zodValidation(addRecommendationSchema), trackTheProductViews);
 
 export default router;

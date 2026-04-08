@@ -5,7 +5,7 @@ import ProductModel from '../models/Product.model.js';
 const trackView = async (req) => {
     const { productId } = req.body;
 
-    await UserModel.findByIdAndUpdate(req.user.id, {
+    await UserModel.findByIdAndUpdate(req.user.userId, {
         $addToSet: { viewedProducts: productId }
     });
 
@@ -17,55 +17,73 @@ const trackView = async (req) => {
 };
 
 export const recommendations = async (req) => {
-    const productId = req.body.productId ;
-    const category = req.body.category;
+    try {
+        const { productId, catId } = req.body;
 
-    const user = await UserModel.findById(req.user.userId).populate("viewedProducts orders.products");
+        const user = await UserModel.findById(req.user.userId)
+            .populate("viewedProducts")
+            .populate("orders.products");
 
-    let recommended = [];
+        let recommended = [];
 
-    // 1. Content-Based (similar products)
-    if (productId) {
-        const product = await ProductModel.findById(productId);
+        // 1️⃣ Content-Based (HIGH PRIORITY)
+        if (productId) {
+            const product = await ProductModel.findById(productId);
 
-        const similar = await ProductModel.find({
-            category: product.categoryId,
-            _id: { $ne: productId }
-        }).limit(10);
+            if (product) {
+                const similar = await ProductModel.find({
+                    categoryId: product.categoryId, // ✅ FIXED
+                    _id: { $ne: productId }
+                }).limit(10);
 
-        recommended.push(...similar);
+                recommended.push(...similar);
+            }
+        }
+
+        // 2️⃣ Category-Based (if fallback triggered OR extra boost)
+        if (catId) {
+            const categoryProducts = await ProductModel.find({
+                categoryId: catId
+            }).limit(10);
+
+            recommended.push(...categoryProducts);
+        }
+
+        // 3️⃣ Behavior-Based (MEDIUM PRIORITY)
+        if (user && user.viewedProducts.length > 0) {
+            const categories = [
+                ...new Set(
+                    user.viewedProducts.map(p => p.categoryId) // ✅ FIXED
+                )
+            ];
+
+            const behaviorProducts = await ProductModel.find({
+                categoryId: { $in: categories }
+            }).limit(10);
+
+            recommended.push(...behaviorProducts);
+        }
+
+        // 4️⃣ Trending fallback (LOW PRIORITY)
+        if (recommended.length < 10) {
+            const trending = await ProductModel.find()
+                .sort({ sold: -1, views: -1 })
+                .limit(10);
+
+            recommended.push(...trending);
+        }
+
+        // 5️⃣ Remove duplicates
+        const unique = Array.from(
+            new Map(recommended.map(p => [p._id.toString(), p])).values()
+        );
+
+        return unique.slice(0, 10);
+
+    } catch (error) {
+        console.error("Recommendation Error:", error);
+        throw error;
     }
-
-    // 2. Behavior-Based (user history)
-    if (user) {
-        const categories = [
-            ...new Set(
-                user.viewedProducts.map(p => p.category)
-            )
-        ];
-
-        const behaviorProducts = await ProductModel.find({
-            category: { $in: categories }
-        }).limit(10);
-
-        recommended.push(...behaviorProducts);
-    }
-
-    // 3. Trending fallback
-    if (recommended.length < 10) {
-        const trending = await ProductModel.find()
-            .sort({ sold: -1, views: -1 })
-            .limit(10);
-
-        recommended.push(...trending);
-    }
-
-    // Remove duplicates
-    const unique = Array.from(
-        new Map(recommended.map(p => [p._id.toString(), p])).values()
-    );
-
-    return unique.slice(0, 10);
 };
 
 export default { trackView, recommendations }
