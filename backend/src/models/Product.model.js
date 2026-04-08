@@ -60,7 +60,11 @@ const productSchema = new mongoose.Schema(
         isActive: {
             type: Boolean,
             default: true
-        }
+        },
+
+        // for Recommendation system
+        views: { type: Number, default: 0 },
+        sold: { type: Number, default: 0 },
     },
     { timestamps: true }
 );

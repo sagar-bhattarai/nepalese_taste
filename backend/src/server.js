@@ -26,6 +26,7 @@ import categoryRouter from "./routes/category.route.js";
 import orderRouter from "./routes/order.route.js";
 import paymentRouter from "./routes/payment.route.js";
 import mediaRouter from "./routes/media.route.js";
+import recommendationRouter from "./routes/recommendation.route.js";
 
 server.use("/api/v1/users", userRouter);
 server.use("/api/v1/products", productRouter);
@@ -34,5 +35,6 @@ server.use("/api/v1/categories", categoryRouter);
 server.use("/api/v1/orders", auth , orderRouter);
 server.use("/api/v1/payments", auth , paymentRouter);
 server.use("/api/v1/medias", auth , roleBasedAuth(ADMIN), mediaRouter);
+server.use("/api/v1/recommendations", recommendationRouter);
 
 export { server };
