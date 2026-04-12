@@ -94,5 +94,35 @@ const toggleActiveStatus = async (req, res) => {
     }
 }
 
+const getBrands = async (req, res) => {
+    try {
+        const result = await productService.brands();
+
+        return res
+            .status(200)
+            .json({ api: config.api, result, message: "Brands fetched successfully." });
+
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ error: true, message: "server error while fetching Brands" });
+    }
+}
+
+const getCategories = async (req, res) => {
+    try {
+        const result = await productService.categories();
+
+        return res
+            .status(200)
+            .json({ api: config.api, result, message: "Categories fetched successfully." });
+
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ error: true, message: "server error while fetching Categories" });
+    }
+}
+
 // export { addProduct, getAllProduct, updateProduct, getProductById, toggleActiveStatus, searchProducts }
-export { addProduct, getAllProduct, updateProduct, getProductById, toggleActiveStatus }
+export { addProduct, getAllProduct, updateProduct, getProductById, toggleActiveStatus, getBrands, getCategories }

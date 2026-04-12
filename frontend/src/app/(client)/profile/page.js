@@ -6,6 +6,7 @@ import userDummy from "../../../../public/user_placeholder.png"
 const profilePage = () => {
   return (
     <div className="p-4">
+      <h1 className="mb-8 text-2xl font-medium dark:text-gray-500 ">General Information</h1>
       <div className="h-30 w-30">
         <Image src={userDummy} alt="profile image" />
       </div>     

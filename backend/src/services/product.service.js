@@ -86,7 +86,6 @@ const single = async (id) => {
   return { ...product };
 };
 
-
 const edit = async (req, res) => {   // adminUpdateProduct
   const productOnDb = await findProductOnDb(req.params.id, "id");
 
@@ -103,7 +102,7 @@ const edit = async (req, res) => {   // adminUpdateProduct
     productDescription: productDescription || productOnDb.productDescription,
     productPrice: productPrice || productOnDb.productPrice,
     productStock: productStock || productOnDb.productStock,
-    categoryId:  categoryId || productOnDb.categoryId,
+    categoryId: categoryId || productOnDb.categoryId,
     isActive: isActive || productOnDb.isActive
   }
 
@@ -121,7 +120,6 @@ const edit = async (req, res) => {   // adminUpdateProduct
   }
   return edited;
 };
-
 
 const getProducts = async (req) => {
   // const hasFilterOrSort =
@@ -169,8 +167,8 @@ const getProducts = async (req) => {
   // Map categoryId → category name
   const formattedProducts = products.map(({ categoryId, ...rest }) => ({
     ...rest,
-    categoryName: categoryId?.categoryName  || null,
-    catId: categoryId?._id  || null,
+    categoryName: categoryId?.categoryName || null,
+    catId: categoryId?._id || null,
   }));
 
   const [totalCount, inactiveCount] = await Promise.all([
@@ -207,5 +205,12 @@ const remove = async (id) => {
   return deleted;
 }
 
+const brands = async () => {
+  return await ProductModel.distinct("brand");
+}
 
-export default { create, single, edit, remove, getProducts, findProductOnDb };
+const categories = async () => {
+  return await ProductModel.distinct("category");
+}
+
+export default { create, single, edit, remove, getProducts, findProductOnDb, brands, categories };

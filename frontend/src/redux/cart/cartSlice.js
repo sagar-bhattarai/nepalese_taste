@@ -24,6 +24,7 @@ const cartSlice = createSlice({
     discount: 0,
     tax: 0,
     deliveryPrice: 0,
+    shipping_details: {}
   },
   reducers: {
     addToCart: (state, action) => {
@@ -79,6 +80,10 @@ const cartSlice = createSlice({
             state.deliveryPrice =  state.deliveryPrice + action.payload;
     },
 
+    shippingDetails: (state, action)=>{
+            state.shipping_details = action.payload;
+    },
+
     clearCart: (state) => {
       state.products = [];
       state.totalPrice = 0;
@@ -87,6 +92,7 @@ const cartSlice = createSlice({
       state.discount = 0;
       state.tax = 0;
       state.deliveryPrice = 0;
+      state.shipping_details = {};
     },
   },
 });
@@ -97,7 +103,8 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   clearCart,
-  addDeliveryPrice
+  addDeliveryPrice,
+  shippingDetails
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
