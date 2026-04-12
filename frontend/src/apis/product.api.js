@@ -47,7 +47,19 @@ export const updateProduct = async (id, data) => {
     }
 };
 
+export const deleteProduct = async (id)=>{
+    const response = await api.delete(`/api/products/${id}`)
+    return response;
+}
 
+export const getProductBrands = async ()=>{
+    const response = await api.get("/api/products/brands");
+    return response;
+}
+export const getProductCategories = async ()=>{
+    const response = await api.get("/api/products/categories");
+    return response;
+}
 /*    suggestion from Ai
 
 export const fetchAllProducts = async (searchParams) => {

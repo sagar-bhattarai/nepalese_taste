@@ -29,6 +29,10 @@ const config = {
         password: process.env.ADMIN_EMAIL_PASSWORD || "",
     },
 
+    stripe:{
+        stripe_secret_key: process.env.STRIPE_SECRET_KEY || ''
+    }
+
 }
 
 export default config;

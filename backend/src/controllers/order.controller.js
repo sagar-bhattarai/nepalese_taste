@@ -96,11 +96,27 @@ const confirmOrder = async (req, res) => {
     }
 };
 
+const orderPaymentviaStripe = async (req, res) => {
+    try {
+        const result = orderService.orderPaymentviaStripeCard(req?.params?.id, req?.user);
+
+        return res
+            .status(200)
+            .json(
+                { api: config.api, result, message: "order via stripe successfull" },
+            );
+    } catch (error) {
+        return res
+            .status(error.statusFromService || 500)
+            .json({ message: error.msgFromService || "order via stripe failed" });
+    }
+}
 export {
     createOrder,
     getOrderByTrackingId,
     getAllOrders,
     updateOrderStatus,
     cancelOrder,
-    confirmOrder
+    confirmOrder,
+    orderPaymentviaStripe
 };

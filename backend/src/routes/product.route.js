@@ -1,4 +1,4 @@
-import { addProduct, getAllProduct, updateProduct, getProductById, toggleActiveStatus } from "../controllers/product.controller.js";
+import { addProduct, getAllProduct, updateProduct, getProductById, toggleActiveStatus, getBrands, getCategories } from "../controllers/product.controller.js";
 import express from "express";
 import auth from "../middlewares/auth.middleware.js";
 import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
@@ -26,6 +26,15 @@ router.post("/add", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValid
 */
 router.get("/", getAllProduct);
 
+/** 
+ * GET /api/categories
+*/
+router.get("/categories", getCategories);
+
+/** 
+ * GET /api/brands
+*/
+router.get("/brands", getBrands);
 
 /** 
  * GET /api/products/product/:id

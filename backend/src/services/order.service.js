@@ -24,6 +24,7 @@ import {
     ORDER___EXPRESS___DELIVERY
 } from "../constants/order.constant.js";
 import createLogFile from "../utility/createLogFile.js";
+import { payViaKhalti, payViaStripe } from "../utility/payment.js";
 
 
 const findOrderOnDb = async (orderIdOrTrackingId, searchType) => {
@@ -34,7 +35,6 @@ const findOrderOnDb = async (orderIdOrTrackingId, searchType) => {
     }
 };
 
-
 const add = async (req) => {
     try {
         const items = req.body.orderItem;
@@ -43,9 +43,9 @@ const add = async (req) => {
         let delivery = ORDER___FREE___DELIVERY;
         let orderStatus = ALL___ORDER___PENDING;
 
-        if(deliveryPrice === 15){
+        if (deliveryPrice === 15) {
             delivery = ORDER___FAST___DELIVERY
-        }else if(deliveryPrice === 49){
+        } else if (deliveryPrice === 49) {
             delivery = ORDER___EXPRESS___DELIVERY
         }
 
@@ -119,14 +119,14 @@ const add = async (req) => {
             orderStatus = CASH___ORDER___PENDING
         }
 
-        const purchase_order_id = crypto.randomUUID();
+        const trackingId = crypto.randomUUID();
 
         const order = await OrderModel.create([{
             customerId: req.user._id,
             items: orderItems,
             totalPrice: grandTotal,
             orderStatus: orderStatus,
-            trackingId: purchase_order_id,
+            trackingId: trackingId,
             paymentMethod: requestFrom,
             deliveryType: delivery
         }]);
@@ -144,7 +144,7 @@ const add = async (req) => {
         // 💳 Payment handling
         switch (requestFrom) {
             case "khalti":
-                // paymentResult = await handleKhalti(order[0], req.user);
+                // paymentResult = await orderPaymentviaKhalti(order[0], req.user);
                 break;
 
             case "esewa":
@@ -152,13 +152,13 @@ const add = async (req) => {
                 break;
 
             case "card":
-                // paymentResult = await orderPaymentviaCard(order[0], req.user);
+                paymentResult = await orderPaymentviaStripeCard(order[0], req.user);
                 break;
 
             default:
                 // paymentResult = await orderPaymentviaCash(order[0]);
-                //  paymentResult = await orderPaymentviaCash(orderCreated._id, purchase_order_id, grandTotal, req.user);
-                //  paymentResult = await orderPaymentviaCash(order._id, purchase_order_id, grandTotal, req.user);
+                //  paymentResult = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
+                //  paymentResult = await orderPaymentviaCash(order._id, trackingId, grandTotal, req.user);
                 break;
         }
 
@@ -260,8 +260,8 @@ const all = async (req) => {
                 trackingId: 1,
                 orderStatus: 1,
                 totalPrice: 1,
-                deliveryType:1,
-                
+                deliveryType: 1,
+
                 ...(isAdmin && {
                     customer: {
                         _id: "$customer._id",
@@ -403,53 +403,30 @@ const cancel = async (id) => {
     return cancelled;
 };
 
-const payViaKhalti = async (payload) => {
-    try {
-        const response = await fetch(
-            "https://dev.khalti.com/api/v2/epayment/initiate/",
-            {
-                method: "POST",
-                headers: {
-                    "Authorization": `${config.khalti_live_secret_key}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            }
-        );
+const confirmOrderPayment = async (id, status) => {
+    // const order = findOrderOnDb(id, "id");   // pidx
+    const order = await findOrderOnDb(id, "trackingId");     // transactionId
 
-        const result = await response.json();
-
-        if (!response.ok) {
-            // console.error("Khalti Error:", result);
-            throw new Error(result.detail || "Khalti payment failed");
-        }
-        return result;
-
-    } catch (error) {
-        console.log(error);
+    if (status.toUpperCase() !== "COMPLETED") {
+        await PaymentModel.findByIdAndUpdate(order.payment, { status: "FAILED" });
+        throw {
+            statusFromService: 400,
+            msgFromService: "Payment Failed",
+        };
     }
+
+    await PaymentModel.findByIdAndUpdate(order.payment, { status: "SUCCESS" });
+
+    // return await OrderModel.findByIdAndUpdate(id, { status: "CONFIRMED" }, { new: true });
+    return await OrderModel.findOneAndUpdate({ trackingId: id }, { $set: { orderStatus: "CONFIRMED" } }, { new: true });
+
 }
 
-const orderPaymentviaCash = async (id, purchase_order_id, grandTotal, user) => {
+const orderPaymentviaKhalti = async (id, trackingId, grandTotal, user) => {
     const order = await findOrderOnDb(id, "id");
 
     const orderPayment = await PaymentModel.create({
-        transactionId: purchase_order_id,
-        method: "CASH",
-        amount: grandTotal,
-    })
-
-    return await OrderModel.findByIdAndUpdate(id, {
-        payment: orderPayment._id,
-        orderStatus: "CONFIRMED"
-    })
-}
-
-const orderPaymentviaKhalti = async (id, purchase_order_id, grandTotal, user) => {
-    const order = await findOrderOnDb(id, "id");
-
-    const orderPayment = await PaymentModel.create({
-        transactionId: purchase_order_id,
+        transactionId: trackingId,
         method: "ONLINE",
         amount: grandTotal,
     })
@@ -462,7 +439,7 @@ const orderPaymentviaKhalti = async (id, purchase_order_id, grandTotal, user) =>
         return_url: config.return_url,
         website_url: config.website_url,
         amount: `${grandTotal * 100}`,
-        purchase_order_id: order.trackingId,
+        trackingId: order.trackingId,
         purchase_order_name: "Multiple Products",
         customer_info: {
             name: user.userName,
@@ -483,32 +460,65 @@ const orderPaymentviaKhalti = async (id, purchase_order_id, grandTotal, user) =>
     return reqResult;
 }
 
-const confirmOrderPayment = async (id, status) => {
-    // const order = findOrderOnDb(id, "id");   // pidx
-    const order = await findOrderOnDb(id, "trackingId");     // transactionId
+const orderPaymentviaCash = async (id, trackingId, grandTotal, user) => {
+    const order = await findOrderOnDb(id, "id");
 
-    if (status.toUpperCase() !== "COMPLETED") {
-        await PaymentModel.findByIdAndUpdate(order.payment, { status: "FAILED" });
+    const orderPayment = await PaymentModel.create({
+        transactionId: trackingId,
+        method: "CASH",
+        amount: grandTotal,
+    })
+
+    return await OrderModel.findByIdAndUpdate(id, {
+        payment: orderPayment._id,
+        orderStatus: "CONFIRMED"
+    })
+}
+
+// const orderPaymentviaStripeCard = async (id, trackingId, grandTotal, user) => {
+const orderPaymentviaStripeCard = async (id, user) => {
+    
+    const order = await findOrderOnDb(id, "id");
+
+    const orderPayment = await PaymentModel.create({
+        transactionId: order.trackingId,
+        method: "CARD",
+        amount: order.grandTotal,
+    })
+
+    const updated = await OrderModel.findByIdAndUpdate(id, {
+        payment: orderPayment._id
+    })
+
+    const stripePayload = {
+        amount: order.grandTotal,
+        orderId: order.trackingId,
+        orderName: "Multiple Products",
+        customer: user,
+    };
+    const reqResult = await payViaStripe(stripePayload);
+
+    // console.log("reqResult", reqResult)
+
+    if (!reqResult) {
         throw {
-            statusFromService: 400,
-            msgFromService: "Payment Failed",
+            serviceserviceStatus: 409,
+            msgFromService: "Error while requesting vendor",
         };
     }
-
-    await PaymentModel.findByIdAndUpdate(order.payment, { status: "SUCCESS" });
-
-    // return await OrderModel.findByIdAndUpdate(id, { status: "CONFIRMED" }, { new: true });
-    return await OrderModel.findOneAndUpdate({ trackingId: id }, { $set: { orderStatus: "CONFIRMED" } }, { new: true });
-
+    return reqResult;
 }
+
 export default {
     add,
     all,
     update,
     cancel,
     findOrderOnDb,
+    confirmOrderPayment,
+    orderPaymentviaStripeCard,
     orderPaymentviaKhalti,
-    confirmOrderPayment
+    orderPaymentviaCash
 };
 
 
@@ -536,7 +546,7 @@ export default {
 
 
 // const add = async (req) => {
-//     // const { return_url, totalPrice, purchase_order_id, purchase_order_name, name, email, phone } = data;
+//     // const { return_url, totalPrice, trackingId, purchase_order_name, name, email, phone } = data;
 //     const items = req.body.orderItem;
 //     // console.log(items)
 
@@ -579,9 +589,9 @@ export default {
 //     const orderStatus = "PENDING";
 //     // const orderDate = new Date().toISOString().split('T')[0];
 //     const orderDate = new Date();
-//     // let purchase_order_id = crypto.randomBytes(8).toString("hex");  // purchase_order_id
-//     // purchase_order_id = `${config.tracking_order_constant}${purchase_order_id}`;
-//     let purchase_order_id = crypto.randomUUID();
+//     // let trackingId = crypto.randomBytes(8).toString("hex");  // trackingId
+//     // trackingId = `${config.tracking_order_constant}${trackingId}`;
+//     let trackingId = crypto.randomUUID();
 
 
 //     // const data = {
@@ -591,7 +601,7 @@ export default {
 //     //     totalPrice: grandTotal,
 //     //     orderDate,
 //     //     orderStatus,
-//     //     trackingId: purchase_order_id
+//     //     trackingId: trackingId
 //     // }
 
 
@@ -606,7 +616,7 @@ export default {
 //         items: orders,
 //         orderStatus,
 //         totalPrice: grandTotal,
-//         trackingId: purchase_order_id
+//         trackingId: trackingId
 //     });
 
 //     if (!orderCreated) {
@@ -622,19 +632,19 @@ export default {
 
 //     switch (requestFrom) {
 //         case "card": {
-//             // result = await orderPaymentviaCard(orderCreated._id, purchase_order_id, grandTotal, req.user);
+//             // result = await orderPaymentviaCard(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //         case "esewa": {
-//             // result = await orderPaymentviaEsewa(orderCreated._id, purchase_order_id, grandTotal, req.user);
+//             // result = await orderPaymentviaEsewa(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //         case "khalti": {
-//             // result = await orderPaymentviaKhalti(orderCreated._id, purchase_order_id, grandTotal, req.user);
+//             // result = await orderPaymentviaKhalti(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //         default: { // cash on delivery
-//             result = await orderPaymentviaCash(orderCreated._id, purchase_order_id, grandTotal, req.user);
+//             result = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //     }
