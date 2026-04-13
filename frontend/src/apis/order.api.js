@@ -43,3 +43,17 @@ export const updateOrder = async (id, data) => {
     const response = await api.patch(`/orders/update/${id}`, data);
     return response.data.data;
 };
+
+
+// api for server component
+export const payViaCash = async (id) => {
+    const response = await api.patch(`/orders/${id}/payment/cash`);
+    return response.data.data;
+};
+
+
+// api for server component
+export const payViaStripe = async (id) => {
+    const response = await api.patch(`/orders/${id}/payment/stripe`);
+    return response.data.data;
+};
