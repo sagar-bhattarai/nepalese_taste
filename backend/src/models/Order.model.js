@@ -58,6 +58,9 @@ const orderSchema = new mongoose.Schema(
     deliveryType: {
       type: String,
     },
+    deliveryAddress: {
+      type: String,
+    },
     payment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payment",

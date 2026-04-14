@@ -24,6 +24,7 @@ export const fetchAllOrders = async (searchParams) => {
 
 // api for server component
 export const addOrder = async (data) => {
+    console.log(data)
     try {
         const response = await api.post(`/orders/add`, data);
         return response.data?.result?.data;

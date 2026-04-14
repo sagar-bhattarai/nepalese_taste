@@ -128,7 +128,8 @@ const add = async (req) => {
             orderStatus: orderStatus,
             trackingId: trackingId,
             paymentMethod: requestFrom,
-            deliveryType: delivery
+            deliveryType: delivery,
+            deliveryAddress: req.body.shippingAddress
         }]);
 
         // ✅ Update stock (atomic)
@@ -139,34 +140,34 @@ const add = async (req) => {
             );
         }
 
-        let paymentResult = null;
+        // let paymentResult = null;
 
-        // 💳 Payment handling
-        switch (requestFrom) {
-            case "khalti":
-                // paymentResult = await orderPaymentviaKhalti(order[0], req.user);
-                break;
+        // // 💳 Payment handling
+        // switch (requestFrom) {
+        //     case "khalti":
+        //         // paymentResult = await orderPaymentviaKhalti(order[0], req.user);
+        //         break;
 
-            case "esewa":
-                // paymentResult = await handleEsewa(order[0], req.user);
-                break;
+        //     case "esewa":
+        //         // paymentResult = await handleEsewa(order[0], req.user);
+        //         break;
 
-            case "card":
-                paymentResult = await orderPaymentviaStripeCard(order[0], req.user);
-                break;
+        //     case "card":
+        //         paymentResult = await orderPaymentviaStripeCard(order[0], req.user);
+        //         break;
 
-            default:
-                // paymentResult = await orderPaymentviaCash(order[0]);
-                //  paymentResult = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
-                //  paymentResult = await orderPaymentviaCash(order._id, trackingId, grandTotal, req.user);
-                break;
-        }
+        //     default:
+        //         // paymentResult = await orderPaymentviaCash(order[0]);
+        //         //  paymentResult = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
+        //         //  paymentResult = await orderPaymentviaCash(order._id, trackingId, grandTotal, req.user);
+        //         break;
+        // }
 
 
         return {
             success: true,
             order: order[0],
-            payment: paymentResult,
+            // payment: paymentResult,
         };
 
     } catch (error) {
@@ -188,8 +189,14 @@ const all = async (req) => {
     const size = Number(req.query.size) || 5;
     const skip = (page - 1) * size;
 
+    const sortBy = req.query.sortBy || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
     const result = await OrderModel.aggregate([
         { $match: matchStage },
+        {
+            $sort: { [sortBy]: order }
+        },
 
         // 👤 customer join
         {
@@ -477,7 +484,7 @@ const orderPaymentviaCash = async (id, trackingId, grandTotal, user) => {
 
 // const orderPaymentviaStripeCard = async (id, trackingId, grandTotal, user) => {
 const orderPaymentviaStripeCard = async (id, user) => {
-    
+
     const order = await findOrderOnDb(id, "id");
 
     const orderPayment = await PaymentModel.create({

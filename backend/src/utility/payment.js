@@ -49,4 +49,20 @@ const payViaKhalti = async (payload) => {
     }
 }
 
-export { payViaStripe, payViaKhalti }
+// const payViaCash = async (id, purchase_order_id, grandTotal, user) => {
+const payViaCash = async (data) => {
+    const order = await findOrderOnDb(id, "id");
+
+    const orderPayment = await PaymentModel.create({
+        transactionId: purchase_order_id,
+        method: "CASH",
+        amount: grandTotal,
+    })
+
+    return await OrderModel.findByIdAndUpdate(id, {
+        payment: orderPayment._id,
+        orderStatus: "CONFIRMED"
+    })
+}
+
+export { payViaStripe, payViaKhalti, payViaCash }

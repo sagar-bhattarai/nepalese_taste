@@ -20,7 +20,7 @@ const orderItemSchema = z.array(
 
 const addOrderSchema = z.object({
   orderItem: orderItemSchema,
-  requestedFrom: z.string().min(4),
+  // requestedFrom: z.string().min(4),
   totalPrice: z
     .number()
     .positive("Total price must be greater than 0"),
