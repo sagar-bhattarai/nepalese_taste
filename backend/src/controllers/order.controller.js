@@ -44,7 +44,7 @@ const updateOrderStatus = async (req, res) => {
         if (!req.body.status) {
             throw "status is required";
         }
-        const updated = await orderService.update(req.params.id, req.body);
+        const updated = await orderService.update(req.params.id, req.body.status);
         return res
             .status(200)
             .json(
@@ -54,6 +54,24 @@ const updateOrderStatus = async (req, res) => {
         return res
             .status(error.statusFromService || 500)
             .json({ message: error.msgFromService || "error while updating order" });
+    }
+};
+
+const updateOrderPayment = async (req, res) => {
+    try {
+        if (!req.body.status) {
+            throw "status is required";
+        }
+        const updated = await orderService.confirmOrderPayment(req.params.id, req.body.status);
+        return res
+            .status(200)
+            .json(
+                { api: config.api, orderPayment: updated, message: "payment updated successfully" },
+            );
+    } catch (error) {
+        return res
+            .status(error.statusFromService || 500)
+            .json({ message: error.msgFromService || "error while updating payment" });
     }
 };
 
@@ -98,7 +116,7 @@ const confirmOrder = async (req, res) => {
 
 const orderPaymentviaStripe = async (req, res) => {
     try {
-        const result = orderService.orderPaymentviaStripeCard(req?.params?.id, req?.user);
+        const result = await orderService.orderPaymentviaStripeCard(req, req?.user);
 
         return res
             .status(200)
@@ -118,5 +136,6 @@ export {
     updateOrderStatus,
     cancelOrder,
     confirmOrder,
-    orderPaymentviaStripe
+    orderPaymentviaStripe,
+    updateOrderPayment
 };

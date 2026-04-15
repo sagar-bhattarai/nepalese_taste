@@ -104,6 +104,7 @@ const add = async (req) => {
         }
 
 
+
         let discount = Math.ceil(grandTotal * 0.05); // 5 %
         let tax = Math.ceil(grandTotal * 0.13); // 13 %
         grandTotal = grandTotal - discount + tax + deliveryPrice;
@@ -385,7 +386,10 @@ const merchantOrders = async (merchantId) => {
 };
 
 const update = async (id, status) => {
-    const updated = await OrderModel.findByIdAndUpdate(id, { orderStatus: status }, { new: true });
+    const updated = await OrderModel.findOneAndUpdate(id, { orderStatus: status }, { new: true });
+
+    console.log(updated)
+
 
     if (!updated) {
         throw {
@@ -411,22 +415,20 @@ const cancel = async (id) => {
 };
 
 const confirmOrderPayment = async (id, status) => {
-    // const order = findOrderOnDb(id, "id");   // pidx
-    const order = await findOrderOnDb(id, "trackingId");     // transactionId
+    const order = await findOrderOnDb(id, "transactionId");    
 
-    if (status.toUpperCase() !== "COMPLETED") {
-        await PaymentModel.findByIdAndUpdate(order.payment, { status: "FAILED" });
+    if (status !== "COMPLETED") {
+        await PaymentModel.findOneAndUpdate(order.payment, { status: "FAILED" });
         throw {
             statusFromService: 400,
             msgFromService: "Payment Failed",
         };
     }
 
-    await PaymentModel.findByIdAndUpdate(order.payment, { status: "SUCCESS" });
+    await PaymentModel.findOneAndUpdate(order.payment, { status: "PAID" });
 
     // return await OrderModel.findByIdAndUpdate(id, { status: "CONFIRMED" }, { new: true });
-    return await OrderModel.findOneAndUpdate({ trackingId: id }, { $set: { orderStatus: "CONFIRMED" } }, { new: true });
-
+    return await OrderModel.findOneAndUpdate(order._id, { $set: { orderStatus: "ALL_CONFIRMED" } }, { new: true });
 }
 
 const orderPaymentviaKhalti = async (id, trackingId, grandTotal, user) => {
@@ -483,30 +485,30 @@ const orderPaymentviaCash = async (id, trackingId, grandTotal, user) => {
 }
 
 // const orderPaymentviaStripeCard = async (id, trackingId, grandTotal, user) => {
-const orderPaymentviaStripeCard = async (id, user) => {
+const orderPaymentviaStripeCard = async (req, user) => {
 
-    const order = await findOrderOnDb(id, "id");
+    const order = await findOrderOnDb(req.params.id, "id");
 
     const orderPayment = await PaymentModel.create({
         transactionId: order.trackingId,
         method: "CARD",
-        amount: order.grandTotal,
+        amount: order.totalPrice,
     })
 
-    const updated = await OrderModel.findByIdAndUpdate(id, {
+    const updated = await OrderModel.findByIdAndUpdate(req.params.id, {
         payment: orderPayment._id
     })
 
+
     const stripePayload = {
-        amount: order.grandTotal,
+        amount: order.totalPrice * 100,   // in paisa
         orderId: order.trackingId,
         orderName: "Multiple Products",
         customer: user,
     };
+    
     const reqResult = await payViaStripe(stripePayload);
-
-    // console.log("reqResult", reqResult)
-
+    
     if (!reqResult) {
         throw {
             serviceserviceStatus: 409,
@@ -525,7 +527,7 @@ export default {
     confirmOrderPayment,
     orderPaymentviaStripeCard,
     orderPaymentviaKhalti,
-    orderPaymentviaCash
+    orderPaymentviaCash,
 };
 
 
