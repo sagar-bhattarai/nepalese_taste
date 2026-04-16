@@ -32,11 +32,13 @@ const auth = async (req, res, next) => {
         req.roles = user.userRoles;
         next();
     } catch (error) {
-        console.log("error",error)
+        console.log("\n \n <<<<<<< Authentication error >>>>>>> \n \n", error)
 
-        return res
-            .status(error.status || 500)
-            .json({ error: true, message: error.message || "internal server error in auth middleware" })
+        return res.status(401).json({
+            error: true,
+            message: "Session expired. Please login again.",
+            code: "TOKEN_EXPIRED"
+        });
     }
 
 }

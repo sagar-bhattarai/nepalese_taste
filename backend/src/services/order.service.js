@@ -104,6 +104,7 @@ const add = async (req) => {
         }
 
 
+
         let discount = Math.ceil(grandTotal * 0.05); // 5 %
         let tax = Math.ceil(grandTotal * 0.13); // 13 %
         grandTotal = grandTotal - discount + tax + deliveryPrice;
@@ -128,7 +129,8 @@ const add = async (req) => {
             orderStatus: orderStatus,
             trackingId: trackingId,
             paymentMethod: requestFrom,
-            deliveryType: delivery
+            deliveryType: delivery,
+            deliveryAddress: req.body.shippingAddress
         }]);
 
         // ✅ Update stock (atomic)
@@ -139,34 +141,34 @@ const add = async (req) => {
             );
         }
 
-        let paymentResult = null;
+        // let paymentResult = null;
 
-        // 💳 Payment handling
-        switch (requestFrom) {
-            case "khalti":
-                // paymentResult = await orderPaymentviaKhalti(order[0], req.user);
-                break;
+        // // 💳 Payment handling
+        // switch (requestFrom) {
+        //     case "khalti":
+        //         // paymentResult = await paymentViaKhalti(order[0], req.user);
+        //         break;
 
-            case "esewa":
-                // paymentResult = await handleEsewa(order[0], req.user);
-                break;
+        //     case "esewa":
+        //         // paymentResult = await handleEsewa(order[0], req.user);
+        //         break;
 
-            case "card":
-                paymentResult = await orderPaymentviaStripeCard(order[0], req.user);
-                break;
+        //     case "card":
+        //         paymentResult = await paymentViaStripeCard(order[0], req.user);
+        //         break;
 
-            default:
-                // paymentResult = await orderPaymentviaCash(order[0]);
-                //  paymentResult = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
-                //  paymentResult = await orderPaymentviaCash(order._id, trackingId, grandTotal, req.user);
-                break;
-        }
+        //     default:
+        //         // paymentResult = await paymentViaCash(order[0]);
+        //         //  paymentResult = await paymentViaCash(orderCreated._id, trackingId, grandTotal, req.user);
+        //         //  paymentResult = await paymentViaCash(order._id, trackingId, grandTotal, req.user);
+        //         break;
+        // }
 
 
         return {
             success: true,
             order: order[0],
-            payment: paymentResult,
+            // payment: paymentResult,
         };
 
     } catch (error) {
@@ -188,8 +190,14 @@ const all = async (req) => {
     const size = Number(req.query.size) || 5;
     const skip = (page - 1) * size;
 
+    const sortBy = req.query.sortBy || "createdAt";
+    const order = req.query.order === "asc" ? 1 : -1;
+
     const result = await OrderModel.aggregate([
         { $match: matchStage },
+        {
+            $sort: { [sortBy]: order }
+        },
 
         // 👤 customer join
         {
@@ -378,7 +386,7 @@ const merchantOrders = async (merchantId) => {
 };
 
 const update = async (id, status) => {
-    const updated = await OrderModel.findByIdAndUpdate(id, { orderStatus: status }, { new: true });
+    const updated = await OrderModel.findOneAndUpdate(id, { orderStatus: status }, { new: true });
 
     if (!updated) {
         throw {
@@ -404,25 +412,23 @@ const cancel = async (id) => {
 };
 
 const confirmOrderPayment = async (id, status) => {
-    // const order = findOrderOnDb(id, "id");   // pidx
-    const order = await findOrderOnDb(id, "trackingId");     // transactionId
+    const order = await findOrderOnDb(id, "transactionId");
 
-    if (status.toUpperCase() !== "COMPLETED") {
-        await PaymentModel.findByIdAndUpdate(order.payment, { status: "FAILED" });
+    if (status !== "COMPLETED") {
+        await PaymentModel.findOneAndUpdate(order.payment, { status: "FAILED" });
         throw {
             statusFromService: 400,
             msgFromService: "Payment Failed",
         };
     }
 
-    await PaymentModel.findByIdAndUpdate(order.payment, { status: "SUCCESS" });
+    await PaymentModel.findOneAndUpdate(order.payment, { status: "PAID" });
 
     // return await OrderModel.findByIdAndUpdate(id, { status: "CONFIRMED" }, { new: true });
-    return await OrderModel.findOneAndUpdate({ trackingId: id }, { $set: { orderStatus: "CONFIRMED" } }, { new: true });
-
+    return await OrderModel.findOneAndUpdate(order._id, { $set: { orderStatus: "ALL_CONFIRMED" } }, { new: true });
 }
 
-const orderPaymentviaKhalti = async (id, trackingId, grandTotal, user) => {
+const paymentViaKhalti = async (id, trackingId, grandTotal, user) => {
     const order = await findOrderOnDb(id, "id");
 
     const orderPayment = await PaymentModel.create({
@@ -460,45 +466,52 @@ const orderPaymentviaKhalti = async (id, trackingId, grandTotal, user) => {
     return reqResult;
 }
 
-const orderPaymentviaCash = async (id, trackingId, grandTotal, user) => {
-    const order = await findOrderOnDb(id, "id");
-
-    const orderPayment = await PaymentModel.create({
-        transactionId: trackingId,
-        method: "CASH",
-        amount: grandTotal,
-    })
-
-    return await OrderModel.findByIdAndUpdate(id, {
-        payment: orderPayment._id,
-        orderStatus: "CONFIRMED"
-    })
-}
-
-// const orderPaymentviaStripeCard = async (id, trackingId, grandTotal, user) => {
-const orderPaymentviaStripeCard = async (id, user) => {
-    
+const paymentViaCash = async (id, user) => {
     const order = await findOrderOnDb(id, "id");
 
     const orderPayment = await PaymentModel.create({
         transactionId: order.trackingId,
-        method: "CARD",
-        amount: order.grandTotal,
+        method: "CASH",
+        amount: order.totalPrice,
     })
 
-    const updated = await OrderModel.findByIdAndUpdate(id, {
+    const orderUpdated = await OrderModel.findByIdAndUpdate(id, {
+        payment: orderPayment._id,
+        orderStatus: "CASH_PENDING"
+    }, { new: true })
+
+    return {
+        method: orderPayment.method,
+        paymentStatus: orderPayment.status,
+        orderStatus: orderUpdated.orderStatus,
+    }
+     
+}
+
+// const paymentViaStripeCard = async (id, trackingId, grandTotal, user) => {
+const paymentViaStripeCard = async (req, user) => {
+
+    const order = await findOrderOnDb(req.params.id, "id");
+
+    const orderPayment = await PaymentModel.create({
+        transactionId: order.trackingId,
+        method: "CARD",
+        amount: order.totalPrice,
+    })
+
+    const orderUpdated = await OrderModel.findByIdAndUpdate(req.params.id, {
         payment: orderPayment._id
     })
 
+
     const stripePayload = {
-        amount: order.grandTotal,
+        amount: order.totalPrice * 100,   // in paisa
         orderId: order.trackingId,
         orderName: "Multiple Products",
         customer: user,
     };
-    const reqResult = await payViaStripe(stripePayload);
 
-    // console.log("reqResult", reqResult)
+    const reqResult = await payViaStripe(stripePayload);
 
     if (!reqResult) {
         throw {
@@ -506,7 +519,16 @@ const orderPaymentviaStripeCard = async (id, user) => {
             msgFromService: "Error while requesting vendor",
         };
     }
-    return reqResult;
+
+    
+    return {
+        method: orderPayment.method,
+        paymentStatus: orderPayment.status,
+        orderStatus: orderUpdated.orderStatus,
+        client_secret: reqResult.client_secret
+    }
+
+    // return reqResult; 
 }
 
 export default {
@@ -516,9 +538,9 @@ export default {
     cancel,
     findOrderOnDb,
     confirmOrderPayment,
-    orderPaymentviaStripeCard,
-    orderPaymentviaKhalti,
-    orderPaymentviaCash
+    paymentViaStripeCard,
+    paymentViaKhalti,
+    paymentViaCash,
 };
 
 
@@ -640,11 +662,11 @@ export default {
 //             break;
 //         }
 //         case "khalti": {
-//             // result = await orderPaymentviaKhalti(orderCreated._id, trackingId, grandTotal, req.user);
+//             // result = await paymentViaKhalti(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //         default: { // cash on delivery
-//             result = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
+//             result = await paymentViaCash(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //     }
