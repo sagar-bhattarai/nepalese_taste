@@ -13,7 +13,7 @@ export default function HomePage() {
     const getProducts = async () => {
       let data = await fetchAllProducts();
       setResponse(data)
-      console.log(data)
+      // console.log("AllProducts",data)
     }
     getProducts()
   }, [])

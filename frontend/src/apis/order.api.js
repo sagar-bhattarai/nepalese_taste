@@ -53,8 +53,9 @@ export const orderPaymentConfirmed = async (id, data) => {
 
 // api for server component
 export const payViaCash = async (id) => {
+    // console.log(id)
     const response = await api.post(`/orders/${id}/payment/cash`);
-    return response;
+    return response.data.result;
 };
 
 

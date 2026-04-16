@@ -6,8 +6,9 @@ import {
   updateOrderStatus,
   cancelOrder,
   confirmOrder,
-  orderPaymentviaStripe,
-  updateOrderPayment
+  orderPaymentViaStripe,
+  updateOrderPayment,
+  orderPaymentViaCash
 }from "../controllers/order.controller.js";
 import zodValidation from "../middlewares/zodValidator.middleware.js";
 import addOrderSchema from "../zod/orders/addOrders.schema.js";
@@ -23,6 +24,7 @@ router.patch("/updateStatus/:id", updateOrderStatus);
 router.patch("/paymentStatus/:id", updateOrderPayment);
 router.put("/cancel/:id", cancelOrder);
 router.post("/confirm/:id", roleBasedAuth(ADMIN), confirmOrder);
-router.post("/:id/payment/stripe", roleBasedAuth(CUSTOMER), orderPaymentviaStripe);
+router.post("/:id/payment/stripe", roleBasedAuth(CUSTOMER), orderPaymentViaStripe);
+router.post("/:id/payment/cash", roleBasedAuth(CUSTOMER), orderPaymentViaCash);
 
 export default router;

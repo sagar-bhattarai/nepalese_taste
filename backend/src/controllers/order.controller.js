@@ -114,9 +114,9 @@ const confirmOrder = async (req, res) => {
     }
 };
 
-const orderPaymentviaStripe = async (req, res) => {
+const orderPaymentViaStripe = async (req, res) => {
     try {
-        const result = await orderService.orderPaymentviaStripeCard(req, req?.user);
+        const result = await orderService.paymentViaStripeCard(req, req?.user);
 
         return res
             .status(200)
@@ -129,6 +129,23 @@ const orderPaymentviaStripe = async (req, res) => {
             .json({ message: error.msgFromService || "order via stripe failed" });
     }
 }
+
+const orderPaymentViaCash = async (req, res) => {
+    try {
+        const result = await orderService.paymentViaCash(req.params.id, req?.user);
+
+        return res
+            .status(200)
+            .json(
+                { api: config.api, result, message: "order via stripe successfull" },
+            );
+    } catch (error) {
+        return res
+            .status(error.statusFromService || 500)
+            .json({ message: error.msgFromService || "order via stripe failed" });
+    }
+}
+
 export {
     createOrder,
     getOrderByTrackingId,
@@ -136,6 +153,7 @@ export {
     updateOrderStatus,
     cancelOrder,
     confirmOrder,
-    orderPaymentviaStripe,
-    updateOrderPayment
+    orderPaymentViaStripe,
+    updateOrderPayment,
+    orderPaymentViaCash
 };

@@ -146,7 +146,7 @@ const add = async (req) => {
         // // 💳 Payment handling
         // switch (requestFrom) {
         //     case "khalti":
-        //         // paymentResult = await orderPaymentviaKhalti(order[0], req.user);
+        //         // paymentResult = await paymentViaKhalti(order[0], req.user);
         //         break;
 
         //     case "esewa":
@@ -154,13 +154,13 @@ const add = async (req) => {
         //         break;
 
         //     case "card":
-        //         paymentResult = await orderPaymentviaStripeCard(order[0], req.user);
+        //         paymentResult = await paymentViaStripeCard(order[0], req.user);
         //         break;
 
         //     default:
-        //         // paymentResult = await orderPaymentviaCash(order[0]);
-        //         //  paymentResult = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
-        //         //  paymentResult = await orderPaymentviaCash(order._id, trackingId, grandTotal, req.user);
+        //         // paymentResult = await paymentViaCash(order[0]);
+        //         //  paymentResult = await paymentViaCash(orderCreated._id, trackingId, grandTotal, req.user);
+        //         //  paymentResult = await paymentViaCash(order._id, trackingId, grandTotal, req.user);
         //         break;
         // }
 
@@ -388,9 +388,6 @@ const merchantOrders = async (merchantId) => {
 const update = async (id, status) => {
     const updated = await OrderModel.findOneAndUpdate(id, { orderStatus: status }, { new: true });
 
-    console.log(updated)
-
-
     if (!updated) {
         throw {
             statusFromService: 400,
@@ -415,7 +412,7 @@ const cancel = async (id) => {
 };
 
 const confirmOrderPayment = async (id, status) => {
-    const order = await findOrderOnDb(id, "transactionId");    
+    const order = await findOrderOnDb(id, "transactionId");
 
     if (status !== "COMPLETED") {
         await PaymentModel.findOneAndUpdate(order.payment, { status: "FAILED" });
@@ -431,7 +428,7 @@ const confirmOrderPayment = async (id, status) => {
     return await OrderModel.findOneAndUpdate(order._id, { $set: { orderStatus: "ALL_CONFIRMED" } }, { new: true });
 }
 
-const orderPaymentviaKhalti = async (id, trackingId, grandTotal, user) => {
+const paymentViaKhalti = async (id, trackingId, grandTotal, user) => {
     const order = await findOrderOnDb(id, "id");
 
     const orderPayment = await PaymentModel.create({
@@ -469,23 +466,30 @@ const orderPaymentviaKhalti = async (id, trackingId, grandTotal, user) => {
     return reqResult;
 }
 
-const orderPaymentviaCash = async (id, trackingId, grandTotal, user) => {
+const paymentViaCash = async (id, user) => {
     const order = await findOrderOnDb(id, "id");
 
     const orderPayment = await PaymentModel.create({
-        transactionId: trackingId,
+        transactionId: order.trackingId,
         method: "CASH",
-        amount: grandTotal,
+        amount: order.totalPrice,
     })
 
-    return await OrderModel.findByIdAndUpdate(id, {
+    const orderUpdated = await OrderModel.findByIdAndUpdate(id, {
         payment: orderPayment._id,
-        orderStatus: "CONFIRMED"
-    })
+        orderStatus: "CASH_PENDING"
+    }, { new: true })
+
+    return {
+        method: orderPayment.method,
+        paymentStatus: orderPayment.status,
+        orderStatus: orderUpdated.orderStatus,
+    }
+     
 }
 
-// const orderPaymentviaStripeCard = async (id, trackingId, grandTotal, user) => {
-const orderPaymentviaStripeCard = async (req, user) => {
+// const paymentViaStripeCard = async (id, trackingId, grandTotal, user) => {
+const paymentViaStripeCard = async (req, user) => {
 
     const order = await findOrderOnDb(req.params.id, "id");
 
@@ -495,7 +499,7 @@ const orderPaymentviaStripeCard = async (req, user) => {
         amount: order.totalPrice,
     })
 
-    const updated = await OrderModel.findByIdAndUpdate(req.params.id, {
+    const orderUpdated = await OrderModel.findByIdAndUpdate(req.params.id, {
         payment: orderPayment._id
     })
 
@@ -506,16 +510,25 @@ const orderPaymentviaStripeCard = async (req, user) => {
         orderName: "Multiple Products",
         customer: user,
     };
-    
+
     const reqResult = await payViaStripe(stripePayload);
-    
+
     if (!reqResult) {
         throw {
             serviceserviceStatus: 409,
             msgFromService: "Error while requesting vendor",
         };
     }
-    return reqResult;
+
+    
+    return {
+        method: orderPayment.method,
+        paymentStatus: orderPayment.status,
+        orderStatus: orderUpdated.orderStatus,
+        client_secret: reqResult.client_secret
+    }
+
+    // return reqResult; 
 }
 
 export default {
@@ -525,9 +538,9 @@ export default {
     cancel,
     findOrderOnDb,
     confirmOrderPayment,
-    orderPaymentviaStripeCard,
-    orderPaymentviaKhalti,
-    orderPaymentviaCash,
+    paymentViaStripeCard,
+    paymentViaKhalti,
+    paymentViaCash,
 };
 
 
@@ -649,11 +662,11 @@ export default {
 //             break;
 //         }
 //         case "khalti": {
-//             // result = await orderPaymentviaKhalti(orderCreated._id, trackingId, grandTotal, req.user);
+//             // result = await paymentViaKhalti(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //         default: { // cash on delivery
-//             result = await orderPaymentviaCash(orderCreated._id, trackingId, grandTotal, req.user);
+//             result = await paymentViaCash(orderCreated._id, trackingId, grandTotal, req.user);
 //             break;
 //         }
 //     }
