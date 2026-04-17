@@ -1,4 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { PRODUCT_MINIMUM_INPUT, PRODUCT_MAXIMUM_INPUT  } from "@/constants/productMInMax";
+
+const maxInput = PRODUCT_MAXIMUM_INPUT;
+const minInput = PRODUCT_MINIMUM_INPUT;
+
+const clamp = (val, minInput, maxInput) => Math.min(Math.max(val, minInput), maxInput);
 
 const calculateTotals = (state) => {
   const total = state.products.reduce(
@@ -14,6 +20,7 @@ const calculateTotals = (state) => {
   state.finalPrice = total - state.discount + state.tax;
 };
 
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
@@ -28,20 +35,22 @@ const cartSlice = createSlice({
   },
   reducers: {
     addToCart: (state, action) => {
-      const product = action.payload;
+      const item = action.payload;
 
-      const existingProduct = state.products.find(
-        (item) => item._id === product._id,
-      );
+      const existingProduct = state.products.find((i) => i._id === item._id);
 
       if (existingProduct) {
-        existingProduct.quantity += 1;
+        // existingProduct.quantity += item.quantity; // use passed quantity
+        existingProduct.quantity = clamp(item.quantity, minInput, maxInput);
       } else {
-        state.products.push({ ...product, quantity: 1 });
+        state.products.push({
+            ...item,
+            quantity: clamp(item.quantity, minInput, maxInput)
+        });
         state.totalCount += 1;
       }
 
-      calculateTotals(state); // ✅ recalc everything
+      calculateTotals(state); // recalc everything
     },
 
     removeFromCart: (state, action) => {
