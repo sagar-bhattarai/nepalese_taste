@@ -5,7 +5,7 @@ import AddToCart from "./AddToCart";
 
 
 const ProductCard = ({ product }) => {
-  // console.log(product)
+
   return (
     <div className="transition duration-200 hover:bottom-1 relative w-full h-max max-w-[16rem] min-w-[245px] bg-neutral-primary-soft p-4 border dark:border-gray border-gray-200 rounded-lg shadow-md hover:shadow-lg dark:bg-gray-900 bg-white">
       <p className="brand absolute rounded-xl text-sm right-[10px] bg-amber-600 dark:text-black text-white px-3 py-0.5 " >{product.brand}</p>
@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => {
         </div>
         <div className="flex items-center justify-between mt-2">
           <span className="dark:text-gray-600 text-xl font-bold text-heading">RS.{product?.productPrice ?? "N/A"} <span className=" text-sm font-light line-through">Rs.old price</span></span>
-          <AddToCart product={product}/>
+          <AddToCart product={product} quantity={1} type={'circle'}/>
         </div>
       </div>
     </div>
