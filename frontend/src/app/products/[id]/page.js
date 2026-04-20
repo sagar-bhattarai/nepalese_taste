@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProductById } from "../../../apis/product.api";
 import ProductActions from "@/components/products/inputAction/ProductActions";
+import CommentSection from "@/modules/comments/CommentSection ";
 
 export const generateMetadata = async ({ params }) => {
     const id = (await params).id;
@@ -32,17 +33,17 @@ const productPageById = async ({ params, searchParams }) => {
 
                         <div className="mt-6 sm:mt-8 lg:mt-0">
                             <h1
-                                className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"
+                                className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-gray-500"
                             >
-                                {product.productName}   <span className="text-xs border rounded-md px-1 py-0.5 ml-2">{product.categoryId.categoryName}</span>
+                                {product.productName}<span className="text-xs border rounded-md px-1 py-0.5 ml-2">{product.categoryId.categoryName}</span>
                             </h1>
                             <div className="mt-4 sm:items-start sm:gap-4 sm:flex">
                                 <div className="flex flex-col ">
-                                    <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white">
+                                    <p className="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-gray-400">
                                         Rs. {product.productPrice}
                                     </p>
 
-                                    <p  className="text-xs font-normal line-through text-gray-900  dark:text-white">
+                                    <p className="text-xs font-normal line-through text-gray-900  dark:text-gray-400">
                                         Rs. {product?.oldPrice ?? "N/A"}
                                     </p>
                                 </div>
@@ -122,7 +123,7 @@ const productPageById = async ({ params, searchParams }) => {
                                     </p>
                                     <Link
                                         href="#"
-                                        className="text-sm font-medium leading-none text-gray-900 underline hover:no-underline dark:text-white"
+                                        className="text-sm font-medium leading-none text-gray-900 underline hover:no-underline dark:text-gray-400"
                                     >
                                         345 Reviews
                                     </Link>
@@ -131,23 +132,35 @@ const productPageById = async ({ params, searchParams }) => {
 
                             <div className="flex flex-col gap-2 mt-4">
                                 <label className="text-gray-500" >Quantity</label>
-                                {/* <input placeholder="Enter Value" type="number" min="1" className="px-2 py-1 border border-gray-600 focus:ring-1 focus:outline-none focus:ring-primary rounded-md max-w-40" /> */}
                                 <ProductActions product={product} />
                             </div>
-
 
                             <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
                             <p className="mb-6 text-gray-500 dark:text-gray-400">
                                 {product.productDescription}
                             </p>
-
                         </div>
                     </div>
                 </div>
             </section>
             {/* products Reviews and comments */}
+            <section className=" py-4 bg-gray-100/50 md:py-8 dark:bg-gray-800">
+                <div className="max-w-4/5 m-auto flex flex-col ">
+                    <p className="text-xl font-extrabold text-gray-900 sm:text-2xl dark:text-gray-400">
+                        Comments
+                    </p>
+                    <CommentSection  postId={id} />
+                </div>
+            </section>
             {/* Recommendation products */}
+            <section className=" py-4 bg-white md:py-8 dark:bg-gray-900">
+                <div className="max-w-4/5 m-auto flex flex-col ">
+                    <p className="text-xl font-extrabold text-gray-900 sm:text-2xl dark:text-gray-400">
+                        Recommended products
+                    </p>
+                </div>
+            </section>
         </div>
     )
 }

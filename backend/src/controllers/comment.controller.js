@@ -18,7 +18,7 @@ const getAllComments = async (req, res) => {
 
 const addComment = async (req, res) => {
   try {
-    const commentAdded = await commentService.add(req.body);
+    const commentAdded = await commentService.add(req);
 
     return res.status(200).json(
       {

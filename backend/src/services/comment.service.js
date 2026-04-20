@@ -1,11 +1,17 @@
 import CommentModel from "../models/Comment.model.js";
 
 const add = async (req) => {
-    console.log(">>>>>...",req.body)
-    const { postId, text, parentId } = await req;
+    const { postId, text, parentId } = await req.body;
     const userId = req.user._id;
 
     let depth = 0;
+
+    if (!text || !text.trim()) {
+        throw {
+            statusFromService: 400,
+            msgFromService: "Comment cannot be empty",
+        };
+    }
 
     // If it's a reply, calculate depth
     if (parentId) {
@@ -41,7 +47,7 @@ const add = async (req) => {
 };
 
 const all = async (req) => {
-    const { postId } = await req.params;
+    const postId = await req.params.id;
     const comments = await CommentModel.find({
         postId,
     })
@@ -49,7 +55,6 @@ const all = async (req) => {
         .lean();
 
     return comments;
-
 };
 
 const update = async (req) => {
