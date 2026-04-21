@@ -67,9 +67,26 @@ const deleteComment = async (req, res) => {
   }
 };
 
+const reactToComment = async (req, res) => {
+  try {
+    const action = await commentService.reaction(req);
+    return res
+      .status(200)
+      .json(
+        { api: config.api, comment: action, message: "reaction toggled successfully" },
+      );
+  } catch (error) {
+    return res
+      .status(error.status || 500)
+      .json({ message: "error while toggling reaction" });
+  }
+};
+
+
 export {
   addComment,
   getAllComments,
   updateComment,
   deleteComment,
+  reactToComment
 };

@@ -47,10 +47,10 @@ const add = async (req) => {
 };
 
 const all = async (req) => {
-    const postId = await req.params.id;
-    const comments = await CommentModel.find({
-        postId,
-    })
+    const postId = req.params.id;
+
+    const comments = await CommentModel.find({ postId })
+        .populate("userId", "userName profileImage")
         .sort({ createdAt: -1 })
         .lean();
 
@@ -106,10 +106,42 @@ const remove = async (req) => {
     }
 
     comment.isDeleted = true;
-    comment.text = "This comment was deleted";
+    // comment.text = "This comment was deleted";
     await comment.save();
 
     return ({ deleted: true });
 
 }
-export default { add, all, update, remove };
+
+const reaction = async (req) => {
+  const userId = req.user._id;
+  const { commentId } = req.params;
+  const { type } = req.body; // "like", "love", etc.
+
+  const comment = await Comment.findById(commentId);
+
+  const existing = comment.reactions.find(
+    (r) => r.user.toString() === userId.toString()
+  );
+
+  if (existing) {
+    if (existing.type === type) {
+      // same reaction → remove (toggle off)
+      comment.reactions = comment.reactions.filter(
+        (r) => r.user.toString() !== userId.toString()
+      );
+    } else {
+      // change reaction
+      existing.type = type;
+    }
+  } else {
+    // new reaction
+    comment.reactions.push({ user: userId, type });
+  }
+
+  await comment.save();
+
+  return comment;
+};
+
+export default { add, all, update, remove, reaction };
