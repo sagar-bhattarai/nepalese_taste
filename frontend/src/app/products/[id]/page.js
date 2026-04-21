@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getProductById } from "../../../apis/product.api";
 import ProductActions from "@/components/products/inputAction/ProductActions";
-import CommentSection from "@/modules/comments/CommentSection ";
+import CommentSection from "@/modules/comments/component/CommentSection ";
 
 export const generateMetadata = async ({ params }) => {
     const id = (await params).id;

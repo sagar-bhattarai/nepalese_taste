@@ -9,6 +9,7 @@ const commentSchema = new mongoose.Schema(
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     text: {
@@ -24,12 +25,22 @@ const commentSchema = new mongoose.Schema(
     },
     depth: {
       type: Number,
-      default: 0, // 👈 helps limit nesting
+      default: 0, // helps limit nesting
     },
     isDeleted: {
       type: Boolean,
       default: false,
     },
+    reactions: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        type: {
+          type: String,
+          enum: ["like", "love", "haha", "wow", "sad", "angry", "disLike", "voilence", "band_this"],
+        },
+      },
+    ],
+
   },
   { timestamps: true }
 );
