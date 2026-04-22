@@ -115,14 +115,14 @@ const remove = async (req) => {
 
 const reaction = async (req) => {
   const userId = req.user._id;
-  const { commentId } = req.params;
-  const { type } = req.body; // "like", "love", etc.
+  const { type, commentId } = req.body; 
 
-  const comment = await Comment.findById(commentId);
+  const comment = await CommentModel.findById(commentId);
 
   const existing = comment.reactions.find(
     (r) => r.user.toString() === userId.toString()
   );
+
 
   if (existing) {
     if (existing.type === type) {
