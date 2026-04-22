@@ -36,7 +36,7 @@ const commentSchema = new mongoose.Schema(
         user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         type: {
           type: String,
-          enum: ["like", "love", "haha", "wow", "sad", "angry", "disLike", "voilence", "band_this"],
+          enum: ["like", "love", "haha", "wow", "sad", "angry", "disLike", "violence", "ban_this"],
         },
       },
     ],
