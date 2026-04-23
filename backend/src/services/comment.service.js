@@ -1,4 +1,5 @@
 import CommentModel from "../models/Comment.model.js";
+import mongoose from "mongoose";
 
 const add = async (req) => {
     const { postId, text, parentId } = await req.body;
@@ -114,34 +115,51 @@ const remove = async (req) => {
 }
 
 const reaction = async (req) => {
-  const userId = req.user._id;
-  const { type, commentId } = req.body; 
+    const userId = req.user._id;
+    const { type, commentId } = req.body;
 
-  const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId);
 
-  const existing = comment.reactions.find(
-    (r) => r.user.toString() === userId.toString()
-  );
+    const existing = comment.reactions.find(
+        (r) => r.user.toString() === userId.toString()
+    );
 
 
-  if (existing) {
-    if (existing.type === type) {
-      // same reaction → remove (toggle off)
-      comment.reactions = comment.reactions.filter(
-        (r) => r.user.toString() !== userId.toString()
-      );
+    if (existing) {
+        if (existing.type === type) {
+            // same reaction → remove (toggle off)
+            comment.reactions = comment.reactions.filter(
+                (r) => r.user.toString() !== userId.toString()
+            );
+        } else {
+            // change reaction
+            existing.type = type;
+        }
     } else {
-      // change reaction
-      existing.type = type;
+        // new reaction
+        comment.reactions.push({ user: userId, type });
     }
-  } else {
-    // new reaction
-    comment.reactions.push({ user: userId, type });
-  }
 
-  await comment.save();
+    await comment.save();
 
-  return comment;
+    return comment;
 };
 
-export default { add, all, update, remove, reaction };
+const getReactions = async (req) => {
+    const { commentId } = req.params;
+
+    const reactions = await CommentModel.findById(commentId)
+        .populate("reactions.user", "userName profileImage")
+        .lean();
+
+    if (!reactions) {
+        throw {
+            statusFromService: 404,
+            msgFromService: "Comment not found",
+        };
+    }
+
+    return reactions;
+};
+
+export default { add, all, update, remove, reaction, getReactions };
