@@ -82,11 +82,26 @@ const reactToComment = async (req, res) => {
   }
 };
 
+const getAllReactions = async (req, res) => {
+  try {
+    const result = await commentService.getReactions(req);
+
+    return res
+      .status(200)
+      .json({ api: config.api, result, message: "Reactions fetched successfully." });
+  } catch (error) {
+    return res
+      .status(error.statusFromService || 500)
+      .json({ message: error.msgFromService || "server error while fetching all Reactions." })
+
+  }
+};
 
 export {
   addComment,
   getAllComments,
   updateComment,
   deleteComment,
-  reactToComment
+  reactToComment,
+  getAllReactions
 };
