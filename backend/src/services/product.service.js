@@ -1,4 +1,5 @@
 import ProductModel from "../models/Product.model.js";
+import StarReviewModel from "../models/StarReview.model.js";
 import CategoryModel from "../models/Category.model.js";
 import uploadOnCloudinary from "../utility/cloudinary.js"
 
@@ -71,10 +72,9 @@ const create = async (req) => {
 };
 
 
-const single = async (id) => {
+const single = async (req) => {
   const product = await ProductModel.findOne({
-    _id: id,
-    // isActive: true
+    _id: req.params.id,
   })
     .populate("categoryId")
     .lean();
@@ -83,7 +83,19 @@ const single = async (id) => {
     throw new Error("Product not found");
   }
 
-  return { ...product };
+  let userRating = null;
+
+  if (req.params?.userId) {
+    userRating = await StarReviewModel.findOne({
+      user: req.params.userId,
+      product: req.params.id,
+    });
+  }
+
+  return {
+    ...product,
+    userRating: userRating?.rating || null,
+  };
 };
 
 const edit = async (req, res) => {   // adminUpdateProduct

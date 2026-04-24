@@ -28,10 +28,9 @@ export const fetchAllProducts = async (searchParams) => {
 };
 
 // api for client component
-export const getProductById = async (id) => {
+export const getProductById = async (id, userId) => {
 
-    const response = await axios.get(`${config.apiUrl}/products/product/${id}`);
-    // return response.data.result.data;
+    const response = await axios.get(`${config.apiUrl}/products/product/${id}/${userId}`);
     return response.data;
 };
 

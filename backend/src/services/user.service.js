@@ -50,7 +50,7 @@ const edit = async (req) => {
         url = user.profileImage;
     }
 
-    console.log(" req.body.userRoles", req.body.userRoles)
+    // console.log(" req.body.userRoles", req.body.userRoles)
     const data = {
         userName: req.body.userName ?? user.userName,
         userAddress: req.body.userAddress ?? user.userAddress,
@@ -60,7 +60,7 @@ const edit = async (req) => {
         profileImage: url ?? "",
     }
 
-    return await UserModel.findByIdAndUpdate(req.params.id, data, { new: true }).select("-userPassword -refreshToken -createdAt -updatedAt -__v");
+    return await UserModel.findByIdAndUpdate(req.params.id, data, { returnDocument: "after" }).select("-userPassword -refreshToken -createdAt -updatedAt -__v");
 }
 
 const deactivate = async (req) => {
@@ -75,7 +75,7 @@ const reset = async (req) => {
         };
     }
     const hashedPassword = await bcrypt.hash(req.body.newPassword.toString(), 10);
-    const resetted = await UserModel.findByIdAndUpdate(req.user._id, { userPassword: hashedPassword }, { new: true });
+    const resetted = await UserModel.findByIdAndUpdate(req.user._id, { userPassword: hashedPassword }, { returnDocument: "after" });
     if (!resetted) {
         throw {
             customStatus: 400,
@@ -95,7 +95,7 @@ const generateOtp = async (id) => {
             otp: hashedOtp.toString(),
             expiry
         },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: "after"}
     );
 
     if (!saved) {
@@ -147,7 +147,7 @@ const verifyOtp = async (req) => {
     return await UserModel.findByIdAndUpdate(
         req.user._id,
         { isEmailVerified: true },
-        { new: true, runValidators: true }
+        { returnDocument: "after", runValidators: true }
     ).select("-userPassword -refreshToken -createdAt -updatedAt -__v");
 }
 
@@ -161,7 +161,7 @@ const editRole = async (req) => {
     return await UserModel.findByIdAndUpdate(
         req.params.id,
         option,
-        { new: true }
+        { returnDocument: "after" }
     ).select("-userPassword -refreshToken -createdAt -updatedAt -__v");
 }
 
