@@ -15,7 +15,7 @@ const getAllUsers = async (req, res) => {
             .json({ api: config.api, result, message: "users fetched successfully." });
 
     } catch (error) {
-      console.log(error)
+  
         return res
             .status(error.statusFromService || 500)
             .json({ error: true, message: error.msgFromService || "server error while fetching users." });
@@ -120,7 +120,7 @@ const updateUserRole = async (req, res) => {
       .status(200)
       .json({ status: config.api, data: result, message: "role updated successfully." });
   } catch (error) {
-    console.log(error)
+
     return res
       .status(error.customStatus || 500)
       .json({ error: true, message: error.customMessage || "error while editing role." });

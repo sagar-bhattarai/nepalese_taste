@@ -8,10 +8,14 @@ import { login,signUp } from "@/apis/auth.api";
        * Rejected (failed)
 */
 export const loginUser = createAsyncThunk('login', async (data, {rejectWithValue}) => {
+
     try {
         const result = await login(data);
         localStorage.setItem("refreshToken", result.data.refreshToken);
         localStorage.setItem("accessToken", result.data.accessToken);
+        document.cookie = `userId=${result.data.loggedInUser._id}; path=/`;
+        // document.cookie = `refreshToken=${result.data.refreshToken}; path=/`;
+        document.cookie = `accessToken=${result.data.accessToken}; path=/`;
         return result;
     } catch (error) {
         if (error.response) {

@@ -37,9 +37,9 @@ router.get("/categories", getCategories);
 router.get("/brands", getBrands);
 
 /** 
- * GET /api/products/product/:id
+ * GET /api/products/product/:id/:userId
 */
-router.get("/product/:id", getProductById);
+router.get("/product/:id/:userId", getProductById);
 
 /** 
  * GET /api/products/toggleStatus/:internalSku

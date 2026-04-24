@@ -26,7 +26,7 @@ const edit = async (req) => {
         }
     }
 
-    return await PaymentModel.findByIdAndUpdate(req.params.id, { status: req.body.status}, { new: true }).select("transactionId status");
+    return await PaymentModel.findByIdAndUpdate(req.params.id, { status: req.body.status}, { returnDocument: "after" }).select("transactionId status");
 }
 
 const single = async (id) => {

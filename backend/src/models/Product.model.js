@@ -65,6 +65,10 @@ const productSchema = new mongoose.Schema(
         // for Recommendation system
         views: { type: Number, default: 0 },
         sold: { type: Number, default: 0 },
+
+        // for star Reviews
+        averageRating: { type: Number, default: 0 },
+        totalReviews: { type: Number, default: 0 },
     },
     { timestamps: true }
 );

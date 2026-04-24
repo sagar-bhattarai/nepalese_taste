@@ -386,7 +386,7 @@ const merchantOrders = async (merchantId) => {
 };
 
 const update = async (id, status) => {
-    const updated = await OrderModel.findOneAndUpdate(id, { orderStatus: status }, { new: true });
+    const updated = await OrderModel.findOneAndUpdate(id, { orderStatus: status },  { returnDocument: "after" });
 
     if (!updated) {
         throw {
@@ -425,7 +425,7 @@ const confirmOrderPayment = async (id, status) => {
     await PaymentModel.findOneAndUpdate(order.payment, { status: "PAID" });
 
     // return await OrderModel.findByIdAndUpdate(id, { status: "CONFIRMED" }, { new: true });
-    return await OrderModel.findOneAndUpdate(order._id, { $set: { orderStatus: "ALL_CONFIRMED" } }, { new: true });
+    return await OrderModel.findOneAndUpdate(order._id, { $set: { orderStatus: "ALL_CONFIRMED" } }, { returnDocument: "after" });
 }
 
 const paymentViaKhalti = async (id, trackingId, grandTotal, user) => {
@@ -478,7 +478,7 @@ const paymentViaCash = async (id, user) => {
     const orderUpdated = await OrderModel.findByIdAndUpdate(id, {
         payment: orderPayment._id,
         orderStatus: "CASH_PENDING"
-    }, { new: true })
+    },  { returnDocument: "after" })
 
     return {
         method: orderPayment.method,

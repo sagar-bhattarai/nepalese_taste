@@ -66,7 +66,7 @@ const updateProduct = async (req, res) => {
 
 const getProductById = async (req, res) => {
     try {
-        const result = await productService.single(req.params.id);
+        const result = await productService.single(req);
 
         return res
             .status(200)
