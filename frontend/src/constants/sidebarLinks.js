@@ -5,7 +5,7 @@ import {
     ORDER_MANAGEMENT_ROUTE,
     CATEGORY_MANAGEMENT_ROUTE,
     MEDIA_MANAGEMENT_ROUTE,
-    SETTING_MANAGEMENT_ROUTE
+    SETTING_ROUTE
 } from "./routes";
 import {
     FaChartPie,
@@ -52,7 +52,7 @@ const adminSidebarLinks = [
     {
         Icon: TbSettingsStar,
         label: "Settings",
-        route: SETTING_MANAGEMENT_ROUTE
+        route: SETTING_ROUTE
     },
 ]
 
@@ -70,7 +70,7 @@ const normalSidebarLinks = [
     {
         Icon: TbSettingsStar,
         label: "Settings",
-        route: SETTING_MANAGEMENT_ROUTE
+        route: SETTING_ROUTE
     },
 
 ]

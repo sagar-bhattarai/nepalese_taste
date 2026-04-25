@@ -85,7 +85,7 @@ const single = async (req) => {
 
   let userRating = null;
 
-  if (req.params?.userId) {
+  if (req.params?.userId != "guest") {
     userRating = await StarReviewModel.findOne({
       user: req.params.userId,
       product: req.params.id,
