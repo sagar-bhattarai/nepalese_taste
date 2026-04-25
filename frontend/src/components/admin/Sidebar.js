@@ -5,11 +5,14 @@ import logo from "../../../public/logo.png";
 import { adminSidebarLinks, normalSidebarLinks } from "@/constants/sidebarLinks";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
     const state = useSelector((state) => state);
     const user = state.auth.user?.data.data || state.auth.user?.data.loggedInUser;
     const [sidebarlinks, setSideBarLinks] = useState();
+    const path = usePathname();
+    const pathname = path.startsWith("/") ? path.slice(1) : path;
 
     useEffect(() => {
         if (user.userRoles[0] == "ADMIN") {
@@ -29,7 +32,7 @@ const Sidebar = () => {
             </button>
 
             <aside id="logo-sidebar" className="fixed top-34 left-0 z-40 w-64 h-full transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-                <div className="h-full px-3 py-4 overflow-y-auto bg-neutral-primary-soft border-e border-default">
+                <div className="h-full px-3 py-4 overflow-y-auto  border-e border-slate-600">
                     <Link href="/" className="flex items-center ps-2.5 mb-5">
                         <Image
                             src={logo}
@@ -42,10 +45,10 @@ const Sidebar = () => {
                     </Link >
                     <ul className="space-y-2 font-medium">
                         {sidebarlinks?.map((item) => (
-                            <li key={item.route} className="text-gray-600 hover:text-primary">
-                                <Link href={item.route} className="flex items-center px-2 py-1.5 ">
+                            <li key={item.route} className={`${pathname == item.label.toLowerCase() ? "bg-primary text-slate-400" : "text-gray-600 dark:hover:bg-gray-100/5 hover:bg-gray-100/20"} `}>
+                                <Link href={item.route} className="flex items-center px-2 py-1.5">
                                     <item.Icon />
-                                    <span className="ms-3">{item.label}</span>
+                                    <span className={`${pathname == item.label.toLowerCase() ? "bg-primary text-slate-400" : "text-gray-600"} ms-3`}>{item.label}</span>
                                 </Link>
                             </li>
                         ))}

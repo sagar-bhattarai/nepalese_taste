@@ -84,10 +84,10 @@ const Footer = () => {
             <h4 className="dark:text-primary text-white font-medium text-base">More</h4>
             <ul className="space-y-4 mt-6">
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Blog</Link>
+                <Link href='/contact-us#faq' className="hover:text-primary text-slate-400 text-sm font-normal">Faq</Link>
               </li>
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Offers</Link>
+                <Link href='/blog' className="hover:text-primary text-slate-400 text-sm font-normal">Blog</Link>
               </li>
               <li>
                 <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Skincare</Link>
@@ -103,10 +103,10 @@ const Footer = () => {
 
             <ul className="space-y-4 mt-6">
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">About us</Link>
+                <Link href='/about-us' className="hover:text-primary text-slate-400 text-sm font-normal">About us</Link>
               </li>
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Contact Us</Link>
+                <Link href='/contact-us' className="hover:text-primary text-slate-400 text-sm font-normal">Contact Us</Link>
               </li>
               <li>
                 <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Suggestion</Link>
