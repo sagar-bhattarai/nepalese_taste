@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SwiperCarousel from "@/components/SwiperCarousel";
 
 const Dashboard = () => {
   return (
@@ -163,8 +164,8 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-              <div className="relative h-36 border border-slate-500 rounded-md mt-2">
-                Crousel here for customer
+              <div className="relative h-auto border- border-slate-500- rounded-md- mt-2">
+                <SwiperCarousel itemsToShow={3} height={100} size={"small"}/>
               </div>
               <p className="mx-auto mt-1.5 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
                 choose a product to be & feel lucky.

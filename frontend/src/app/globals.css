@@ -36,7 +36,24 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+.smallCarousel .swiper-button-next,
+.smallCarousel .swiper-button-prev{
+  height: 20px;
+}
 
+.smallCarousel .content{
+  font-size: 12px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
 
+.smallCarousel  .swiper-pagination-bullets{
+ top:unset !important;
+ bottom: -5px !important;
+}
 
+.smallCarousel  .swiper-pagination-bullets span{
+    width: 5px;
+    height: 5px;
+}
 
