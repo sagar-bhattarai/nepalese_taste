@@ -1,5 +1,5 @@
 "use client";
-import NukaCarousel from "@/components/NukaCarousel";
+import SwiperCarousel from "@/components/SwiperCarousel";
 import Image from "next/image";
 import home_banner from "../../public/banner/home_banner.jpg";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto pt-0">
-      <NukaCarousel />
+      <SwiperCarousel itemsToShow={1} height={370} size={"big"}/>
       <section className="section1 mx-auto max-w-4/5 my-5">
         <h1 className="text-3xl">Hot Deals</h1>
         <div className="flex gap-2 py-1">

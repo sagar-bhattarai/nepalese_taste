@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import Link from 'next/link';
-import {HOME_ROUTE} from "../constants/routes";
+import {HOME_ROUTE, CONTACT_US_ROUTE, ABOUT_US_ROUTE, BLOG_ROUTE, SUGGESTIONS_ROUTE, TESTINOMIALS_ROUTE, HEALTH_TIPS_ROUTE, TERMS_AND_CONDITIONS_ROUTE, PRIVACY_POLICY_ROUTE, SECURITY_ROUTE} from "../constants/routes";
 
 const Footer = () => {
   return (
@@ -84,16 +84,16 @@ const Footer = () => {
             <h4 className="dark:text-primary text-white font-medium text-base">More</h4>
             <ul className="space-y-4 mt-6">
               <li>
-                <Link href='/contact-us#faq' className="hover:text-primary text-slate-400 text-sm font-normal">Faq</Link>
+                <Link href={CONTACT_US_ROUTE+"#faq"} className="hover:text-primary text-slate-400 text-sm font-normal">Faq</Link>
               </li>
               <li>
-                <Link href='/blog' className="hover:text-primary text-slate-400 text-sm font-normal">Blog</Link>
+                <Link href={BLOG_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Blog</Link>
               </li>
               <li>
                 <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Skincare</Link>
               </li>
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Health & Hygiene</Link>
+                <Link href={HEALTH_TIPS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Health & Hygiene</Link>
               </li>
             </ul>
           </div>
@@ -103,16 +103,16 @@ const Footer = () => {
 
             <ul className="space-y-4 mt-6">
               <li>
-                <Link href='/about-us' className="hover:text-primary text-slate-400 text-sm font-normal">About us</Link>
+                <Link href={ABOUT_US_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">About us</Link>
               </li>
               <li>
-                <Link href='/contact-us' className="hover:text-primary text-slate-400 text-sm font-normal">Contact Us</Link>
+                <Link href={CONTACT_US_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Contact Us</Link>
               </li>
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Suggestion</Link>
+                <Link href={SUGGESTIONS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Suggestion</Link>
               </li>
               <li>
-                <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Testinomials</Link>
+                <Link href={TESTINOMIALS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Testinomials</Link>
               </li>
             </ul>
           </div>
@@ -124,17 +124,17 @@ const Footer = () => {
       <div className="flex flex-wrap max-md:flex-col gap-4">
         <ul className="md:flex md:space-x-6 max-md:space-y-4">
           <li>
-            <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Terms of Service</Link>
+            <Link href={TERMS_AND_CONDITIONS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Terms of Service</Link>
           </li>
           <li>
-            <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Privacy Policy</Link>
+            <Link href={PRIVACY_POLICY_ROUTE}className="hover:text-primary text-slate-400 text-sm font-normal">Privacy Policy</Link>
           </li>
           <li>
-            <Link href='javascript:void(0)' className="hover:text-primary text-slate-400 text-sm font-normal">Security</Link>
+            <Link href={SECURITY_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Security</Link>
           </li>
         </ul>
 
-        <p className="text-slate-400 text-sm md:ml-auto">© ReadymadeUI. All rights reserved.</p>
+        <p className="text-slate-400 text-sm md:ml-auto">© All rights reserved.</p>
       </div>
     </footer>
   )
