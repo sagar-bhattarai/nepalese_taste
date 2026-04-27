@@ -12,7 +12,13 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const server = express();
-server.use(cors());
+// server.use(cors());
+server.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser());
@@ -29,16 +35,20 @@ import mediaRouter from "./routes/media.route.js";
 import recommendationRouter from "./routes/recommendation.route.js";
 import commentRouter from "./routes/comment.route.js";
 import starReviewRouter from "./routes/starReview.route.js";
+import favouriteRouter from "./routes/favourite.route.js";
+import dashboardRouter from "./routes/dashboard.route.js";
 
 server.use("/api/v1/users", userRouter);
 server.use("/api/v1/products", productRouter);
-// server.use("/api/v1/categories", auth , roleBasedAuth(ADMIN), categoryRouter);
 server.use("/api/v1/categories", categoryRouter);
 server.use("/api/v1/orders", auth , orderRouter);
 server.use("/api/v1/payments", auth , paymentRouter);
-server.use("/api/v1/medias", auth , roleBasedAuth(ADMIN), mediaRouter);
+// server.use("/api/v1/medias", auth , roleBasedAuth(ADMIN), mediaRouter);
+server.use("/api/v1/medias", auth, mediaRouter);
 server.use("/api/v1/recommendations", recommendationRouter);
 server.use("/api/v1/comments", commentRouter);
 server.use("/api/v1/starReviews", auth, starReviewRouter);
+server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER),  favouriteRouter);
+server.use("/api/v1/dashboard", auth,  dashboardRouter);
 
 export { server };

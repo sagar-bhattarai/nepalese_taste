@@ -3,6 +3,10 @@ import UserModel from "../models/User.model.js";
 import jwt from "jsonwebtoken";
 
 const auth = async (req, res, next) => {
+
+    // console.log("AUTH HEADER:", req.headers.authorization);
+    // console.log("COOKIES:", req.cookies);
+
     try {
         if (!(req.headers.authorization || req.cookies?.accessToken)) {
             throw {
@@ -32,12 +36,23 @@ const auth = async (req, res, next) => {
         req.roles = user.userRoles;
         next();
     } catch (error) {
-        console.log("\n \n <<<<<<< Authentication error >>>>>>> \n \n", error)
+        console.log("\n \n <<<<<<< Authentication error >>>>>>> \n \n", error);
+
+        let message = "Please login";
+        let code = "";
+
+        if (error.message == "invalid or expired token.") {
+            message = `invalid token, please login with valid credentials.`
+            code = "INVALID_TOKEN"
+        } else if (error.message == "User not authenticated.") {
+            message = ` please login with valid credentials.`
+            code = "EMPTY_TOKEN"
+        }
 
         return res.status(401).json({
             error: true,
-            message: "Session expired. Please login again.",
-            code: "TOKEN_EXPIRED"
+            message: message,
+            code: code
         });
     }
 

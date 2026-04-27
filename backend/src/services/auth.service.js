@@ -2,6 +2,9 @@ import UserModel from "../models/User.model.js";
 // import userService from "../services/user.service.js";
 // import sendMail from "../utility/mail.js";
 import uploadImage from "../utility/uploadImage.js";
+import jwt from "jsonwebtoken";
+import config from "../configs/config.js";
+
 
 const generateTokens = async (user) => {
     try {
@@ -75,4 +78,33 @@ const logout = async (id) => {
     const user = await UserModel.findByIdAndUpdate(id, { refreshToken: "" });
 };
 
-export default { register, login, logout };
+const refreshAuthToken = async (req) => {
+    
+    // const refreshToken = req.headers?.authorization?.split(" ")[1] || req.cookies?.accessToken;
+    const refreshToken = req.headers?.authorization?.split(" ")[1];
+
+    console.log("refreshToken >>>>>>>>>", refreshToken)
+
+    if (!refreshToken) {
+        throw { customStatus: 401, customMessage: "No refresh token" };
+    }
+
+    const decodedToken = jwt.verify(refreshToken, config.accessToken.secret);
+    console.log("decodedToken", decodedToken)
+
+    // if (!decodedToken) {
+    //     throw {
+    //         customStatus: 401,
+    //         customMessage: "invalid or expired token."
+    //     }
+    // }
+
+    // Refresh token rotation (one-time use tokens)
+    // const { refreshToken, accessToken } = await generateTokens(user);
+    // return {
+    //     refreshToken,
+    //     accessToken,
+    // }
+}
+
+export default { register, login, logout, refreshAuthToken };

@@ -1,5 +1,5 @@
 import express from "express";
-import { registerUser, loginUser, logoutUser } from "../controllers/auth.controller.js"
+import { registerUser, loginUser, logoutUser, tokenRefresh } from "../controllers/auth.controller.js"
 import { updateUser, deactivateUser, sendOtp, resetPassword, verifyEmail, updateUserRole, getAllUsers, getUserById } from "../controllers/user.controller.js"
 
 import auth from "../middlewares/auth.middleware.js";
@@ -22,11 +22,16 @@ router.post("/register", zodValidator(registerSchema), registerUser);
 /** 
  * POST /api/users/login
 */
-router.post("/login", zodValidator(loginSchema), loginUser);
+router.post("/login", zodValidator(loginSchema), loginUser); 
 /** 
  * GET /api/users/logout
 */
-router.get("/logout", auth, logoutUser);
+router.get("/logout", auth, logoutUser);    
+/** 
+ * GET /api/users/token/refresh
+*/
+router.get("/token/refresh", tokenRefresh);    
+
 
 
 /** 

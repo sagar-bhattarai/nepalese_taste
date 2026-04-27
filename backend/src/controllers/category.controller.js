@@ -30,7 +30,6 @@ const getCategoryById = async (req, res) => {
       .status(200)
       .json({ api: config.api, result, message: "Category fetched successfully." });
   } catch (error) {
-    console.log(error)
     return res
       .status(error.statusFromService || 500)
       .json({ message: error.msgFromService || "server error while fetching all category." })
