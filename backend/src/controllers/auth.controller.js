@@ -1,9 +1,10 @@
-import authService from "../services/auth.service.js"; 
+import authService from "../services/auth.service.js";
 import config from "../configs/config.js";
 
 const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "lax",
 };
 
 const registerUser = async (req, res) => {
@@ -12,11 +13,11 @@ const registerUser = async (req, res) => {
 
         return res
             .status(200)
-            .json({ status: config.api , data: result , message: "user registered successfully." });
+            .json({ status: config.api, data: result, message: "user registered successfully." });
     } catch (error) {
         return res
             .status(error.customStatus || 500)
-            .json({ error: true , message: error.customMessage || "error while registering user." });
+            .json({ error: true, message: error.customMessage || "error while registering user." });
     }
 };
 
@@ -24,15 +25,26 @@ const loginUser = async (req, res) => {
     try {
         const result = await authService.login(req.body);
 
+        // return res
+        //     .status(200)
+        //     .cookie("refreshToken", result.refreshToken, options)
+        //     .cookie("accessToken", result.accessToken, options)
+        //     .json({ status: config.api , data: result , message: "user logged in successfully." });
+
         return res
             .status(200)
             .cookie("refreshToken", result.refreshToken, options)
-            .cookie("accessToken", result.accessToken, options)
-            .json({ status: config.api , data: result , message: "user logined successfully." });
+            // .cookie("accessToken", result.accessToken, options)
+            .json({
+                accessToken: result.accessToken,
+                userData: result.loggedInUser,
+                message: "login success",
+            });
+
     } catch (error) {
         return res
             .status(error.customStatus || 500)
-            .json({ error: true , message: error.customMessage || "error while login." });
+            .json({ error: true, message: error.customMessage || "error while login." });
     }
 };
 
@@ -41,16 +53,31 @@ const logoutUser = async (req, res) => {
         const result = await authService.logout(req.user._id);
 
         return res
-            .status(200) 
+            .status(200)
             .cookie("refreshToken", "", options)
             .cookie("accessToken", "", options)
             .json({ status: config.api, message: "user logged out successfully." });
     } catch (error) {
         return res
-            .status( 500)
-            .json({ error: true , message:"error while loging out." });
+            .status(500)
+            .json({ error: true, message: "error while loging out." });
     }
 };
 
+const tokenRefresh = async (req, res) => {
+    try {
+        const result = await authService.refreshAuthToken(req);
 
-export { registerUser, loginUser, logoutUser};
+        return res
+            .status(200)
+            .cookie("refreshToken", result.refreshToken, options)
+            .cookie("accessToken", result.accessToken, options)
+            .json({ status: config.api, data: result, message: "Token Refreshed successfully." });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ error: true, message: "error while refreshing auth token." });
+    }
+};
+
+export { registerUser, loginUser, logoutUser, tokenRefresh };
