@@ -2,14 +2,15 @@
 import Link from "next/link"
 import { DASHBOARD_ROUTE, PROFILE_ROUTE } from "@/constants/routes";
 import { useDispatch } from 'react-redux';
-import { logout } from "@/redux/auth/authSlice";
+// import { logout } from "@/redux/auth/authSlice";
+import { logOutUser } from "@/redux/auth/authActions";
 import { FaSignOutAlt } from "react-icons/fa";
 
 const User = ({ userEmail, setShow }) => {
     const dispatch = useDispatch();
 
     const dispatch_logout = () => {
-        dispatch(logout());
+        dispatch(logOutUser());
     }
     return (
         <div className="absolute right-0 top-11 p-4 z-10 bg-darkBackground border-gray-500 shadow rounded-md ">

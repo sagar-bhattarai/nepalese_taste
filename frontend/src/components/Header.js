@@ -16,7 +16,7 @@ import CartTotal from "./CartTotal";
 const Header = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state);
-  const user = state.auth.user?.data.data || state.auth.user?.data.loggedInUser
+  const user = state.auth?.user?.userData 
   const [toggle, setToggle] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -77,7 +77,7 @@ const Header = () => {
         </Link>
 
         <div className="flex items-center gap-2">
-          {state.auth.user ? (
+          {state.auth?.user?.userData ? (
             <div className="relative flex justify-center items-center gap-2">
               <h4>{user?.userName}</h4>
               <button
