@@ -11,13 +11,19 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import PasswordInput from "@/components/PasswordInput"
 import { SIGN_UP_ROUTE } from "@/constants/routes";
+import { logout } from "@/redux/auth/authSlice";
 
 
 const loginPage = () => {
   // const { name, ref, onChange, onBlur } = register("");
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
+
   const { loading, error, user } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    dispatch(logout())
+  }, []);
 
   useEffect(() => {
     if (error) {
