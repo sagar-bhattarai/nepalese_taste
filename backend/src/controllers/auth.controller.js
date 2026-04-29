@@ -3,7 +3,8 @@ import config from "../configs/config.js";
 
 const options = {
     httpOnly: true,
-    secure: true,
+    // secure: true, // use this in Production
+    secure: false, // it is for localhost
     sameSite: "lax",
 };
 
@@ -54,8 +55,8 @@ const logoutUser = async (req, res) => {
 
         return res
             .status(200)
-            .cookie("refreshToken", "", options)
-            .cookie("accessToken", "", options)
+            .clearCookie("refreshToken", options)
+            // .cookie("accessToken", "", options)
             .json({ status: config.api, message: "user logged out successfully." });
     } catch (error) {
         return res
@@ -68,11 +69,18 @@ const tokenRefresh = async (req, res) => {
     try {
         const result = await authService.refreshAuthToken(req);
 
+        // return res
+        //     .status(200)
+        //     .cookie("refreshToken", result.refreshToken, options)
+        //     .json({ status: config.api, data: result, message: "Token Refreshed successfully." });
+        
         return res
             .status(200)
             .cookie("refreshToken", result.refreshToken, options)
-            .cookie("accessToken", result.accessToken, options)
-            .json({ status: config.api, data: result, message: "Token Refreshed successfully." });
+            .json({
+                accessToken: result.accessToken,
+                message: "Token Refreshed successfully.",
+            });
     } catch (error) {
         return res
             .status(500)

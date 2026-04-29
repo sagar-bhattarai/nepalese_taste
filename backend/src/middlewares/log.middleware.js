@@ -50,7 +50,7 @@ const logger = async (req, res, next) => {
         await fs.appendFile(LOG_FILE, log);
 
     } catch (error) {
-        console.error("Log middleware error:", err.message);
+        console.error("Log middleware error:", error.message);
     }
     
     next();
