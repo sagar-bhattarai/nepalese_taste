@@ -8,6 +8,7 @@ import config from "../configs/config.js";
 
 const generateTokens = async (user) => {
     try {
+
         const refreshToken = await user.generateRefreshToken();
         const accessToken = await user.generateAccessToken();
 
@@ -76,35 +77,32 @@ const login = async (req) => {
 
 const logout = async (id) => {
     const user = await UserModel.findByIdAndUpdate(id, { refreshToken: "" });
+    return true;
 };
 
 const refreshAuthToken = async (req) => {
-    
-    // const refreshToken = req.headers?.authorization?.split(" ")[1] || req.cookies?.accessToken;
-    const refreshToken = req.headers?.authorization?.split(" ")[1];
 
-    console.log("refreshToken >>>>>>>>>", refreshToken)
+    const token = req.cookies?.refreshToken;
 
-    if (!refreshToken) {
+    if (!token) {
         throw { customStatus: 401, customMessage: "No refresh token" };
     }
+   
+    const verified = jwt.verify(token, config.refreshToken.secret);
+  
+    const user = await UserModel.findById(verified._id);
 
-    const decodedToken = jwt.verify(refreshToken, config.accessToken.secret);
-    console.log("decodedToken", decodedToken)
-
-    // if (!decodedToken) {
-    //     throw {
-    //         customStatus: 401,
-    //         customMessage: "invalid or expired token."
-    //     }
-    // }
+    if (!user) {
+        throw {
+            customStatus: 400,
+            customMessage: "Invalid credentials.",
+        };
+    }
 
     // Refresh token rotation (one-time use tokens)
-    // const { refreshToken, accessToken } = await generateTokens(user);
-    // return {
-    //     refreshToken,
-    //     accessToken,
-    // }
+    const { refreshToken, accessToken } = await generateTokens(user);
+
+    return { refreshToken, accessToken };
 }
 
 export default { register, login, logout, refreshAuthToken };

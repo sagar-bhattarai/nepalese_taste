@@ -115,6 +115,7 @@ userSchema.methods.generateRefreshToken = async function () {
             },
         );
     } catch (error) {
+        console.log("generateRefreshToken >>>>> ",error)
         throw error;
     }
 };

@@ -12,18 +12,31 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const server = express();
+
 // server.use(cors());
-server.use(
-  cors({
-    origin: "http://localhost:3000",
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Authorization"], // 🔥 ADD THIS
+};
+server.use(cors(corsOptions));
+server.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
+  next();
+});
+
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser());
 server.use(logger);
 
+server.use((req, res, next) => {
+  next();
+});
 
 server.get('/', (req, res) => { res.send(config.api) });
 import userRouter from "./routes/user.route.js"
@@ -48,7 +61,7 @@ server.use("/api/v1/medias", auth, mediaRouter);
 server.use("/api/v1/recommendations", recommendationRouter);
 server.use("/api/v1/comments", commentRouter);
 server.use("/api/v1/starReviews", auth, starReviewRouter);
-server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER),  favouriteRouter);
+server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER), favouriteRouter);
 server.use("/api/v1/dashboard", auth,  dashboardRouter);
 
 export { server };

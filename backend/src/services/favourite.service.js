@@ -26,12 +26,12 @@ const add = async (req) => {
   }
 
   return {
-    message: favourite.isFavourited  ? "favourite added successfully" : "favourite removed successfully",
-    isFavourited: favourite.isFavourited ? true  : false,
+    message: favourite.isFavourited ? "favourite added successfully" : "favourite removed successfully",
+    isFavourited: favourite.isFavourited ? true : false,
   };
 
 
-{/*
+  {/*
   
     const favourite = await FavouriteModel.findOneAndUpdate(
     { customerId: customerId, productId: productId },
@@ -63,24 +63,33 @@ const all = async (req) => {
   const size = Number(req.query.size) || 3;
   const skip = (page - 1) * size;
 
-  const [favourites, total] = await Promise.all([
-    FavouriteModel.find()
+  const userId = req.user._id;
+  const filter = { customerId: userId };
+
+  const [products, total] = await Promise.all([
+    FavouriteModel.find(filter)
+      .populate({
+        path: "productId",
+        populate: {
+          path: "categoryId",
+          select: "categoryName",
+        },
+      })
+      // .populate("customerId")
+      .populate({
+        path: "customerId",
+        select: "userName userAddress",
+      })
       .limit(size)
       .skip(skip),
-    FavouriteModel.countDocuments(),
+
+    FavouriteModel.countDocuments(filter),
   ]);
 
-
-  if (!favourites) {
-    throw {
-      statusFromService: 404,
-      msgFromService: "no any favourites found",
-    };
-  }
-
-  return { favourites: [...favourites], total: total };
+  return { products, total };
 
 };
+
 const single = async (req) => {
   const favourite = await FavouriteModel.findById(req.params.id);
   if (!favourite) {
@@ -94,6 +103,7 @@ const single = async (req) => {
 
 
 const remove = async (req) => {
+  console.log("here")
   const deleted = await FavouriteModel.findByIdAndDelete(req.params.id);
   if (!deleted) {
     throw {

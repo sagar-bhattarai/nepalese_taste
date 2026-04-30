@@ -8,6 +8,7 @@ import { CUSTOMER, MERCHANT, ADMIN, STAFF } from "../constants/roles.constant.js
 import zodValidator from "../middlewares/zodValidator.middleware.js";
 import productSchema from "../zod/products/addProduct.schema.js";
 import updateProductSchema from "../zod/products/updateProduct.schema.js";
+import optionalAuth from "../middlewares/optional.auth.middleware.js"
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ router.post("/add", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValid
  *     /api/products?brand=Nike&attributes[material]=Cotton
  *     /api/products?sort=price_asc
 */
-router.get("/", getAllProduct);
+router.get("/", optionalAuth, getAllProduct); 
 
 /** 
  * GET /api/categories

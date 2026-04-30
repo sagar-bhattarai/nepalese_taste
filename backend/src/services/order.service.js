@@ -49,6 +49,7 @@ const add = async (req) => {
             delivery = ORDER___EXPRESS___DELIVERY
         }
 
+
         if (!items || items.length === 0) {
             throw {
                 serviceserviceStatus: 400,
@@ -56,7 +57,7 @@ const add = async (req) => {
             };
         }
 
-        // ✅ Fetch all products at once (optimized)
+        // Fetch all products at once (optimized)
         const productIds = items.map(i => i.productId);
 
         const products = await ProductModel.find({
@@ -73,7 +74,7 @@ const add = async (req) => {
         let grandTotal = 0;
 
 
-        // ✅ Validate + build order
+        //  Validate + build order
         for (const item of items) {
             const product = productMap[item.productId];
 
@@ -133,7 +134,7 @@ const add = async (req) => {
             deliveryAddress: req.body.shippingAddress
         }]);
 
-        // ✅ Update stock (atomic)
+        //  Update stock (atomic)
         for (const item of orderItems) {
             await ProductModel.updateOne(
                 { _id: item.productId },
@@ -143,7 +144,7 @@ const add = async (req) => {
 
         // let paymentResult = null;
 
-        // // 💳 Payment handling
+        // //  Payment handling
         // switch (requestFrom) {
         //     case "khalti":
         //         // paymentResult = await paymentViaKhalti(order[0], req.user);

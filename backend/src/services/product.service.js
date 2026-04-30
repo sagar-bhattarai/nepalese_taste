@@ -2,6 +2,7 @@ import ProductModel from "../models/Product.model.js";
 import StarReviewModel from "../models/StarReview.model.js";
 import CategoryModel from "../models/Category.model.js";
 import uploadOnCloudinary from "../utility/cloudinary.js"
+import FavouriteModel from "../models/Favourite.model.js"
 
 const findProductOnDb = async (productIdOrName, searchType) => {
   if (searchType === "name") {
@@ -157,6 +158,8 @@ const getProducts = async (req) => {
   return { products: [...products], total: total, inActive }; */}
 
 
+  {/*
+    
   const page = Number(req.query.page) || 1;
   const size = Number(req.query.size) || 10;
   const skip = (page - 1) * size;
@@ -189,6 +192,69 @@ const getProducts = async (req) => {
   ]);
 
   return { products: formattedProducts, total: totalCount, inActive: inactiveCount, page, size, };
+
+  */}
+
+  const page = Number(req.query.page) || 1;
+  const size = Number(req.query.size) || 10;
+  const skip = (page - 1) * size;
+
+  // Optional filters
+  const filters = {};
+  if (req.query.isActive) {
+    filters.isActive = req.query.isActive === "true";
+  }
+  if (req.query.categoryId) {
+    filters.categoryId = req.query.categoryId;
+  }
+
+  // 1. Get products
+  const products = await ProductModel.find(filters)
+    .populate("categoryId", "categoryName")
+    .skip(skip)
+    .limit(size)
+    .lean();
+
+  const productIds = products.map(p => p._id);
+
+  // 2. Default: no favourites
+  let favouriteSet = new Set();
+  // 3. Only fetch favourites IF user exists
+  if (req.user?._id) {
+    const favourites = await FavouriteModel.find({
+      customerId: req.user._id,
+      productId: { $in: productIds },
+      isFavourited: true,
+    }).lean();
+
+
+    favouriteSet = new Set(
+      favourites.map(fav => fav.productId.toString())
+    );
+  }
+
+  // 4. Format response
+  const formattedProducts = products.map(({ categoryId, _id, ...rest }) => ({
+    ...rest,
+    _id,
+    categoryName: categoryId?.categoryName || null,
+    catId: categoryId?._id || null,
+    isFavourited: favouriteSet.has(_id.toString()), // false for guests
+  }));
+
+  // 5. Counts
+  const [totalCount, inactiveCount] = await Promise.all([
+    ProductModel.countDocuments(filters),
+    ProductModel.countDocuments({ ...filters, isActive: false }),
+  ]);
+
+  return {
+    products: formattedProducts,
+    total: totalCount,
+    inActive: inactiveCount,
+    page,
+    size,
+  };
 
 };
 
