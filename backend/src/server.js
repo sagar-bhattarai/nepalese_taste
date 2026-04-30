@@ -61,7 +61,7 @@ server.use("/api/v1/medias", auth, mediaRouter);
 server.use("/api/v1/recommendations", recommendationRouter);
 server.use("/api/v1/comments", commentRouter);
 server.use("/api/v1/starReviews", auth, starReviewRouter);
-server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER),  favouriteRouter);
+server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER), favouriteRouter);
 server.use("/api/v1/dashboard", auth,  dashboardRouter);
 
 export { server };

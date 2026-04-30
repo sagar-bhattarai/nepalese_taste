@@ -219,7 +219,6 @@ const getProducts = async (req) => {
 
   // 2. Default: no favourites
   let favouriteSet = new Set();
-
   // 3. Only fetch favourites IF user exists
   if (req.user?._id) {
     const favourites = await FavouriteModel.find({
@@ -228,7 +227,6 @@ const getProducts = async (req) => {
       isFavourited: true,
     }).lean();
 
-    // console.log("const getProducts = async (req) => { ",favourites)
 
     favouriteSet = new Set(
       favourites.map(fav => fav.productId.toString())
