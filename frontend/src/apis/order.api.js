@@ -26,7 +26,7 @@ export const fetchAllOrders = async (searchParams) => {
 export const addOrder = async (data) => {
     try {
         const response = await api.post(`/orders/add`, data);
-        return response.data?.result?.data;
+        return response.data?.result?.data || response?.data;
     } catch (error) {
         throw error.response?.data || error;
     }

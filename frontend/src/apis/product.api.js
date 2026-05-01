@@ -5,7 +5,7 @@ import api from "."
 // api for server component
 export const addProduct = async (data) => {
     try {
-        const response = await api.post( `/products/add`, data);
+        const response = await api.post(`/products/add`, data);
 
         return response.data?.result?.data;
     } catch (error) {
@@ -23,7 +23,11 @@ export const fetchAllProducts = async (searchParams) => {
     const brands = (await searchParams)?.brands ?? ""
     const name = (await searchParams)?.name ?? ""
 
-    const response = await axios.get(`${config.apiUrl}/products?sort=${sort}&min=${min}&max=${max}&category=${category}&brands=${brands}&name=${name}`);
+    // const response = await axios.get(`${config.apiUrl}/products?sort=${sort}&min=${min}&max=${max}&category=${category}&brands=${brands}&name=${name}`);
+    const response = await api
+        .get(`${config.apiUrl}/products`, {
+            params: { sort, min, max, category, brands, name },
+        });
     return response.data.result;
 };
 
@@ -37,25 +41,25 @@ export const getProductById = async (id, userId) => {
 // api for server component
 export const updateProduct = async (id, data) => {
     try {
-    const response = await api.patch(`/products/update/${id}`, data );
+        const response = await api.patch(`/products/update/${id}`, data);
 
-    return response.data.result.data;
-        } catch (error) {
+        return response.data.result.data;
+    } catch (error) {
         // console.error("API ERROR:", error);
         throw error.response?.data || error;
     }
 };
 
-export const deleteProduct = async (id)=>{
+export const deleteProduct = async (id) => {
     const response = await api.delete(`/api/products/${id}`)
     return response;
 }
 
-export const getProductBrands = async ()=>{
+export const getProductBrands = async () => {
     const response = await api.get("/api/products/brands");
     return response;
 }
-export const getProductCategories = async ()=>{
+export const getProductCategories = async () => {
     const response = await api.get("/api/products/categories");
     return response;
 }
