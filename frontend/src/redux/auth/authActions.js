@@ -22,12 +22,7 @@ export const loginUser = createAsyncThunk('login', async (data, { rejectWithValu
 
 export const logOutUser = createAsyncThunk('logoutFromServer', async (_, { rejectWithValue }) => {
     try {
-
-
-        const test  = await logoutFromServer(); // API call
-        console.log("<<<<<<<<< test >>>>>>>>>",test)
-        
-        
+        const test  = await logoutFromServer(); 
         localStorage.removeItem("accessToken"); 
     } catch (error) {
         return rejectWithValue(error.response?.data || error.message);
