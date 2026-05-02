@@ -5,32 +5,29 @@ import Pagination from "@/components/admin/category/Pagination";
 import { fetchAllCategories } from "@/apis/category.api";
 import { useState, useEffect } from "react";
 
-const categoryManagementPage =  () => {
-  const limit = 10;
+const categoryManagementPage = () => {
+  const limit = 3;
   const [categoryData, setCategoriessData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [size, setSize] = useState(limit);
 
   const loadCategries = async (reset = false) => {
-    const res = await fetchAllCategories({
-      page,
-      search
-    });
+    const res = await fetchAllCategories({ page, search });
 
     if (res) {
       if (reset) {
         setCategoriessData(res);
       } else {
-        setCategoriessData((prev) => [...prev, ...res.data]);
+        setCategoriessData((prev) => [...prev, ...res.data]); // yo over all products dekhauna ho ja samma
       }
-
     }
   };
 
   useEffect(() => {
     setSearch("");
     loadCategries(true);
-  }, [search, page]);
+  }, [search, page, size]);
 
   return (
     <>

@@ -13,14 +13,13 @@ export default function HomePage() {
     const getProducts = async () => {
       let data = await fetchAllProducts();
       setResponse(data)
-      // console.log("AllProducts",data)
     }
     getProducts()
   }, [])
 
   return (
     <div className="mx-auto pt-0">
-      <SwiperCarousel itemsToShow={1} height={370} size={"big"}/>
+      <SwiperCarousel products={response?.products} itemsToShow={1} height={370} size={"big"}/>
       <section className="section1 mx-auto max-w-4/5 my-5">
         <h1 className="text-3xl">Hot Deals</h1>
         <div className="flex gap-2 py-1">

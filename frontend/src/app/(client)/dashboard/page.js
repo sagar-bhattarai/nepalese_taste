@@ -10,31 +10,68 @@ import IncDecInput from "@/components/products/inputAction/IncDecInput";
 import { useRouter } from "next/navigation";
 import { ORDER_MANAGEMENT_ROUTE, PROFILE_ROUTE } from "@/constants/routes";
 import { useSelector } from "react-redux";
+import Pagination from "@/components/products/Pagination";
+import SortBy from "@/components/products/Filters/SortBy";
 
 
 const Dashboard = () => {
-  const [favourites, setFavourites] = useState();
+  const limit = 3;
+  const [favourites, setFavourites] = useState({
+    products: [],
+    total: 0,
+  });
   const [dashboardData, setDashboardData] = useState();
   const [quantities, setQuantities] = useState({})
   const [deliveryType, setDeliveryTypes] = useState({});
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(limit);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const user = useSelector((state) => state.auth?.user?.userData);
 
+
+
+  const DEFAULT_SORT = JSON.stringify({ createdAt: -1 });
+  const [sort, setSort] = useState(DEFAULT_SORT);
+
+  // useEffect(() => {
+  //   handleSort();
+  // }, [sort]);
+
+  // const handleSort = () => {
+  //   const params = new URLSearchParams();
+  //   params.set("sort", sort);
+  //   // router.push(`?sort=${sort}`);
+  //   router.push(`?${params.toString()}`);
+  // };
+
+
   const loadFavourites = async () => {
-    const response = await fetchAllFavourites();
-    setFavourites(response);
+    if (loading) return;
+    setLoading(true);
+
+    const response = await fetchAllFavourites({ page, size });
+
+    if (response?.products) {
+      setFavourites({ products: response.products, total: response.total });
+    }
+
+    setLoading(false);
   };
 
-  const dashboarData = async () => {
+  const customerDashboardData = async () => {
     const response = await customerSummary();
     setDashboardData(response.summary);
   };
 
-  
+  useEffect(() => {
+    customerDashboardData();
+  }, []);
+
   useEffect(() => {
     loadFavourites();
-    dashboarData();
-  }, []);
+  }, [page, size]);
+
 
   const handleQuantityChange = (productId, value) => {
     setQuantities(prev => ({
@@ -42,7 +79,6 @@ const Dashboard = () => {
       [productId]: value,
     }));
   };
-
 
   const handleDeliveryChange = (productId, value) => {
     setDeliveryTypes(prev => ({
@@ -74,7 +110,11 @@ const Dashboard = () => {
 
   const removeHandler = async (id) => {
     await deleteFavourite(id);
-    loadFavourites()
+    loadFavourites();
+  }
+
+  const handleFilter = async () => {
+
   }
 
   return (
@@ -151,12 +191,12 @@ const Dashboard = () => {
                     Total Orders
                   </span>
                   <h4 className="mt-2 text-title-sm font-bold text-gray-800 dark:text-white/90">
-                    {dashboardData?.totalOrders}
+                    {dashboardData?.order?.totalOrders}
                   </h4>
                 </div>
 
                 <span className="flex items-center gap-1 rounded-full bg-error-50 py-0.5 pl-2 pr-2.5 text-sm font-medium text-error-600 dark:bg-error-500/15 dark:text-error-500">
-                  Rs. {dashboardData?.confirmed?.totalRevenue}
+                  Rs. {dashboardData?.order?.confirmed?.totalRevenue}
                 </span>
               </div>
             </div>
@@ -241,7 +281,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="relative h-auto border- border-slate-500- rounded-md- mt-2">
-                <SwiperCarousel itemsToShow={3} height={100} size={"small"} />
+                <SwiperCarousel products={dashboardData?.products} itemsToShow={(dashboardData?.products.length >= 3) ? 3 : 1} height={100} size={"small"} />
               </div>
               <p className="mx-auto mt-1.5 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
                 choose a product to be & feel lucky.
@@ -308,20 +348,34 @@ const Dashboard = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                <button className="text-theme-sm shadow-theme-xs inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-2.5 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+                <button className="text-theme-sm shadow-theme-xs inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100/50 pl-4  font-medium text-gray-700  dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
                   <svg className="stroke-current fill-white dark:fill-gray-800" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M2.29004 5.90393H17.7067" stroke="" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
                     <path d="M17.7075 14.0961H2.29085" stroke="" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
                     <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" fill="" stroke="" strokeWidth="1.5"></path>
                     <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" fill="" stroke="" strokeWidth="1.5"></path>
                   </svg>
-
                   Filter
+                  {/* <select 
+                  value={''}
+                  onChange={(e)=>handleFilter(e.target.value)}
+                  className="text-gray-900 text-sm cursor-pointer block w-full p-2 dark:hover:text-gray-500 bg-[#07070729]  dark:text-gray-600 outline-none border-none">
+                    <option>By Default</option>
+                    <option value={JSON.stringify({ price: -1 })}>By High to Low</option>
+                    <option value={JSON.stringify({ price: 1 })}>By Low to High</option>
+                    <option value={JSON.stringify({ createdAt: 1 })}>By A-Z</option>
+                    <option value={JSON.stringify({ createdAt: -1 })}>By Z-A</option>
+                  </select> */}
+                  <SortBy 
+                  setSort={setSort} 
+                  ItemName={"Products"} 
+                  classes={"text-gray-900 text-sm cursor-pointer block w-full p-2 dark:hover:text-gray-500 bg-[#07070729]  dark:text-gray-600 outline-none border-none"}/>
                 </button>
 
-                <button className="text-theme-sm shadow-theme-xs inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-2.5 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+
+                {/* <button className="text-theme-sm shadow-theme-xs inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-2.5 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
                   See all
-                </button>
+                </button> */}
               </div>
             </div>
 
@@ -339,9 +393,9 @@ const Dashboard = () => {
                           <div className="col-span-3 ">
                             <h2 className="font-semibold text-base leading-5 text-black dark:text-gray-500 ">
                               {item.productId.productName}</h2>
-                            <p className="font-normal text-xs leading-5 text-amber-600 dark:text-amber-200 ">
+                            <p className="font-normal text-xs leading-5 text-cyan-700 ">
                               {item.productId.categoryId.categoryName}</p>
-                            <p className="font-normal text-base leading-5 text-gray-500 ">
+                            <p className="font-normal text-base leading-5 text-gray-500">
                               {item.productId.productDescription}</p>
                           </div>
 
@@ -428,6 +482,8 @@ const Dashboard = () => {
 
             </div>
           </div>
+          {/* pagination */}
+          <Pagination page={page} setPage={setPage} LIMIT={size} overAllTotal={favourites?.total} />
         </div>
 
       </div>

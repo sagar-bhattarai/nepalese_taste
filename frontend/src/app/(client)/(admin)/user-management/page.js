@@ -6,10 +6,12 @@ import { fetchAllUsers } from "@/apis/user.api";
 import { useState, useEffect } from "react";
 
 const userManagementPage = () => {
-  const limit = 10;
+  const limit = 3;
   const [usersData, setUsersData] = useState();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [size, setSize] = useState(limit);
+
 
   const loadUsers = async (reset = false) => {
     const res = await fetchAllUsers({
@@ -21,7 +23,7 @@ const userManagementPage = () => {
       if (reset) {
         setUsersData(res);
       } else {
-        setUsersData((prev) => [...prev, ...res.data]);
+        setUsersData((prev) => [...prev, ...res.data]); // yo over all products dekhauna ho ja samma
       }
     }
   };
@@ -29,7 +31,7 @@ const userManagementPage = () => {
   useEffect(() => {
     setSearch("");
     loadUsers(true);
-  }, [search, page]);
+  }, [search, page, size]);
 
   return (
     <>
