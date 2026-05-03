@@ -74,6 +74,11 @@ const create = async (req) => {
 
 
 const single = async (req) => {
+
+  if (req?.params?.id == "#") {
+    throw new Error("Product not found");
+  }
+
   const product = await ProductModel.findOne({
     _id: req.params.id,
   })
@@ -134,69 +139,134 @@ const edit = async (req, res) => {   // adminUpdateProduct
   return edited;
 };
 
+
 const getProducts = async (req) => {
-  // const hasFilterOrSort =
-  //   req.query.sort ||
-  //   req.query.minPrice ||
-  //   req.query.maxPrice ||
-  //   req.query.color ||
-  //   req.query.brand;
-
-  {/* const page = Number(req.query.page) || 1;
-  const size = Number(req.query.size) || 10;
-  const skip = (page - 1) * size;
-
-  const [products, total, inActive] = await Promise.all([
-    ProductModel.find()
-      .populate("categoryId")
-      .skip(skip)
-      .limit(size),
-
-    ProductModel.countDocuments(),
-    ProductModel.countDocuments({ isActive: false }),
-  ]);
-  return { products: [...products], total: total, inActive }; */}
-
-
-  {/*
-    
   const page = Number(req.query.page) || 1;
-  const size = Number(req.query.size) || 10;
+  const size = Number(req.query.size) || 3;
   const skip = (page - 1) * size;
 
-  // Optional filters
+  const { category, sort, min, max, name, brands } = req.query;
+
+  // -------------------------
+  // FILTERS
+  // -------------------------
   const filters = {};
+
   if (req.query.isActive) {
-    filters.isActive = req.query.isActive === "true"; // convert string → boolean
-  }
-  if (req.query.categoryId) {
-    filters.categoryId = req.query.categoryId;
+    filters.isActive = req.query.isActive === "true";
   }
 
+  if (category) {
+    filters.categoryId = category;
+  }
+
+  // name search
+  if (name) {
+    filters.productName = {
+      $regex: name,
+      $options: "i",
+    };
+  }
+
+  // brand filter (array support)
+  if (brands) {
+    const brandArray = brands.split(",");
+    filters.brand = { $in: brandArray };
+  }
+
+  // price filter
+  if (min || max) {
+    filters.productPrice = {};
+
+    if (min) filters.productPrice.$gte = Number(min);
+    if (max) filters.productPrice.$lte = Number(max);
+  }
+
+  // -------------------------
+  // SORT
+  // -------------------------
+  let sortOption = { createdAt: -1 };
+
+  switch (sort) {
+    case "price_asc":
+      sortOption = { productPrice: 1 };
+      break;
+
+    case "price_desc":
+      sortOption = { productPrice: -1 };
+      break;
+
+    case "name_asc":
+      sortOption = { productName: 1 };
+      break;
+
+    case "name_desc":
+      sortOption = { productName: -1 };
+      break;
+
+    case "latest":
+      sortOption = { createdAt: -1 };
+      break;
+
+    case "oldest":
+      sortOption = { createdAt: 1 };
+      break;
+  }
+
+  // -------------------------
+  // QUERY
+  // -------------------------
   const products = await ProductModel.find(filters)
     .populate("categoryId", "categoryName")
+    .sort(sortOption)
     .skip(skip)
     .limit(size)
     .lean();
 
-  // Map categoryId → category name
-  const formattedProducts = products.map(({ categoryId, ...rest }) => ({
-    ...rest,
-    categoryName: categoryId?.categoryName || null,
-    catId: categoryId?._id || null,
-  }));
+  const productIds = products.map((p) => p._id);
 
-  const [totalCount, inactiveCount] = await Promise.all([
+  let favouriteSet = new Set();
+
+  if (req.user?._id) {
+    const favourites = await FavouriteModel.find({
+      customerId: req.user._id,
+      productId: { $in: productIds },
+      isFavourited: true,
+    }).lean();
+
+    favouriteSet = new Set(favourites.map((f) => f.productId.toString()));
+  }
+
+  const formattedProducts = products.map(
+    ({ categoryId, _id, ...rest }) => ({
+      ...rest,
+      _id,
+      categoryName: categoryId?.categoryName || null,
+      catId: categoryId?._id || null,
+      isFavourited: favouriteSet.has(_id.toString()),
+    })
+  );
+
+  const [total, inActive] = await Promise.all([
     ProductModel.countDocuments(filters),
     ProductModel.countDocuments({ ...filters, isActive: false }),
   ]);
 
-  return { products: formattedProducts, total: totalCount, inActive: inactiveCount, page, size, };
+  return {
+    products: formattedProducts,
+    total,
+    inActive,
+    page,
+    size,
+  };
+};
 
-  */}
-
+{/*
+  
+  const getProducts = async (req) => {
+ 
   const page = Number(req.query.page) || 1;
-  const size = Number(req.query.size) || 10;
+  const size = Number(req.query.size) || 3;
   const skip = (page - 1) * size;
 
   // Optional filters
@@ -204,8 +274,8 @@ const getProducts = async (req) => {
   if (req.query.isActive) {
     filters.isActive = req.query.isActive === "true";
   }
-  if (req.query.categoryId) {
-    filters.categoryId = req.query.categoryId;
+  if (req.query.category) {
+    filters.categoryId = req.query.category;
   }
 
   // 1. Get products
@@ -257,6 +327,10 @@ const getProducts = async (req) => {
   };
 
 };
+  
+
+*/}
+
 
 const remove = async (id) => {
 

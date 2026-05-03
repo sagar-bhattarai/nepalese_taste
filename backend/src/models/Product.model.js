@@ -36,6 +36,12 @@ const productSchema = new mongoose.Schema(
             required: [true, "category id is required"],
         },
 
+        // brand: {
+        //     type: Schema.Types.ObjectId,
+        //     ref: "Brand",
+        //     required: [true, "Brand id is required"],
+        // },
+
         productWeight: Number,
 
         productDimension: {

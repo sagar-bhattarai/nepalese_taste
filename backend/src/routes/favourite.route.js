@@ -8,6 +8,6 @@ const router = express.Router();
 router.get("/", getAllFavourites);
 router.post("/add", zodValidation(addFavouriteSchema), addFavourite);
 router.delete("/delete/:id", deleteFavourite);
-router.get("/:id", getFavouriteById);
+// router.get("/:id", getFavouriteById);
 
 export default router;

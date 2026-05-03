@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema(
             trim: true,
             lowercase: true,
         },
+        userPhone: {
+            type: String,
+            // required: [true, "Phone Is Required"],
+            trim: true,
+        },
         profileImage: String,
         refreshToken: String,
         userRoles: {
@@ -115,7 +120,7 @@ userSchema.methods.generateRefreshToken = async function () {
             },
         );
     } catch (error) {
-        console.log("generateRefreshToken >>>>> ",error)
+        console.log("generateRefreshToken >>>>> ", error)
         throw error;
     }
 };
