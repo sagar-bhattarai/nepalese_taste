@@ -6,30 +6,29 @@ import { fetchAllProducts } from "@/apis/product.api";
 import { useState, useEffect } from "react";
 
 const productManagementPage = () => {
-  const limit = 10;
+  const limit = 3;
   const [productsData, setProductsData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [size, setSize] = useState(limit);
+
 
   const loadProducts = async (reset = false) => {
-    const res = await fetchAllProducts({
-      page,
-      search
-    });
+    const res = await fetchAllProducts({ page, search });
 
     if (res) {
       if (reset) {
         setProductsData(res);
       } else {
-        setProductsData((prev) => [...prev, ...res.data]);
-      }
+        setProductsData((prev) => [...prev, ...res.data]); // yo over all products dekhauna ho ja samma
+      } 
     }
   };
 
   useEffect(() => {
     setSearch("");
     loadProducts(true);
-  }, [search, page]);
+  }, [search, page, size]);
 
   return (
     <>

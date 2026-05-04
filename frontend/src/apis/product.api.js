@@ -22,11 +22,13 @@ export const fetchAllProducts = async (searchParams) => {
     const category = (await searchParams)?.category ?? ""
     const brands = (await searchParams)?.brands ?? ""
     const name = (await searchParams)?.name ?? ""
+    const page = (await searchParams)?.page ?? ""
+    const size = (await searchParams)?.size ?? ""
 
-    // const response = await axios.get(`${config.apiUrl}/products?sort=${sort}&min=${min}&max=${max}&category=${category}&brands=${brands}&name=${name}`);
+    // const response = await axios.get(`${config.apiUrl}/products?page=${page}&size=${size}&sort=${sort}&min=${min}&max=${max}&category=${category}&brands=${brands}&name=${name}`);
     const response = await api
         .get(`${config.apiUrl}/products`, {
-            params: { sort, min, max, category, brands, name },
+            params: { page, size, sort, min, max, category, brands, name },
         });
     return response.data.result;
 };

@@ -29,7 +29,7 @@ const getAdminDashboardData = async (req, res) => {
 
 
   } catch (error) {
-
+console.log(error)
     return res
       .status(error.statusFromService || 500)
       .json({ message: error.msgFromService || "server error while fetching admins all dashboard datas." })

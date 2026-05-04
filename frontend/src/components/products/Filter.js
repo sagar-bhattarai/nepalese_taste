@@ -3,6 +3,10 @@
 import { PRODUCTS_ROUTE } from "@/constants/routes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import SearchByName from "./Filters/SearchByName";
+import ByCategories from "./Filters/ByCategories";
+import SortBy from "./Filters/SortBy";
+import ByBrand from "./Filters/ByBrand";
 
 const DEFAULT_SORT = JSON.stringify({ createdAt: -1 });
 const MIN_PRICE = 0;
@@ -51,24 +55,29 @@ const Filter = () => {
     }
     return (
         <aside className="shadow-md rounded-xl p-4">
-            <h3 className="dark:text-primary light:text-black dark:border-gray font-medium text-lg mb-2">Products Filter</h3>
+            <h3 className="dark:text-primary light:text-black dark:border-slate-600 font-medium text-lg mb-2">Products Filter</h3>
+
             {/* search */}
             <div className="w-full mt-4">
-                <h4 className="dark:text-gray-600 light:text-black dark:border-gray" >Search:</h4>
-                <div >
+                <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600" >Search:</h4>
+                {/* <div >
                     <input
                         name="name"
                         id="name"
                         type="text"
-                        className="dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 w-full p-1 mt-1 border  rounded-md"
+                        className="dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 w-full p-1 mt-1 border  rounded-md"
                         onChange={(e) => setSearchByName(e.target.value)} />
-                </div>
+                </div> */}
+                <SearchByName
+                    setSearchByName={setSearchByName}
+                    classes={"dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 w-full p-1 mt-1 border  rounded-md"} />
             </div>
+
             {/* sort by */}
             <div className="w-full mt-4">
-                <h4 className="dark:text-gray-600 light:text-black dark:border-gray">Sort By:</h4>
-                <select
-                    className="w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600 mb-1">Sort By:</h4>
+                {/* <select
+                    className="w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                     name="sort"
                     id="sort"
                     onChange={(e) => setSort(e.target.value)}>
@@ -78,13 +87,18 @@ const Filter = () => {
                     <option value={JSON.stringify({ price: 1 })}>Price: Low to High</option>
                     <option value={JSON.stringify({ name: 1 })}>Name: A - Z</option>
                     <option value={JSON.stringify({ name: -1 })}>Name: Z - A</option>
-                </select>
+                </select> */}
+                <SortBy
+                    setSort={setSort}
+                    ItemName={"Products"}
+                    classes={"w-full p-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"} />
             </div>
+
             {/* categories */}
             <div className="w-full mt-4">
-                <h4 className="dark:text-gray-600 light:text-black dark:border-gray">Categories:</h4>
-                <select
-                    className="w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600">Categories:</h4>
+                {/* <select
+                    className="w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                     name="category"
                     id="category"
                     onChange={(e) => setCategory(e.target.value)}>
@@ -92,11 +106,14 @@ const Filter = () => {
                     <option value="smartphones">smartphones</option>
                     <option value="laptops">laptops</option>
                     <option value="smartwatches">smartwatches</option>
-                </select>
+                </select> */}
+                <ByCategories 
+                setCategory={setCategory}
+                classes={"w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"} />
             </div>
             {/* price range */}
             <div className="w-full mt-4">
-                <h4 className="dark:text-gray-600 light:text-black dark:border-gray">Price Range:</h4>
+                <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600">Price Range:</h4>
                 <div >
                     <label className="text-xs text-gray-500" htmlFor="min">Minimum Price</label>
                     <input
@@ -105,7 +122,7 @@ const Filter = () => {
                         name="min"
                         id="min"
                         type="number"
-                        className="w-full p-1 mt-1 border dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                        className="w-full p-1 mt-1 border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                         onChange={(e) => setMinPrice(e.target.value)} />
                 </div>
                 <div >
@@ -116,19 +133,20 @@ const Filter = () => {
                         name="max"
                         id="max"
                         type="number"
-                        className="w-full p-1 mt-1 border dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                        className="w-full p-1 mt-1 border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                         onChange={(e) => setMaxPrice(e.target.value)} />
                 </div>
             </div>
+
             {/* brand */}
             <div className="w-full mt-4">
-                <h4 className="dark:text-gray-600 light:text-black dark:border-gray">Brand:</h4>
-                <div className="flex items-center gap-1 ml-1">
+                <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600">Brand:</h4>
+                {/* <div className="flex items-center gap-1 ml-1">
                     <input
                         name="apple"
                         id="apple"
                         type="checkbox"
-                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                         onChange={() => handleBrandChange("apple")} />
                     <label className="text-xs text-gray-500" htmlFor="apple">Apple</label>
                 </div>
@@ -137,7 +155,7 @@ const Filter = () => {
                         name="google"
                         id="google"
                         type="checkbox"
-                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                         onChange={() => handleBrandChange("google")} />
                     <label className="text-xs text-gray-500" htmlFor="google">Google</label>
                 </div>
@@ -146,11 +164,12 @@ const Filter = () => {
                         name="samsung"
                         id="samsung"
                         type="checkbox"
-                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-gray light:border-gray-300 rounded-md"
+                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
                         onChange={() => handleBrandChange("samsung")} />
                     <label className="text-xs text-gray-500" htmlFor="samsung">Samsung</label>
-                </div>
+                </div> */}
 
+                <ByBrand handleBrandChange={handleBrandChange} />
             </div>
 
             <button

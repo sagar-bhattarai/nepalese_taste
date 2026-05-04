@@ -6,10 +6,12 @@ export const fetchAllUsers = async (searchParams) => {
     const sort = searchParams?.sort ?? "";
     const min = searchParams?.min ?? "";
     const max = searchParams?.max ?? "";
+    const page = (await searchParams)?.page ?? ""
+    const size = (await searchParams)?.size ?? ""
 
     const authToken = localStorage.getItem("accessToken");
 
-    const queryParams = new URLSearchParams({ sort, min, max }).toString();
+    const queryParams = new URLSearchParams({ page, size, sort, min, max }).toString();
 
     const response = await axios.get(`${config.apiUrl}/users?${queryParams}`, {
         headers: {
@@ -29,7 +31,7 @@ export const addUser = async (data) => {
     return response.data.result.data;
 };
 
-export const getUserById = async ({id}) => {
+export const getUserById = async ({ id }) => {
     const authToken = localStorage.getItem("accessToken");
     const response = await axios.get(`${config.apiUrl}/users/user/${id}`,
         {
