@@ -17,9 +17,11 @@ export const TERMS_AND_CONDITIONS_ROUTE = "/terms-and-conditions";
 export const PRIVACY_POLICY_ROUTE = "/privacy-policy";
 export const SECURITY_ROUTE = "/security";
 
+export const DASHBOARD_ROUTE = "/dashboard";
+
 
 // Admmin Routes
-export const DASHBOARD_ROUTE = "/dashboard";
+export const ADMIN_DASHBOARD_ROUTE = "/admin-dashboard";
 export const PRODUCT_MANAGEMENT_ROUTE = "/product-management";
 export const USER_MANAGEMENT_ROUTE = "/user-management";
 export const ORDER_MANAGEMENT_ROUTE = "/order-management";

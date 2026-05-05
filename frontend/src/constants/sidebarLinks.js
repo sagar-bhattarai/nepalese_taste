@@ -1,5 +1,6 @@
 import {
     DASHBOARD_ROUTE,
+    ADMIN_DASHBOARD_ROUTE,
     PRODUCT_MANAGEMENT_ROUTE,
     USER_MANAGEMENT_ROUTE,
     ORDER_MANAGEMENT_ROUTE,
@@ -22,7 +23,7 @@ const adminSidebarLinks = [
     {
         Icon: FaChartPie,
         label: "Dashboard",
-        route: DASHBOARD_ROUTE
+        route: ADMIN_DASHBOARD_ROUTE
     },
     {
         Icon: BiSolidCategoryAlt,
