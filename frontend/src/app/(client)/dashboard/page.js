@@ -7,11 +7,13 @@ import { customerSummary } from "@/apis/dashboard.api";
 import { addOrder } from "@/apis/order.api";
 import productPlaceHolder from "../../../../public/product_placeholder.jpg"
 import IncDecInput from "@/components/products/inputAction/IncDecInput";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ORDER_MANAGEMENT_ROUTE, PROFILE_ROUTE } from "@/constants/routes";
 import { useSelector } from "react-redux";
 import Pagination from "@/components/products/Pagination";
 import SortBy from "@/components/products/Filters/SortBy";
+import ByCategories from "@/components/products/Filters/ByCategories";
+import Loading from "../../../components/Loader";
 
 
 const Dashboard = () => {
@@ -20,6 +22,9 @@ const Dashboard = () => {
     products: [],
     total: 0,
   });
+
+  // console.log(favourites.products )
+
   const [dashboardData, setDashboardData] = useState();
   const [quantities, setQuantities] = useState({})
   const [deliveryType, setDeliveryTypes] = useState({});
@@ -27,34 +32,64 @@ const Dashboard = () => {
   const [size, setSize] = useState(limit);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useSelector((state) => state.auth?.user?.userData);
-
-
 
   const DEFAULT_SORT = JSON.stringify({ createdAt: -1 });
   const [sort, setSort] = useState(DEFAULT_SORT);
+  const [category, setCategory] = useState("");
 
-  // useEffect(() => {
-  //   handleSort();
-  // }, [sort]);
+  useEffect(() => {
+    const params = new URLSearchParams();
 
-  // const handleSort = () => {
-  //   const params = new URLSearchParams();
-  //   params.set("sort", sort);
-  //   // router.push(`?sort=${sort}`);
-  //   router.push(`?${params.toString()}`);
-  // };
+    // keep only what you want
+    if (size) params.set("size", size);
 
+    if (sort) {
+      params.set("sort", sort);
+    }
+
+    if (category) {
+      params.set("category", category);
+    }
+
+    params.set("page", 1);
+
+    router.push(`?${params.toString()}`);
+  }, [sort, category]);
+
+
+  const handleSortChange = (value) => {
+    const params = new URLSearchParams();
+
+    params.set("sort", value);
+    if (category) params.set("category", category);
+
+    params.set("page", 1);
+
+    router.push(`?${params.toString()}`);
+  };
+
+
+  const handleCategoryChange = (value) => {
+    const params = new URLSearchParams();
+
+    params.set("category", value);
+    if (sort) params.set("sort", sort);
+
+    params.set("page", 1);
+
+    router.push(`?${params.toString()}`);
+  };
 
   const loadFavourites = async () => {
     if (loading) return;
     setLoading(true);
 
-    const response = await fetchAllFavourites({ page, size });
+    const params = Object.fromEntries(searchParams.entries());
 
-    if (response?.products) {
-      setFavourites({ products: response.products, total: response.total });
-    }
+    const response = await fetchAllFavourites({ ...params, page, size, });
+    setFavourites({ products: response.products, total: response.total });
 
     setLoading(false);
   };
@@ -70,7 +105,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadFavourites();
-  }, [page, size]);
+  }, [page, searchParams, size]);
 
 
   const handleQuantityChange = (productId, value) => {
@@ -92,13 +127,13 @@ const Dashboard = () => {
       deliveryPrice: Number(deliveryType[item?._id] || 0),
       orderItem: [
         {
-          price: Number(item.productId.productPrice * Number(quantities[item?._id] || 1)),
-          productId: item.productId._id,
+          price: Number(item.product.productPrice * Number(quantities[item?._id] || 1)),
+          productId: item.product._id,
           quantity: Number(quantities[item?._id] || 1)
         }
       ],
       shippingAddress: item.customerId.userAddress,
-      totalPrice: Number(item.productId.productPrice * Number(quantities[item?._id] || 1))
+      totalPrice: Number(item.product.productPrice * Number(quantities[item?._id] || 1))
     }
 
     const orderAdded = await addOrder(order);
@@ -113,9 +148,6 @@ const Dashboard = () => {
     loadFavourites();
   }
 
-  const handleFilter = async () => {
-
-  }
 
   return (
     <>
@@ -281,7 +313,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="relative h-auto border- border-slate-500- rounded-md- mt-2">
-                <SwiperCarousel products={dashboardData?.products} itemsToShow={(dashboardData?.products.length >= 3) ? 3 : 1} height={100} size={"small"} />
+                <SwiperCarousel products={dashboardData?.products } itemsToShow={(dashboardData?.products.length >= 3) ? 3 : 1} height={100} size={"small"} />
               </div>
               <p className="mx-auto mt-1.5 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
                 choose a product to be & feel lucky.
@@ -355,130 +387,136 @@ const Dashboard = () => {
                     <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" fill="" stroke="" strokeWidth="1.5"></path>
                     <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" fill="" stroke="" strokeWidth="1.5"></path>
                   </svg>
-                  Filter
-                  {/* <select 
-                  value={''}
-                  onChange={(e)=>handleFilter(e.target.value)}
-                  className="text-gray-900 text-sm cursor-pointer block w-full p-2 dark:hover:text-gray-500 bg-[#07070729]  dark:text-gray-600 outline-none border-none">
-                    <option>By Default</option>
-                    <option value={JSON.stringify({ price: -1 })}>By High to Low</option>
-                    <option value={JSON.stringify({ price: 1 })}>By Low to High</option>
-                    <option value={JSON.stringify({ createdAt: 1 })}>By A-Z</option>
-                    <option value={JSON.stringify({ createdAt: -1 })}>By Z-A</option>
-                  </select> */}
-                  <SortBy 
-                  setSort={setSort} 
-                  ItemName={"Products"} 
-                  classes={"text-gray-900 text-sm cursor-pointer block w-full p-2 dark:hover:text-gray-500 bg-[#07070729]  dark:text-gray-600 outline-none border-none"}/>
+                  Sort
+                  <SortBy
+                    setSort={handleSortChange}
+                    ItemName={"Favourites"}
+                    classes={"text-gray-900 text-sm cursor-pointer block w-full p-2 dark:hover:text-gray-500 bg-[#07070729]  dark:text-gray-600 outline-none border-none"} />
                 </button>
 
 
-                {/* <button className="text-theme-sm shadow-theme-xs inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100/50 px-4 py-2.5 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-                  See all
-                </button> */}
+                <button className="text-theme-sm shadow-theme-xs inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100/50 pl-4  font-medium text-gray-700  dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                  <svg className="stroke-current fill-white dark:fill-gray-800" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.29004 5.90393H17.7067" stroke="" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                    <path d="M17.7075 14.0961H2.29085" stroke="" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                    <path d="M12.0826 3.33331C13.5024 3.33331 14.6534 4.48431 14.6534 5.90414C14.6534 7.32398 13.5024 8.47498 12.0826 8.47498C10.6627 8.47498 9.51172 7.32398 9.51172 5.90415C9.51172 4.48432 10.6627 3.33331 12.0826 3.33331Z" fill="" stroke="" strokeWidth="1.5"></path>
+                    <path d="M7.91745 11.525C6.49762 11.525 5.34662 12.676 5.34662 14.0959C5.34661 15.5157 6.49762 16.6667 7.91745 16.6667C9.33728 16.6667 10.4883 15.5157 10.4883 14.0959C10.4883 12.676 9.33728 11.525 7.91745 11.525Z" fill="" stroke="" strokeWidth="1.5"></path>
+                  </svg>
+                  Filter
+                  <ByCategories
+                    setCategory={handleCategoryChange}
+                    classes={"text-gray-900 text-sm cursor-pointer block w-full p-2 dark:hover:text-gray-500 bg-[#07070729]  dark:text-gray-600 outline-none border-none"} />
+                </button>
               </div>
             </div>
 
             <div className="max-w-full overflow-x-auto custom-scrollbar ">
-              {favourites?.products?.map((item) => (
-                <div key={item._id} className="mb-4 main-box border dark:border-gray-700 border-gray-200 rounded-xl ">
-                  <div className="w-full px-3 min-[400px]:px-6">
-                    <div className="flex flex-col lg:flex-row items-center py-3  gap-6 w-full">
-                      <div className="img-box max-lg:w-full">
-                        <img src={item.productId.productImage || productPlaceHolder.src} alt="Premium Watch image"
-                          className="aspect-square w-full lg:max-w-18 rounded-xl object-cover text-gray-500 text-xs" />
-                      </div>
-                      <div className="flex flex-row items-center w-full ">
-                        <div className="grid grid-cols-1 lg:grid-cols-12 w-full">
-                          <div className="col-span-3 ">
-                            <h2 className="font-semibold text-base leading-5 text-black dark:text-gray-500 ">
-                              {item.productId.productName}</h2>
-                            <p className="font-normal text-xs leading-5 text-cyan-700 ">
-                              {item.productId.categoryId.categoryName}</p>
-                            <p className="font-normal text-base leading-5 text-gray-500">
-                              {item.productId.productDescription}</p>
+
+              {
+                loading 
+                  ?
+                  <Loading/>
+                  :
+                  favourites?.products?.map((item) => (
+                    <div key={item._id} className="mb-4 main-box border dark:border-gray-700 border-gray-200 rounded-xl ">
+                      <div className="w-full px-3 min-[400px]:px-6">
+                        <div className="flex flex-col lg:flex-row items-center py-3  gap-6 w-full">
+                          <div className="img-box max-lg:w-full">
+                            <img src={item.product.productImage || productPlaceHolder.src} alt="Premium Watch image"
+                              className="aspect-square w-full lg:max-w-18 rounded-xl object-cover text-gray-500 text-xs" />
                           </div>
-
-                          <div className="grid col-span-8">
-                            <div className="flex gap-4 lg:gap-8">
-                              <div className=" flex items-center m-auto">
-                                <div className="flex gap-3 lg:block">
-                                  <p className="font-medium text-sm leading-7 text-black dark:text-gray-600">Price</p>
-                                  <p className=" font-medium text-sm leading-7 text-indigo-600">Rs. {item.productId.productPrice}</p>
-                                </div>
+                          <div className="flex flex-row items-center w-full ">
+                            <div className="grid grid-cols-1 lg:grid-cols-12 w-full">
+                              <div className="col-span-3 ">
+                                <h2 className="font-semibold text-base leading-5 text-black dark:text-gray-500 ">
+                                  {item.product.productName}</h2>
+                                <p className="font-normal text-xs leading-5 text-cyan-700 ">
+                                  {item.category.categoryName}</p>
+                                <p className="font-normal text-base leading-5 text-gray-500">
+                                  {item.product.productDescription}</p>
                               </div>
 
-                              <div className=" flex items-center flex-col m-auto">
-                                <p className="font-medium text-sm leading-7 text-black dark:text-gray-600">
-                                  Quantity</p>
-                                <div className="mt-auto pt-2">
-                                  <IncDecInput
-                                    key={item._id}
-                                    quantity={quantities[item._id] || 1}
-                                    setQuantity={(val) => handleQuantityChange(item._id, val)}
-                                  />
-                                </div>
-                              </div>
+                              <div className="grid col-span-8">
+                                <div className="flex gap-4 lg:gap-8">
+                                  <div className=" flex items-center m-auto">
+                                    <div className="flex gap-3 lg:block">
+                                      <p className="font-medium text-sm leading-7 text-black dark:text-gray-600">Price</p>
+                                      <p className=" font-medium text-sm leading-7 text-indigo-600">Rs. {item.product.productPrice}</p>
+                                    </div>
+                                  </div>
 
-                              <div className="flex items-center flex-col m-auto">
-                                <p className="font-medium text-sm leading-7 text-black dark:text-gray-600 ">Delivery Type:</p>
-                                <select
-                                  className=" p-1 w-max text-sm border cursor-pointer dark:text-gray-600 light:text-black dark:border-gray-600 light:border-gray-300 rounded-md"
-                                  name="delivery_type"
-                                  id="delivery_type"
-                                  value={deliveryType[item._id] ?? 0}
-                                  onChange={(e) => handleDeliveryChange(item._id, e.target.value)}>
-                                  <option value={0}>Free Delivery</option>
-                                  <option value={15}>DHL Fast Delivery</option>
-                                  <option value={49}> Express Delivery</option>
-                                </select>
-                              </div>
+                                  <div className=" flex items-center flex-col m-auto">
+                                    <p className="font-medium text-sm leading-7 text-black dark:text-gray-600">
+                                      Quantity</p>
+                                    <div className="mt-auto pt-2">
+                                      <IncDecInput
+                                        key={item._id}
+                                        quantity={quantities[item._id] || 1}
+                                        setQuantity={(val) => handleQuantityChange(item._id, val)}
+                                      />
+                                    </div>
+                                  </div>
 
-                              <div className=" flex items-center m-auto">
-                                <div className="flex gap-3 lg:block">
-                                  <p className="font-medium text-sm  whitespace-nowrap leading-7 text-black dark:text-gray-600">
-                                    Expected Delivery Time</p>
-                                  <p className={`
+                                  <div className="flex items-center flex-col m-auto">
+                                    <p className="font-medium text-sm leading-7 text-black dark:text-gray-600 ">Delivery Type:</p>
+                                    <select
+                                      className=" p-1 w-max text-sm border cursor-pointer dark:text-gray-600 light:text-black dark:border-gray-600 light:border-gray-300 rounded-md"
+                                      name="delivery_type"
+                                      id="delivery_type"
+                                      value={deliveryType[item._id] ?? 0}
+                                      onChange={(e) => handleDeliveryChange(item._id, e.target.value)}>
+                                      <option value={0}>Free Delivery</option>
+                                      <option value={15}>DHL Fast Delivery</option>
+                                      <option value={49}> Express Delivery</option>
+                                    </select>
+                                  </div>
+
+                                  <div className=" flex items-center m-auto">
+                                    <div className="flex gap-3 lg:block">
+                                      <p className="font-medium text-sm  whitespace-nowrap leading-7 text-black dark:text-gray-600">
+                                        Expected Delivery Time</p>
+                                      <p className={`
                                   ${(deliveryType[item._id] == 0 || !deliveryType[item._id]) && "text-orange-500"}
                                   ${(deliveryType[item._id] == 15) && "text-amber-300"}
                                   ${(deliveryType[item._id] == 49) && "text-emerald-500"}
                                   font-medium text-sm whitespace-nowrap leading-7  text-center`}>
-                                    {(deliveryType[item._id] == 0 || !deliveryType[item._id]) && "with in 3 days"}
-                                    {(deliveryType[item._id] == 15) && "with in 2 days"}
-                                    {(deliveryType[item._id] == 49) && "with in a day"}
-                                  </p>
+                                        {(deliveryType[item._id] == 0 || !deliveryType[item._id]) && "with in 3 days"}
+                                        {(deliveryType[item._id] == 15) && "with in 2 days"}
+                                        {(deliveryType[item._id] == 49) && "with in a day"}
+                                      </p>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
+
+                            <button
+                              onClick={() => buyHandler(item)}
+                              className="transition-all duration-500  bg-green-100 text-green-600 hover:text-gray-200 hover:bg-green-700 border border-green-600 cursor-pointer  text-xs text-success-600 dark:bg-success-500/15 dark:text-success-500 rounded-full px-4 py-1 font-medium">
+                              Buy
+                            </button>
                           </div>
                         </div>
-
-                        <button
-                          onClick={() => buyHandler(item)}
-                          className="transition-all duration-500  bg-green-100 text-green-600 hover:text-gray-200 hover:bg-green-700 border border-green-600 cursor-pointer  text-xs text-success-600 dark:bg-success-500/15 dark:text-success-500 rounded-full px-4 py-1 font-medium">
-                          Buy
-                        </button>
                       </div>
+
+
+                      <div className="w-full border-t dark:border-gray-700 border-gray-200 pr-6 flex flex-col lg:flex-row items-center justify-between ">
+                        <button
+                          onClick={() => removeHandler(item._id)}
+                          className="flex py-2 pl-6 sm:pr-6 cursor-pointer  border rounded-bl-xl sm:border-r border-red-300 dark:border-red-900 text-red-500 hover:text-white  hover:bg-red-500 whitespace-nowrap gap-2 items-center justify-center font-medium group text-xs transition-all duration-500 ">
+                          <svg className="stroke-red-700 hover:stroke-white transition-all duration-300  " xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22"
+                            fill="">
+                            <path d="M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5" stroke="" strokeWidth="1.6"
+                              strokeLinecap="round" />
+                          </svg>
+                          Remove
+                        </button>
+                        <p className="font-medium text-base text-black dark:text-gray-600 ml-2">Total Price <span className="text-[10px]">(Tax inc) </span>: <span className="text-indigo-600">Rs. {(quantities[item._id] * item.product.productPrice) || item.product.productPrice} </span></p>
+                      </div>
+
                     </div>
-                  </div>
-
-
-                  <div className="w-full border-t dark:border-gray-700 border-gray-200 pr-6 flex flex-col lg:flex-row items-center justify-between ">
-                    <button
-                      onClick={() => removeHandler(item._id)}
-                      className="flex py-2 pl-6 sm:pr-6 cursor-pointer  border rounded-bl-xl sm:border-r border-red-300 dark:border-red-900 text-red-500 hover:text-white  hover:bg-red-500 whitespace-nowrap gap-2 items-center justify-center font-medium group text-xs transition-all duration-500 ">
-                      <svg className="stroke-red-700 hover:stroke-white transition-all duration-300  " xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22"
-                        fill="">
-                        <path d="M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5" stroke="" strokeWidth="1.6"
-                          strokeLinecap="round" />
-                      </svg>
-                      Remove
-                    </button>
-                    <p className="font-medium text-base text-black dark:text-gray-600 ml-2">Total Price <span className="text-[10px]">(Tax inc) </span>: <span className="text-indigo-600">Rs. {(quantities[item._id] * item.productId.productPrice) || item.productId.productPrice} </span></p>
-                  </div>
-
-                </div>
-              ))}
+                  ))
+              }
 
             </div>
           </div>

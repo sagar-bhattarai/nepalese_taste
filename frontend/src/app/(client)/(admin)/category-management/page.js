@@ -6,7 +6,7 @@ import { fetchAllCategories } from "@/apis/category.api";
 import { useState, useEffect } from "react";
 
 const categoryManagementPage = () => {
-  const limit = 3;
+  const limit = 10;
   const [categoryData, setCategoriessData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);

@@ -26,6 +26,17 @@ const ProductForm = ({ product, categories }) => {
         stock: product?.productStock || "",
         description: product?.productDescription || "",
       });
+
+      // Set existing image into state
+      if (product?.productImage) {
+        setSelectedImages([
+          {
+            url: product.productImage[0],
+            name: product.productName,
+            isExisting: true, // optional flag
+          },
+        ]);
+      }
     }
   }, [product, reset]);
 
@@ -40,13 +51,13 @@ const ProductForm = ({ product, categories }) => {
     setSelectedImages((prev) => [...prev, ...images]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: true });
 
   const removeImage = (index) => {
     setSelectedImages((prev) => prev.filter((_, i) => i != index));
   };
 
-  const submitForm = (data) => {    
+  const submitForm = (data) => {
     setLoading(true);
     const formData = new FormData();
 
@@ -63,7 +74,7 @@ const ProductForm = ({ product, categories }) => {
 
     if (selectedImages.length > 0) {
       selectedImages.forEach((image) => {
-        formData.append("productImage", image);
+        formData.append("productImage", image.file);
       });
     }
 
@@ -96,6 +107,14 @@ const ProductForm = ({ product, categories }) => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      selectedImages.forEach((img) => URL.revokeObjectURL(img.url));
+    };
+  }, []);
+
+
+
   return (
     <form onSubmit={handleSubmit(submitForm)}>
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -122,14 +141,19 @@ const ProductForm = ({ product, categories }) => {
           >
             Active*
           </label>
-          <input
+          {/* <input
             type="text"
             id="active"
             className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
             placeholder="true/false"
             required
             {...register("active")}
-          />
+          /> */}
+          <select {...register("active")}
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary">
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
+          </select>
         </div>
         <div className="w-full">
           <label
@@ -193,7 +217,7 @@ const ProductForm = ({ product, categories }) => {
             className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
           >
             <option value="">-- Select Category --</option>
-            {categories?.map((category)=>(
+            {categories?.map((category) => (
               <option key={category._id} value={category._id}>{category.categoryName}</option>
             ))}
           </select>
@@ -257,8 +281,8 @@ const ProductForm = ({ product, categories }) => {
               {selectedImages.map((image, index) => (
                 <div className="p-1 relative max-w-20" key={index}>
                   <Image
-                    src={image.url}
-                    alt="uploads"
+                    src={image?.url}
+                    alt={image.name}
                     height={70}
                     width={70}
                     className="border border-gray-600 rounded-lg h-16 object-cover"

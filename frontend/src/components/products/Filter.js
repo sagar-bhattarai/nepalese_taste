@@ -8,7 +8,8 @@ import ByCategories from "./Filters/ByCategories";
 import SortBy from "./Filters/SortBy";
 import ByBrand from "./Filters/ByBrand";
 
-const DEFAULT_SORT = JSON.stringify({ createdAt: -1 });
+// const DEFAULT_SORT = JSON.stringify({ createdAt: -1 });
+const DEFAULT_SORT = "latest";
 const MIN_PRICE = 0;
 const MAX_PRICE = 9999999;
 
@@ -60,14 +61,6 @@ const Filter = () => {
             {/* search */}
             <div className="w-full mt-4">
                 <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600" >Search:</h4>
-                {/* <div >
-                    <input
-                        name="name"
-                        id="name"
-                        type="text"
-                        className="dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 w-full p-1 mt-1 border  rounded-md"
-                        onChange={(e) => setSearchByName(e.target.value)} />
-                </div> */}
                 <SearchByName
                     setSearchByName={setSearchByName}
                     classes={"dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 w-full p-1 mt-1 border  rounded-md"} />
@@ -76,18 +69,6 @@ const Filter = () => {
             {/* sort by */}
             <div className="w-full mt-4">
                 <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600 mb-1">Sort By:</h4>
-                {/* <select
-                    className="w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
-                    name="sort"
-                    id="sort"
-                    onChange={(e) => setSort(e.target.value)}>
-                    <option value={JSON.stringify({ createdAt: -1 })}>Latest Products</option>
-                    <option value={JSON.stringify({ createdAt: 1 })}>Oldest Products</option>
-                    <option value={JSON.stringify({ price: -1 })}>Price: High to Low</option>
-                    <option value={JSON.stringify({ price: 1 })}>Price: Low to High</option>
-                    <option value={JSON.stringify({ name: 1 })}>Name: A - Z</option>
-                    <option value={JSON.stringify({ name: -1 })}>Name: Z - A</option>
-                </select> */}
                 <SortBy
                     setSort={setSort}
                     ItemName={"Products"}
@@ -97,16 +78,6 @@ const Filter = () => {
             {/* categories */}
             <div className="w-full mt-4">
                 <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600">Categories:</h4>
-                {/* <select
-                    className="w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
-                    name="category"
-                    id="category"
-                    onChange={(e) => setCategory(e.target.value)}>
-                    <option value="">Select Category</option>
-                    <option value="smartphones">smartphones</option>
-                    <option value="laptops">laptops</option>
-                    <option value="smartwatches">smartwatches</option>
-                </select> */}
                 <ByCategories 
                 setCategory={setCategory}
                 classes={"w-full p-1 mt-1 text-sm border dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"} />
@@ -141,34 +112,6 @@ const Filter = () => {
             {/* brand */}
             <div className="w-full mt-4">
                 <h4 className="dark:text-gray-600 light:text-black dark:border-slate-600">Brand:</h4>
-                {/* <div className="flex items-center gap-1 ml-1">
-                    <input
-                        name="apple"
-                        id="apple"
-                        type="checkbox"
-                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
-                        onChange={() => handleBrandChange("apple")} />
-                    <label className="text-xs text-gray-500" htmlFor="apple">Apple</label>
-                </div>
-                <div className="flex items-center gap-1 ml-1">
-                    <input
-                        name="google"
-                        id="google"
-                        type="checkbox"
-                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
-                        onChange={() => handleBrandChange("google")} />
-                    <label className="text-xs text-gray-500" htmlFor="google">Google</label>
-                </div>
-                <div className="flex items-center gap-1 ml-1">
-                    <input
-                        name="samsung"
-                        id="samsung"
-                        type="checkbox"
-                        className="border dark:accent-primary dark:text-gray-600 light:text-black dark:border-slate-600 light:border-gray-300 rounded-md"
-                        onChange={() => handleBrandChange("samsung")} />
-                    <label className="text-xs text-gray-500" htmlFor="samsung">Samsung</label>
-                </div> */}
-
                 <ByBrand handleBrandChange={handleBrandChange} />
             </div>
 
