@@ -10,13 +10,15 @@ import { useSelector } from "react-redux";
 const ProductCard = ({ product }) => {
   const user = useSelector((state) => state.auth?.user?.userData);
 
+  // console.log("product.productImage",product.productImage)
+
   return (
     <div className="transition duration-200 hover:bottom-1 relative w-full h-max max-w-[16rem] min-w-[245px] bg-neutral-primary-soft p-4 border dark:border-gray border-gray-200 rounded-lg shadow-md hover:shadow-lg dark:bg-gray-900 bg-white">
       {user && <AddToFavourites product={product} />}
       <p className="brand absolute rounded-xl text-sm right-[10px] bg-amber-600 dark:text-black text-white px-3 py-0.5 " >{product.brand}</p>
       <Link href={`/products/${product._id}`}>
-        {/* <Image className="rounded-base mb-6 min-h-[10rem]" src={product.images[0]} alt="product image"  height={300} width={200}/> */}
-        <Image className="rounded-base mb-6 min-h-[10rem]" src={pimage} alt="product image" height={300} width={200} />
+        <Image className="rounded-base mb-6 max-h-50" src={product.productImage ? product.productImage[0] : pimage} alt="product image"  height={200} width={200}/>
+        {/* <Image className="rounded-base mb-6 min-h-[10rem]" src={pimage} alt="product image" height={300} width={200} /> */}
       </Link>
       <div>
         <div className="flex items-center space-x-3 mb-2">

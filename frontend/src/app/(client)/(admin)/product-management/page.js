@@ -6,7 +6,7 @@ import { fetchAllProducts } from "@/apis/product.api";
 import { useState, useEffect } from "react";
 
 const productManagementPage = () => {
-  const limit = 3;
+  const limit = 12;
   const [productsData, setProductsData] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
