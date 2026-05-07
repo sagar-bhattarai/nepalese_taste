@@ -15,6 +15,7 @@ const categorySchema = new mongoose.Schema(
       required: [true, "Description is required"],
       trim: true
     },
+    categoryImage: String,
   },
   {
     timestamps: true,

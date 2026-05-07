@@ -1,42 +1,41 @@
 import UserModel from "../models/User.model.js";
 import OtpModel from "../models/Otp.model.js";
-import uploadImage from "../utility/uploadImage.js";
+import uploadOnCloudinary from "../utility/cloudinary.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import sendMail from "../utility/mail.js";
 
 const all = async (req) => {
-      const page = Number(req.query.page) || 1;
-      const size = Number(req.query.size) || 3;
-      const skip = (page - 1) * size;
-    
-      const [users, total, Active, Verified] = await Promise.all([
+    const page = Number(req.query.page) || 1;
+    const size = Number(req.query.size) || 3;
+    const skip = (page - 1) * size;
+
+    const [users, total, Active, Verified] = await Promise.all([
         UserModel.find()
-          .limit(size)
-          .skip(skip),
+            .limit(size)
+            .skip(skip),
         UserModel.countDocuments(),
         UserModel.countDocuments({ isActive: true }),
         UserModel.countDocuments({ isEmailVerified: true }),
-      ]);
-    
-    
-      if (!users) {
+    ]);
+
+
+    if (!users) {
         throw {
-          statusFromService: 404,
-          msgFromService: "no any users found",
+            statusFromService: 404,
+            msgFromService: "no any users found",
         };
-      }
-    
-      return { users: [...users], total: total, active: Active, verified: Verified };
+    }
+
+    return { users: [...users], total: total, active: Active, verified: Verified };
 }
 
 const single = async (id) => {
-    return await UserModel.findById(id);
+    return await UserModel.findById(id).select('-userPassword -refreshToken');
 }
 
 const edit = async (req) => {
-
-    const user = await UserModel.findById(req.params.id);
+    const user = await UserModel.findById(req.params.id).select('-userPassword -refreshToken');
 
     if (!user) {
         throw {
@@ -45,19 +44,41 @@ const edit = async (req) => {
         };
     }
 
-    let url = await uploadImage(req.body?.profileImage);
-    if (!url) {
-        url = user.profileImage;
+    const imagePath = req.files?.[0]?.path;
+
+    let imageUploaded = null;
+    if (imagePath) {
+        imageUploaded = await uploadOnCloudinary(imagePath);
+        // console.log("imageUploaded", imageUploaded)
+        if (!imageUploaded) {
+            throw {
+                statusFromService: 409,
+                msgFromService: "Error while image upload.",
+            };
+        }
     }
 
-    // console.log(" req.body.userRoles", req.body.userRoles)
+
+    let adminEdits={
+        role:"",
+        active:"",
+        emailVerified:"",
+    };
+    if(user?.userRoles?.includes('ADMIN')){
+        adminEdits.role = req.body.userRoles 
+        adminEdits.active = req.body.isActive 
+        adminEdits.emailVerified = req.body.isEmailVerified 
+    }
+    // console.log("adminEdits",adminEdits)
+
     const data = {
-        userName: req.body.userName ?? user.userName,
-        userAddress: req.body.userAddress ?? user.userAddress,
-        userRoles: req.body.userRoles ?? user.userRoles,
-        isActive: req.body.isActive ?? user.isActive,
-        isEmailVerified: req.body.isEmailVerified ?? user.isEmailVerified,
-        profileImage: url ?? "",
+        userName: req.body?.userName || user.userName,
+        userAddress: req.body?.userAddress || user.userAddress,
+        profileImage: imageUploaded?.url || user?.profileImage,
+
+        userRoles: adminEdits.role || user.userRoles,
+        isActive: adminEdits.active || user.isActive,
+        isEmailVerified: adminEdits.emailVerified || user.isEmailVerified,
     }
 
     return await UserModel.findByIdAndUpdate(req.params.id, data, { returnDocument: "after" }).select("-userPassword -refreshToken -createdAt -updatedAt -__v");
@@ -95,7 +116,7 @@ const generateOtp = async (id) => {
             otp: hashedOtp.toString(),
             expiry
         },
-        { upsert: true, returnDocument: "after"}
+        { upsert: true, returnDocument: "after" }
     );
 
     if (!saved) {

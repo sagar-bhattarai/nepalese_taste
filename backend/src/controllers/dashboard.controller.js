@@ -29,7 +29,6 @@ const getAdminDashboardData = async (req, res) => {
 
 
   } catch (error) {
-console.log(error)
     return res
       .status(error.statusFromService || 500)
       .json({ message: error.msgFromService || "server error while fetching admins all dashboard datas." })
@@ -37,5 +36,23 @@ console.log(error)
   }
 };
 
+const getAdminChartsData = async (req, res) => {
+  try {
+    const adminDashboardDataSummary = await dashboardData.chartsData();
 
-export { getCustomerDashboardData, getAdminDashboardData };
+    return res
+      .status(200)
+      .json({ api: config.api, summary: adminDashboardDataSummary, message: "admin charts datas fetched successfully." });
+
+
+  } catch (error) {
+    return res
+      .status(error.statusFromService || 500)
+      .json({ message: error.msgFromService || "server error while fetching admins charts datas." })
+
+  }
+};
+
+
+
+export { getCustomerDashboardData, getAdminDashboardData, getAdminChartsData };
