@@ -2,8 +2,8 @@ import { addProduct, getAllProduct, updateProduct, getProductById, toggleActiveS
 import express from "express";
 import auth from "../middlewares/auth.middleware.js";
 import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
-import { CUSTOMER, MERCHANT, ADMIN, STAFF } from "../constants/roles.constant.js"
-;import {upload} from "../middlewares/multer.middleware.js";
+import { CUSTOMER, MERCHANT, ADMIN, STAFF } from "../constants/roles.constant.js";
+import {upload} from "../middlewares/multer.middleware.js";
 
 import zodValidator from "../middlewares/zodValidator.middleware.js";
 import productSchema from "../zod/products/addProduct.schema.js";
@@ -15,7 +15,7 @@ const router = express.Router();
 /** 
  * POST /api/products/add
 */
-router.post("/add", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(productSchema), addProduct);
+router.post("/add", auth, roleBasedAuth(ADMIN), upload.array("productImage"), zodValidator(productSchema), addProduct);
 
 
 /** 
@@ -51,7 +51,7 @@ router.get("/toggleStatus/:id", auth, roleBasedAuth(ADMIN), toggleActiveStatus);
  * PATCH /api/products/update/:id
  *       /api/products/:id/admin-update
 */
-router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(updateProductSchema), updateProduct);   
+router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("productImage"), zodValidator(updateProductSchema), updateProduct);   
 // router.patch("/:id/update", auth, roleBasedAuth(ADMIN), zodValidator(updateProductSchema), updateProduct);
 // router.patch("/update/:id", auth, roleBasedAuth(ADMIN), upload.array("images"), zodValidator(updateProductSchema), updateProduct);
 

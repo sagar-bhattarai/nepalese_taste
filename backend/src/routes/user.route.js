@@ -5,7 +5,7 @@ import { updateUser, deactivateUser, sendOtp, resetPassword, verifyEmail, update
 import auth from "../middlewares/auth.middleware.js";
 import {upload} from "../middlewares/multer.middleware.js";
 import roleBasedAuth from "../middlewares/roleBasedAuth.middleware.js";
-import { ADMIN } from "../constants/roles.constant.js";
+import { ADMIN, CUSTOMER } from "../constants/roles.constant.js";
 
 import zodValidator from "../middlewares/zodValidator.middleware.js";
 import registerSchema from "../zod/users/register.schema.zod.js";
@@ -57,11 +57,12 @@ router.get("/verify-email", auth, verifyEmail);
 /** 
  * GET /api/users/user/:id
 */
-router.get("/user/:id", auth, roleBasedAuth(ADMIN), getUserById);
+// router.get("/user/:id", auth, roleBasedAuth(ADMIN), getUserById);
+router.get("/user/:id", auth, roleBasedAuth([CUSTOMER, ADMIN]), getUserById);
 /** 
  * PUT /api/users/update/:id
 */
-router.patch("/update/:id", upload.single('profileImage'), auth, roleBasedAuth(ADMIN), updateUser);
+router.patch("/update/:id", upload.array('profileImage'), auth, roleBasedAuth([ADMIN, CUSTOMER]), updateUser);
 /** 
  * PUT /api/users/update-user-role/:id
 */

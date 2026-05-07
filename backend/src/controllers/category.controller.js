@@ -3,7 +3,7 @@ import config from "../configs/config.js";
 
 const addCategory = async (req, res) => {
   try {
-    const catAdded = await categoryService.add(req.body);
+    const catAdded = await categoryService.add(req);
 
     return res.status(200).json(
       {

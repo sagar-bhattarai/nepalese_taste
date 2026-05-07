@@ -13,34 +13,6 @@ const findProductOnDb = async (productIdOrName, searchType) => {
 };
 
 const create = async (req) => {
-  // const {
-  //   productName,
-  //   productDescription,
-  //   categoryId,
-  //   brand,
-  //   attributes,
-  //   productPrice,
-  //   oldPrice,
-  //   productStock,
-  // } = req.body;
-
-  // const vendorId = req.user._id;
-
-  // const category = await CategoryModel.findById(categoryId);
-  // if (!category) throw new Error("Invalid category");
-
-  // const listing = await ProductModel.create({
-  //   vendorId,
-  //   productId: product._id,
-  //   publicSku,
-  //   productPrice,
-  //   oldPrice,
-  //   productStock,
-  // });
-
-  // return { product, listing };
-
-
   const existingProduct = await findProductOnDb(req.body.productName, "name");
   if (existingProduct) {
     throw {
@@ -49,13 +21,13 @@ const create = async (req) => {
     };
   }
 
-  const imagePath = req.files?.productImage?.[0]?.path;
+  // const imagePath = req.files?.productImage?.[0]?.path;
+  const imagePath = req.files?.[0]?.path;
+
   let imageUploaded = null;
   if (imagePath) {
     imageUploaded = await uploadOnCloudinary(imagePath);
-
     // console.log("imageUploaded", imageUploaded)
-
     if (!imageUploaded) {
       throw {
         statusFromService: 409,
@@ -71,7 +43,6 @@ const create = async (req) => {
 
   return await newProduct.save();
 };
-
 
 const single = async (req) => {
 
@@ -104,7 +75,7 @@ const single = async (req) => {
   };
 };
 
-const edit = async (req, res) => {   // adminUpdateProduct
+const edit = async (req, res) => { // adminUpdateProduct
   const productOnDb = await findProductOnDb(req.params.id, "id");
 
   if (!productOnDb) {
@@ -114,6 +85,19 @@ const edit = async (req, res) => {   // adminUpdateProduct
     };
   }
 
+  const imagePath = req.files?.[0]?.path;
+  let imageUploaded = null;
+  if (imagePath) {
+    imageUploaded = await uploadOnCloudinary(imagePath);
+    // console.log("imageUploaded", imageUploaded)
+    if (!imageUploaded) {
+      throw {
+        statusFromService: 409,
+        msgFromService: "Error while image upload.",
+      };
+    }
+  }
+
   const { productName, productDescription, productPrice, productStock, categoryId, isActive } = req.body;
   const updateThis = {
     productName: productName || productOnDb.productName,
@@ -121,7 +105,8 @@ const edit = async (req, res) => {   // adminUpdateProduct
     productPrice: productPrice || productOnDb.productPrice,
     productStock: productStock || productOnDb.productStock,
     categoryId: categoryId || productOnDb.categoryId,
-    isActive: isActive || productOnDb.isActive
+    isActive: isActive || productOnDb.isActive,
+    productImage: imageUploaded?.url || productOnDb.imageUploaded,
   }
 
   const edited = await ProductModel.findByIdAndUpdate(
@@ -142,7 +127,7 @@ const edit = async (req, res) => {   // adminUpdateProduct
 
 const getProducts = async (req) => {
   const page = Number(req.query.page) || 1;
-  const size = Number(req.query.size) || 3;
+  const size = Number(req.query.size) || 12;
   const skip = (page - 1) * size;
 
   const { category, sort, min, max, name, brands } = req.query;
