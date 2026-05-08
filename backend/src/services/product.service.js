@@ -21,24 +21,43 @@ const create = async (req) => {
     };
   }
 
-  // const imagePath = req.files?.productImage?.[0]?.path;
-  const imagePath = req.files?.[0]?.path;
+  // const imagePath = req.files?.[0]?.path;
+  // let imageUploaded = null;
+  // if (imagePath) {
+  //   imageUploaded = await uploadOnCloudinary(imagePath);
+  //   // console.log("imageUploaded", imageUploaded)
+  //   if (!imageUploaded) {
+  //     throw {
+  //       statusFromService: 409,
+  //       msgFromService: "Error while image upload.",
+  //     };
+  //   }
+  // }
 
-  let imageUploaded = null;
-  if (imagePath) {
-    imageUploaded = await uploadOnCloudinary(imagePath);
-    // console.log("imageUploaded", imageUploaded)
-    if (!imageUploaded) {
-      throw {
-        statusFromService: 409,
-        msgFromService: "Error while image upload.",
-      };
-    }
+  const imagePaths = req.files?.map((file) => file.path);
+  let uploadedImages = [];
+
+  if (imagePaths?.length > 0) {
+    uploadedImages = await Promise.all(
+      imagePaths.map(async (path) => {
+        const uploaded = await uploadOnCloudinary(path);
+
+        if (!uploaded) {
+          throw {
+            statusFromService: 409,
+            msgFromService: "Error while image upload.",
+          };
+        }
+
+        return uploaded.url;
+      })
+    );
   }
 
   const newProduct = await ProductModel({
     ...req.body,
-    productImage: imageUploaded?.url || null,
+    // productImage: imageUploaded?.url || null,
+    productImage: uploadedImages || null
   });
 
   return await newProduct.save();
@@ -85,17 +104,36 @@ const edit = async (req, res) => { // adminUpdateProduct
     };
   }
 
-  const imagePath = req.files?.[0]?.path;
-  let imageUploaded = null;
-  if (imagePath) {
-    imageUploaded = await uploadOnCloudinary(imagePath);
-    // console.log("imageUploaded", imageUploaded)
-    if (!imageUploaded) {
-      throw {
-        statusFromService: 409,
-        msgFromService: "Error while image upload.",
-      };
-    }
+  // const imagePath = req.files?.[0]?.path;
+  // let imageUploaded = null;
+  // if (imagePath) {
+  //   imageUploaded = await uploadOnCloudinary(imagePath);
+  //   // console.log("imageUploaded", imageUploaded)
+  //   if (!imageUploaded) {
+  //     throw {
+  //       statusFromService: 409,
+  //       msgFromService: "Error while image upload.",
+  //     };
+  //   }
+  // }
+
+  const imagePaths = req.files?.map((file) => file.path);
+  let uploadedImages = [];
+
+  if (imagePaths?.length > 0) {
+    uploadedImages = await Promise.all(
+      imagePaths.map(async (path) => {
+        const uploaded = await uploadOnCloudinary(path);
+
+        if (!uploaded) {
+          throw {
+            statusFromService: 409,
+            msgFromService: "Error while image upload.",
+          };
+        }
+        return uploaded.url;
+      })
+    );
   }
 
   const { productName, productDescription, productPrice, productStock, categoryId, isActive } = req.body;
@@ -106,7 +144,9 @@ const edit = async (req, res) => { // adminUpdateProduct
     productStock: productStock || productOnDb.productStock,
     categoryId: categoryId || productOnDb.categoryId,
     isActive: isActive || productOnDb.isActive,
-    productImage: imageUploaded?.url || productOnDb.imageUploaded,
+    // productImage: imageUploaded?.url,
+    // productImage: uploadedImages || null,
+    productImage: [...(productOnDb.productImage || []), ...uploadedImages,],
   }
 
   const edited = await ProductModel.findByIdAndUpdate(
