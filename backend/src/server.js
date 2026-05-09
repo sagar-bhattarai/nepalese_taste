@@ -50,7 +50,7 @@ import commentRouter from "./routes/comment.route.js";
 import starReviewRouter from "./routes/starReview.route.js";
 import favouriteRouter from "./routes/favourite.route.js";
 import dashboardRouter from "./routes/dashboard.route.js";
-import testinomialRouter from "./routes/testinomial.route.js";
+import testimonialRouter from "./routes/testimonial.route.js";
 
 server.use("/api/v1/users", userRouter);
 server.use("/api/v1/products", productRouter);
@@ -64,7 +64,7 @@ server.use("/api/v1/comments", commentRouter);
 server.use("/api/v1/starReviews", auth, starReviewRouter);
 server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER), favouriteRouter);
 server.use("/api/v1/dashboard", auth,  dashboardRouter);
-server.use("/api/v1/testinomials", auth, roleBasedAuth(CUSTOMER), testinomialRouter);
+server.use("/api/v1/testimonials", testimonialRouter);
 
 
 export { server };
