@@ -200,7 +200,7 @@ const all = async (req) => {
             $sort: { [sortBy]: order }
         },
 
-        // 👤 customer join
+        //  customer join
         {
             $lookup: {
                 from: "users",
@@ -211,7 +211,7 @@ const all = async (req) => {
         },
         { $unwind: "$customer" },
 
-        // 🛒 lookup products INSIDE items
+        //  lookup products INSIDE items
         {
             $lookup: {
                 from: "products",
@@ -221,7 +221,7 @@ const all = async (req) => {
             }
         },
 
-        // 🔥 merge product into items
+        //  merge product into items
         {
             $addFields: {
                 items: {
@@ -251,7 +251,7 @@ const all = async (req) => {
             }
         },
 
-        // 📦 category lookup inside each product
+        //  category lookup inside each product
         {
             $lookup: {
                 from: "categories",
@@ -261,7 +261,7 @@ const all = async (req) => {
             }
         },
 
-        // 🎯 final projection
+        //  final projection
         {
             $project: {
                 _id: 1,
