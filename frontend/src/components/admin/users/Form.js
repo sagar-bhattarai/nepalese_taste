@@ -22,24 +22,17 @@ const UserForm = (id) => {
   }, []);
 
   const state = useSelector((state) => state);
-  // const user = state.auth.user.userData|| state.auth.user.userData;
+  // const user = state.auth.user.userData || state.auth.user.userData;
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const { register, handleSubmit, reset } = useForm();
+
   useEffect(() => {
     if (user) {
       reset({
-        // name: user.userName || "",
-        // email: user.userEmail || "",
-        // address: user.userAddress || "",
-        // roles: user.userRoles.map(role => role) || "",
-        // active: user.isActive || "",
-        // verified: user.isEmailVerified || "",
-        // code: user.userCode || "",
-        // password: user.userPassword || "",
         name: user.userName ?? "",
         email: user.userEmail ?? "",
         address: user.userAddress ?? "",
@@ -49,13 +42,23 @@ const UserForm = (id) => {
         // code: user.userCode ?? "",
         password: user.userPassword ?? "",
       });
+
+      // Set existing image into state
+      if (user?.profileImage) {
+        setSelectedImages([
+          {
+            url: user.profileImage,
+            name: user.userName,
+            isExisting: true, // optional flag
+          },
+        ]);
+      }
     }
   }, [user, reset]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const images = acceptedFiles.map((file) => ({
       file, // keep original File
-      // ...file,
       url: URL.createObjectURL(file),
       name: file.name,
       size: file.size,
@@ -63,14 +66,13 @@ const UserForm = (id) => {
     setSelectedImages((prev) => [...prev, ...images]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: true });
 
   const removeImage = (index) => {
     setSelectedImages((prev) => prev.filter((_, i) => i != index));
   };
 
   const submitForm = (data) => {
-    console.log("data",data)
     setLoading(true);
     const formData = new FormData();
 
@@ -86,7 +88,7 @@ const UserForm = (id) => {
 
     if (selectedImages.length > 0) {
       selectedImages.forEach((image) => {
-        formData.append("profileImage", image);
+        formData.append("profileImage", image.file);
       });
     }
 
@@ -118,6 +120,12 @@ const UserForm = (id) => {
         .finally(() => setLoading(false));
     }
   };
+
+  useEffect(() => {
+    return () => {
+      selectedImages.forEach((img) => URL.revokeObjectURL(img.url));
+    };
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(submitForm)}>
@@ -219,22 +227,6 @@ const UserForm = (id) => {
             {...register("verified")}
           />
         </div>
-        {/* <div>
-          <label
-            htmlFor="code"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            User code
-          </label>
-          <input
-            disabled={user && true}
-            type="text"
-            id="code"
-            className={`${user && 'disabled:text-gray-100/20'} bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary`}
-            placeholder="usr-012"
-            {...register("code")}
-          />
-        </div> */}
         <div className="sm:col-span-2">
           <label
             htmlFor="password"
@@ -292,8 +284,8 @@ const UserForm = (id) => {
               {selectedImages.map((image, index) => (
                 <div className="p-1 relative max-w-20" key={index}>
                   <Image
-                    src={image.url}
-                    alt="uploads"
+                    src={image?.url}
+                    alt={image.name}
                     height={70}
                     width={70}
                     className="border border-gray-600 rounded-lg h-16 object-cover"
@@ -310,21 +302,6 @@ const UserForm = (id) => {
             </div>
           )}
         </div>
-        {/* <div className="sm:col-span-2">
-          <label
-            htmlFor="description"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Description
-          </label>
-          <textarea
-            id="description"
-            rows="5"
-            className="block p-2.5 w-full text-sm text-gray-900 bg-[#07070729] rounded-lg border border-gray-300 focus:ring-purple-600 focus:border-purple-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
-            placeholder="Your description here"
-            {...register("description")}
-          ></textarea>
-        </div> */}
       </div>
       <button
         type="submit"

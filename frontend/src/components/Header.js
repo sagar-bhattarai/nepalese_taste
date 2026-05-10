@@ -7,7 +7,7 @@ import { WiDaySunny } from "react-icons/wi";
 import { GiNightSky } from "react-icons/gi";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleTheme } from "@/redux/userPreference/userPreferencesSlice";
-import {FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import User from "./User";
 import logo from "../../public/logo.png";
 import Image from "next/image";
@@ -16,7 +16,7 @@ import CartTotal from "./CartTotal";
 const Header = () => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state);
-  const user = state.auth?.user?.userData 
+  const user = state.auth?.user?.userData
   const [toggle, setToggle] = useState(false);
   const [show, setShow] = useState(false);
 
@@ -70,7 +70,7 @@ const Header = () => {
             // src="https://readymadeui.com/readymadeui.svg"
             src={logo}
             alt="logo"
-            className="md:w-[50px] w-[50x]"
+            className="md:w-[50px] w-[50x] rounded-full"
             height={50}
             width={50}
           />
@@ -84,7 +84,18 @@ const Header = () => {
                 onClick={() => setShow(!show)}
                 className="cursor-pointer border-2 rounded-full h-9 w-9 flex justify-center items-center hover:bg-primary light:hover:text-white"
               >
-                <FaUser />
+                {(user?.profileImage)
+                  ?
+                  <Image
+                    alt={`${user?.userName}'s profile image`}
+                    src={user.profileImage}
+                    height={50}
+                    width={50}
+                    className="md:w-[50px] w-[50x] rounded-full text-[8px] overflow-hidden"
+                  />
+                  :
+                  <FaUser />
+                }
               </button>
               {show && <User userEmail={user?.userEmail} setShow={setShow} />}
             </div>

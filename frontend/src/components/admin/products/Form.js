@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 const ProductForm = ({ product, categories }) => {
-
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -28,14 +27,23 @@ const ProductForm = ({ product, categories }) => {
       });
 
       // Set existing image into state
-      if (product?.productImage) {
-        setSelectedImages([
-          {
-            url: product.productImage[0],
-            name: product.productName,
-            isExisting: true, // optional flag
-          },
-        ]);
+      // if (product?.productImage) {
+      //   setSelectedImages([
+      //     {
+      //       url: product.productImage[0],
+      //       name: product.productName,
+      //       isExisting: true, // optional flag
+      //     },
+      //   ]);
+      // }
+      if (product?.productImage?.length > 0) {
+        const existingImages = product.productImage.map((img, index) => ({
+          url: img,
+          name: `product-${index}`,
+          isExisting: true,
+        }));
+
+        setSelectedImages(existingImages);
       }
     }
   }, [product, reset]);
@@ -43,16 +51,15 @@ const ProductForm = ({ product, categories }) => {
   const onDrop = useCallback((acceptedFiles) => {
     const images = acceptedFiles.map((file) => ({
       file, // keep original File
-      // ...file,
       url: URL.createObjectURL(file),
       name: file.name,
       size: file.size,
+      isExisting: false,
     }));
     setSelectedImages((prev) => [...prev, ...images]);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop, multiple: true });
-
   const removeImage = (index) => {
     setSelectedImages((prev) => prev.filter((_, i) => i != index));
   };
@@ -282,7 +289,7 @@ const ProductForm = ({ product, categories }) => {
                 <div className="p-1 relative max-w-20" key={index}>
                   <Image
                     src={image?.url}
-                    alt={image.name}
+                    alt={image.name || "product image"}
                     height={70}
                     width={70}
                     className="border border-gray-600 rounded-lg h-16 object-cover"

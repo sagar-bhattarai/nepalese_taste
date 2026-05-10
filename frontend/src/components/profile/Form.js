@@ -3,7 +3,7 @@ const ProfileForm = () => {
   return (
 <div className="mt-5">
   <h1 className=" max-w-4xl pb-4 mx-auto text-3xl dark:text-gray-600">Edit Profile</h1>
-      <form className="p-6 max-w-4xl mx-auto">
+      {/* <form className="p-6 max-w-4xl mx-auto">
       <div className="grid sm:grid-cols-2 gap-10">
         <div className="relative flex items-center">
           <label className="text-[13px] bg-lightBackground dark:bg-darkBackground dark:text-gray-400  5ont-medium absolute px-2 top-[-10px] left-[18px]">First
@@ -101,7 +101,7 @@ const ProfileForm = () => {
 
       <button type="button"
         className="mt-10 px-6 py-2.5 w-full text-sm font-medium bg-primary  text-white rounded-sm hover:bg-purple-600 transition-all cursor-pointer">Submit</button>
-    </form>
+    </form> */}
 </div>
   )
 }

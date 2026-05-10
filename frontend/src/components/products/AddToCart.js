@@ -11,7 +11,7 @@ const AddToCart = ({ product, quantity, type = "circle" }) => {
     const handleAddToCart = () => {
         // dispatch(addToCart(product));
         dispatch(addToCart({ ...product, quantity }));
-        toast.success(product.productName + "added to cart");
+        toast.success(product.productName + " added to cart");
     }
     return (
         <div>
