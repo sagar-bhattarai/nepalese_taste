@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import Link from 'next/link';
-import {HOME_ROUTE, CONTACT_US_ROUTE, ABOUT_US_ROUTE, BLOG_ROUTE, SUGGESTIONS_ROUTE, TESTINOMIALS_ROUTE, HEALTH_TIPS_ROUTE, TERMS_AND_CONDITIONS_ROUTE, PRIVACY_POLICY_ROUTE, SECURITY_ROUTE} from "../constants/routes";
+import {HOME_ROUTE, CONTACT_US_ROUTE, ABOUT_US_ROUTE, BLOG_ROUTE, SUGGESTIONS_ROUTE, testimonialS_ROUTE, HEALTH_TIPS_ROUTE, TERMS_AND_CONDITIONS_ROUTE, PRIVACY_POLICY_ROUTE, SECURITY_ROUTE} from "../constants/routes";
 
 const Footer = () => {
   return (
@@ -112,7 +112,7 @@ const Footer = () => {
                 <Link href={SUGGESTIONS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Suggestion</Link>
               </li>
               <li>
-                <Link href={TESTINOMIALS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">Testinomials</Link>
+                <Link href={testimonialS_ROUTE} className="hover:text-primary text-slate-400 text-sm font-normal">testimonials</Link>
               </li>
             </ul>
           </div>

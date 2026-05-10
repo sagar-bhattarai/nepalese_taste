@@ -10,8 +10,6 @@ import { useSelector } from "react-redux";
 const ProductCard = ({ product }) => {
   const user = useSelector((state) => state.auth?.user?.userData);
 
-  // console.log("product.productImage",product.productImage)
-
   return (
     <div className="transition duration-200 hover:bottom-1 relative w-full h-max max-w-[16rem] min-w-[245px] bg-neutral-primary-soft p-4 border dark:border-gray border-gray-200 rounded-lg shadow-md hover:shadow-lg dark:bg-gray-900 bg-white">
       {user && <AddToFavourites product={product} />}

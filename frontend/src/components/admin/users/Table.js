@@ -4,6 +4,7 @@ import user_placeholder from "../../../../public/user_placeholder.png";
 import { FaPencilAlt, FaTrash } from "react-icons/fa";
 
 const ProductTable = ({ users }) => {
+
     return (
         <div>
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -65,7 +66,7 @@ const ProductTable = ({ users }) => {
                                 className="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                             >
                                 <Image
-                                    src={!user.image ? user_placeholder : user.image}
+                                    src={!user.profileImage ? user_placeholder : user.profileImage}
                                     alt={user.userName}
                                     className="w-8 h-8 mr-3 object-cover"
                                     height={100}
