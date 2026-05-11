@@ -1,6 +1,7 @@
 import axios from "axios";
 import config from "@/config/config";
-import api from "."
+// import api from "."
+import api from "../apis/index.js"
 
 // api for server component
 export const addProduct = async (data) => {

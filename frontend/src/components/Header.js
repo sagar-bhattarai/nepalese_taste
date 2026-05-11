@@ -11,7 +11,7 @@ import { FaUser } from "react-icons/fa";
 import User from "./User";
 import logo from "../../public/logo.png";
 import Image from "next/image";
-import CartTotal from "./CartTotal";
+import CartTotal from "./CartTotal.js";
 
 const Header = () => {
   const dispatch = useDispatch();
