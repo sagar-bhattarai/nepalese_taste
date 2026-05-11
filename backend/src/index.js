@@ -1,6 +1,8 @@
 import { server } from "./server.js";
 import config from "./configs/config.js";
 import databaseConnection from "../src/db/connection.js"
+import dotenv from "dotenv";
+dotenv.config();
 
 const startServer = async () => {
     try {
