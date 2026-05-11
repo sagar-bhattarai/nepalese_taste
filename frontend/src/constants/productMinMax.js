@@ -1,0 +1,3 @@
+
+export const PRODUCT_MINIMUM_INPUT = 1;
+export const PRODUCT_MAXIMUM_INPUT = 10;
