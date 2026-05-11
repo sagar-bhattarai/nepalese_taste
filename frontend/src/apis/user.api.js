@@ -31,7 +31,8 @@ export const addUser = async (data) => {
     return response.data.result.data;
 };
 
-export const getUserById = async ({ id }) => {
+// export const getUserById = async ({ id }) => {
+export const getUserById = async (id ) => {
     const authToken = localStorage.getItem("accessToken");
     const response = await axios.get(`${config.apiUrl}/users/user/${id}`,
         {

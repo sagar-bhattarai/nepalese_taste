@@ -4,34 +4,49 @@ import Image from "next/image";
 import home_banner from "../../public/banner/home_banner.jpg";
 import { useEffect, useState } from "react";
 import { fetchAllProducts } from "@/apis/product.api";
+import { fetchAllTestimonials } from "@/apis/testimonial.api"
 import Card from "@/components/products/Card";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
 
 
 export default function HomePage() {
-  const [response, setResponse] = useState()
+  const [response, setResponse] = useState();
+  const [testimonials, settestimonials] = useState();
+
+  const productLimit = 5;
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(productLimit);
+
+  const getProducts = async () => {
+    let data = await fetchAllProducts({ page, size });
+    setResponse(data)
+  }
+
+  const allTestimonials = async () => {
+    const response = await fetchAllTestimonials({ page, size: 12 });
+    settestimonials(response.testimonials)
+  }
   useEffect(() => {
-    const getProducts = async () => {
-      let data = await fetchAllProducts();
-      setResponse(data)
-    }
     getProducts()
+    allTestimonials()
   }, [])
+
 
   return (
     <div className="mx-auto pt-0">
       {/* <SwiperCarousel products={response?.products} itemsToShow={1} height={370} size={"big"}/> */}
-      <SwiperCarousel products={false} itemsToShow={1} height={370} size={"big"}/>
+      <SwiperCarousel products={false} itemsToShow={1} height={370} size={"big"} />
       <section className="section1 mx-auto max-w-4/5 my-5">
-        <h1 className="text-3xl">Hot Deals</h1>
-        <div className="flex gap-2 py-1">
+        <h1 className="text-3xl mb-4">Hot Deals</h1>
+        <div className="flex flex-wrap lg:flex-nowrap justify-between gap-2 py-1">
           {response?.products.map((product) => (
             <Card key={product._id} product={product} />
           ))}
         </div>
       </section>
       <section className="section2 mx-auto max-w-4/5 my-5">
-        <h1 className="text-3xl">Most Liked</h1>
-        <div className="flex gap-2 py-1">
+        <h1 className="text-3xl mb-4">Most Liked</h1>
+        <div className="flex flex-wrap lg:flex-nowrap  gap-2 py-1">
           {response?.products.map((product) => (
             <Card key={product._id} product={product} />
           ))}
@@ -47,12 +62,14 @@ export default function HomePage() {
         />
       </section>
       <section className="section2 mx-auto max-w-4/5 my-5">
-        <h1 className="text-3xl">Testinomials</h1>
-        <div> </div>
+        <h1 className="text-3xl mb-4">testimonials</h1>
+        <div className="mx-auto mb-14">
+          <TestimonialCarousel testimonials={testimonials} />
+        </div>
       </section>
       <section className="section2 mx-auto max-w-4/5 my-5">
-        <h1 className="text-3xl">Recommended</h1>
-        <div className="flex gap-2 py-1">
+        <h1 className="text-3xl mb-4">Recommended</h1>
+        <div className="flex flex-wrap lg:flex-nowrap gap-2 py-1">
           {response?.products.map((product) => (
             <Card key={product._id} product={product} />
           ))}

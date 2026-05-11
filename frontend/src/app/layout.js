@@ -7,6 +7,7 @@ import AppProvider from '@/redux/provider';
 import MainLayout from "@/layouts/MainLayout"
 import { ToastContainer } from "react-toastify";
 import TimeUpdater from "@/modules/comments/utility/TimeUpdater";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -28,10 +29,11 @@ export default function RootLayout({ children }) {
       >
         <AppProvider>
         <TimeUpdater />
-          <MainLayout>
+          <MainLayout className="relative">
             <Header />
             <main className="min-h-screen dark:text-white dark:bg-darkBackground light:bg-lightBackground">{children}</main>
             <Footer />
+            <ScrollToTop/>
             <ToastContainer
               position="top-right"
               autoClose={2500}

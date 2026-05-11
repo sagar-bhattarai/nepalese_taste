@@ -5,6 +5,8 @@ import CommentSection from "@/modules/comments/component/CommentSection ";
 import StarDisplay from "@/modules/starReviews/component/StarDisplay";
 import StarInput from "@/modules/starReviews/component/StarInput";
 import { cookies } from "next/headers";
+import Image from "next/image";
+import ProductCarousel from "@/components/products/ProductCarousel";
 
 export const generateMetadata = async ({ params }) => {
     const cookieStore = await cookies();
@@ -31,15 +33,18 @@ const productPageById = async ({ params, searchParams }) => {
     const product = response.result;
 
 
+    // console.log(product)
+
     return (
         <div className="font-poppins">
             <section className="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
                 <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
                     <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
                         <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
-                            <img className="w-full dark:hidden" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="" />
-                            <img className="w-full hidden dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="" />
-                            {product.productImage}
+                            {/* <img className="w-full dark:hidden" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="" />
+                            <img className="w-full hidden dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="" /> */}      
+                            {/* <Image src={product?.productImage[0]} alt={product?.productName} height={300} width={300} />    */}
+                            <ProductCarousel images={product?.productImage}/>                  
                         </div>
 
                         <div className="mt-6 sm:mt-8 lg:mt-0">
