@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { PRODUCT_MINIMUM_INPUT, PRODUCT_MAXIMUM_INPUT  } from "@/constants/productMinMax";
+import { PRODUCT_MINIMUM_INPUT, PRODUCT_MAXIMUM_INPUT  } from "../../constants/productMinMax";
 
 const maxInput = PRODUCT_MAXIMUM_INPUT;
 const minInput = PRODUCT_MINIMUM_INPUT;
