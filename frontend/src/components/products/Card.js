@@ -3,9 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import pimage from "@/../public/product-banner.png";
 import AddToCart from "./AddToCart";
-import AddToFavourites from "./AddToFavourites";
+import AddToFavourites from "./AddToFavourites.js";
 import { useSelector } from "react-redux";
-import StarDisplay from "../testimonial/StarDisplay";
+import StarDisplay from "../testimonial/StarDisplay.js";
 
 
 const ProductCard = ({ product }) => {
