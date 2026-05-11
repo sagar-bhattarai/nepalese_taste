@@ -18,7 +18,8 @@
     "start-render": "node src/index.js",
     "dev": "nodemon --env-file=.env src/index.js",
     "testOnly": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
-    "start": "nodemon --env-file=.env src/index.js "
+    "start-locally": "nodemon --env-file=.env src/index.js",
+    "start": "node src/index.js "
   },
   "dependencies": {
     "axios": "^1.15.0",
