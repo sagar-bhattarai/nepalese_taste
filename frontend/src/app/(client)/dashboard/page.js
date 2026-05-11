@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import Pagination from "@/components/products/Pagination";
 import SortBy from "@/components/products/Filters/SortBy";
 import ByCategories from "@/components/products/Filters/ByCategories";
-import Loading from "../../../components/Loader";
+import Loader from "../../../components/Loader";
 
 
 const Dashboard = () => {
@@ -415,7 +415,7 @@ const Dashboard = () => {
               {
                 loading 
                   ?
-                  <Loading/>
+                  <Loader/>
                   :
                   favourites?.products?.map((item) => (
                     <div key={item._id} className="mb-4 main-box border dark:border-gray-700 border-gray-200 rounded-xl ">
