@@ -26,6 +26,7 @@ const corsOptions = {
 };
 server.use(cors(corsOptions));
 server.options("*", cors(corsOptions));
+
 // server.use((req, res, next) => {
 //   // res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // https://nepalese-taste.vercel.app
 //   res.header("Access-Control-Allow-Credentials", "true");
@@ -37,6 +38,13 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(cookieParser());
 server.use(logger);
+
+
+server.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+});
+
 
 server.use((req, res, next) => {
   next();
@@ -71,5 +79,15 @@ server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER), favouriteRouter)
 server.use("/api/v1/dashboard", auth, dashboardRouter);
 server.use("/api/v1/testimonials", testimonialRouter);
 
+
+
+server.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR:", err);
+  
+  res.status(500).json({
+    success: false,
+    message: err.message,
+  });
+});
 
 export { server };
