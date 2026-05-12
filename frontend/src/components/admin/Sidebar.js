@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const Sidebar = () => {
-    const user = useSelector((state) => state.auth.user.userData);
+    const user = useSelector((state) => state.auth?.user?.userData);
     const [sidebarlinks, setSideBarLinks] = useState();
     const path = usePathname();
     const pathname = path.startsWith("/") ? path.slice(1) : path;

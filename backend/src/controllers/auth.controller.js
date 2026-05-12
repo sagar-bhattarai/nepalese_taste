@@ -3,8 +3,8 @@ import config from "../configs/config.js";
 
 const options = {
     httpOnly: true,
-    // secure: true, // use this in Production
-    secure: false, // it is for localhost
+    secure: true, // use this in Production
+    // secure: false, // it is for localhost
     sameSite: "lax",
 };
 
@@ -14,7 +14,11 @@ const registerUser = async (req, res) => {
 
         return res
             .status(200)
-            .json({ status: config.api, data: result, message: "user registered successfully." });
+            .json({
+                status: config.api,
+                userData: result,
+                message: "user registered successfully."
+            });
     } catch (error) {
         return res
             .status(error.customStatus || 500)
@@ -25,12 +29,6 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const result = await authService.login(req.body);
-
-        // return res
-        //     .status(200)
-        //     .cookie("refreshToken", result.refreshToken, options)
-        //     .cookie("accessToken", result.accessToken, options)
-        //     .json({ status: config.api , data: result , message: "user logged in successfully." });
 
         return res
             .status(200)
@@ -73,7 +71,7 @@ const tokenRefresh = async (req, res) => {
         //     .status(200)
         //     .cookie("refreshToken", result.refreshToken, options)
         //     .json({ status: config.api, data: result, message: "Token Refreshed successfully." });
-        
+
         return res
             .status(200)
             .cookie("refreshToken", result.refreshToken, options)

@@ -33,6 +33,7 @@ export const logOutUser = createAsyncThunk('logoutFromServer', async (_, { rejec
 export const signUpUser = createAsyncThunk('signUp', async (data, { rejectWithValue }) => {
     try {
         const result = await signUp(data);
+
         return result;
     } catch (error) {
         if (error.response) {

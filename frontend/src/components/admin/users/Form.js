@@ -22,7 +22,7 @@ const UserForm = (id) => {
   }, []);
 
   const state = useSelector((state) => state);
-  // const user = state.auth.user.userData || state.auth.user.userData;
+  // const user = state.auth?.user?.userData || state.auth?.user?.userData;
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(false);

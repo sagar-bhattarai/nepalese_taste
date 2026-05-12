@@ -77,7 +77,7 @@ const Header = () => {
         </Link>
 
         <div className="flex items-center gap-2">
-          {state.auth?.user?.userData ? (
+          {user ? (
             <div className="relative flex justify-center items-center gap-2">
               <h4>{user?.userName}</h4>
               <button
