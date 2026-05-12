@@ -25,6 +25,7 @@ const corsOptions = {
   exposedHeaders: ["Authorization"], //  ADD THIS
 };
 server.use(cors(corsOptions));
+server.options("*", cors(corsOptions));
 // server.use((req, res, next) => {
 //   // res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // https://nepalese-taste.vercel.app
 //   res.header("Access-Control-Allow-Credentials", "true");
@@ -40,6 +41,7 @@ server.use(logger);
 server.use((req, res, next) => {
   next();
 });
+
 
 server.get('/', (req, res) => { res.send(config.api) });
 import userRouter from "./routes/user.route.js"
