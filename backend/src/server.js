@@ -25,7 +25,6 @@ const corsOptions = {
   exposedHeaders: ["Authorization"], //  ADD THIS
 };
 server.use(cors(corsOptions));
-server.options("*", cors(corsOptions));
 
 // server.use((req, res, next) => {
 //   // res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // https://nepalese-taste.vercel.app
