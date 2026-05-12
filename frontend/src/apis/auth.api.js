@@ -40,5 +40,5 @@ export const signUp = async ({
       userPhone,
       userAddress,
    });
-   return response;
+   return response.data;
 };

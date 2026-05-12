@@ -8,7 +8,7 @@ import { FaSignOutAlt } from "react-icons/fa";
 
 const User = ({ userEmail, setShow }) => {
     const dispatch = useDispatch();
-    const roles = useSelector(state => state.auth.user.userData.userRoles);
+    const roles = useSelector(state => state.auth?.user?.userData.userRoles);
 
     const dispatch_logout = () => {
         dispatch(logOutUser());

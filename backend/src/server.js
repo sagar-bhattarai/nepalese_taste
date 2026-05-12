@@ -8,28 +8,29 @@ import { CUSTOMER, MERCHANT, STAFF, ADMIN } from "./constants/roles.constant.js"
 import cors from "cors";
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.error(' #################  Error :: Global Unhandled Promise Rejection ################# ',reason);
+  console.error(' #################  Error :: Global Unhandled Promise Rejection ################# ', reason);
 });
 
 const server = express();
 
 // server.use(cors());
 const corsOptions = {
-  // origin: "http://localhost:3000",
-  origin: "https://nepalese-taste.vercel.app/",
+  origin: [
+    "http://localhost:3000",
+    "https://nepalese-taste.vercel.app"
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   exposedHeaders: ["Authorization"], //  ADD THIS
 };
 server.use(cors(corsOptions));
-server.use((req, res, next) => {
-  // res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header("Access-Control-Allow-Origin", "https://nepalese-taste.vercel.app/");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
-  next();
-});
+// server.use((req, res, next) => {
+//   // res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // https://nepalese-taste.vercel.app
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header("Access-Control-Allow-Headers", "Authorization, Content-Type");
+//   next();
+// });
 
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
@@ -57,15 +58,15 @@ import testimonialRouter from "./routes/testimonial.route.js";
 server.use("/api/v1/users", userRouter);
 server.use("/api/v1/products", productRouter);
 server.use("/api/v1/categories", categoryRouter);
-server.use("/api/v1/orders", auth , orderRouter);
-server.use("/api/v1/payments", auth , paymentRouter);
+server.use("/api/v1/orders", auth, orderRouter);
+server.use("/api/v1/payments", auth, paymentRouter);
 // server.use("/api/v1/medias", auth , roleBasedAuth(ADMIN), mediaRouter);
 server.use("/api/v1/medias", auth, mediaRouter);
 server.use("/api/v1/recommendations", recommendationRouter);
 server.use("/api/v1/comments", commentRouter);
 server.use("/api/v1/starReviews", auth, starReviewRouter);
 server.use("/api/v1/favourites", auth, roleBasedAuth(CUSTOMER), favouriteRouter);
-server.use("/api/v1/dashboard", auth,  dashboardRouter);
+server.use("/api/v1/dashboard", auth, dashboardRouter);
 server.use("/api/v1/testimonials", testimonialRouter);
 
 

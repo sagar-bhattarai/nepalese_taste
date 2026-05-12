@@ -39,15 +39,16 @@ const authSlice = createSlice({
                 state.user = null;
                 state.error = null;
             })
-        .addCase(signUpUser.fulfilled, (state, action) => {
-            state.loading = false;
-            state.user = action.payload;
-        })
-        .addCase(signUpUser.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-        })
-}
+            .addCase(signUpUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+
+            })
+            .addCase(signUpUser.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+    }
 })
 
 export const { logout } = authSlice.actions

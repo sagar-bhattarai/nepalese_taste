@@ -17,7 +17,7 @@ const profilePage = () => {
   const [editProfile, setEditProfile] = useState(false);
   const [selectedImage, setSelectedImage] = useState();
   const [loading, setLoading] = useState(false);
-  const user = useSelector(state => (state.auth.user.userData))
+  const user = useSelector(state => (state.auth?.user?.userData))
   const { register, handleSubmit, reset } = useForm();
 
   // console.log(profile)

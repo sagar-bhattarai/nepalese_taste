@@ -24,8 +24,16 @@ const registerPage = () => {
     }
   },[error]);
 
-  const submitForm = (data) => {
-    dispatch(signUpUser(data));
+  const submitForm = async  (data) => {
+    const res =  await dispatch(signUpUser(data));
+    if(res.error){
+      // toast.error(res.error?.message);
+      toast.error("Apology, Please Contact Us");
+    }
+
+    if(res.payload.data){
+      toast.success(res.payload.data.message);
+    }
   };
 
   return (
