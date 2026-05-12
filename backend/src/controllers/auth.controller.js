@@ -3,8 +3,8 @@ import config from "../configs/config.js";
 
 const options = {
     httpOnly: true,
-    secure: true, // use this in Production
-    // secure: false, // it is for localhost
+    // secure: true, // use this in Production
+    secure: false, // it is for localhost
     sameSite: "lax",
 };
 
@@ -20,6 +20,7 @@ const registerUser = async (req, res) => {
                 message: "user registered successfully."
             });
     } catch (error) {
+        console.log(error)
         return res
             .status(error.customStatus || 500)
             .json({ error: true, message: error.customMessage || "error while registering user." });
