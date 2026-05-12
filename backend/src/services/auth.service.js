@@ -40,8 +40,9 @@ const register = async (req) => {
     //     req.body.profileImage = url;
     // }
 
-    const newUser = await UserModel(req.body);
-    newUser.save();
+    const newUser = new UserModel(req.body);
+    await newUser.save();
+    
     const { userPassword, __v, createdAt, updatedAt, ...safeUser } = newUser.toObject();
 
     // await userService.sendOtpOnMail(newUser);
@@ -87,9 +88,9 @@ const refreshAuthToken = async (req) => {
     if (!token) {
         throw { customStatus: 401, customMessage: "No refresh token" };
     }
-   
+
     const verified = jwt.verify(token, config.refreshToken.secret);
-  
+
     const user = await UserModel.findById(verified._id);
 
     if (!user) {
