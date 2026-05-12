@@ -16,13 +16,14 @@
   "main": "index.js",
   "producion----scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "start-old": "nodemon --env-file=.env src/index.js "
   },
   "scripts": {
     "start-render": "node src/index.js",
     "dev": "nodemon --env-file=.env src/index.js",
     "testOnly": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
-    "start": "nodemon --env-file=.env src/index.js "
+    "start": "node src/index.js"
   },
   "dependencies": {
     "axios": "^1.15.0",
