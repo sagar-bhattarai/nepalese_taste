@@ -136,13 +136,14 @@ const edit = async (req, res) => { // adminUpdateProduct
     );
   }
 
-  const { productName, productDescription, productPrice, productStock, categoryId, isActive } = req.body;
+  const { productName, productDescription, productPrice, productStock, categoryId, brandId, isActive } = req.body;
   const updateThis = {
     productName: productName || productOnDb.productName,
     productDescription: productDescription || productOnDb.productDescription,
     productPrice: productPrice || productOnDb.productPrice,
     productStock: productStock || productOnDb.productStock,
     categoryId: categoryId || productOnDb.categoryId,
+    brandId: brandId || productOnDb.brandId,
     isActive: isActive || productOnDb.isActive,
     // productImage: imageUploaded?.url,
     // productImage: uploadedImages || null,
@@ -243,6 +244,7 @@ const getProducts = async (req) => {
   // -------------------------
   const products = await ProductModel.find(filters)
     .populate("categoryId", "categoryName")
+    .populate("brandId", "brandName")
     .sort(sortOption)
     .skip(skip)
     .limit(size)
@@ -263,10 +265,11 @@ const getProducts = async (req) => {
   }
 
   const formattedProducts = products.map(
-    ({ categoryId, _id, ...rest }) => ({
+    ({ categoryId, brandId, _id, ...rest }) => ({
       ...rest,
       _id,
       categoryName: categoryId?.categoryName || null,
+      brandName: brandId?.brandName || null,
       catId: categoryId?._id || null,
       isFavourited: favouriteSet.has(_id.toString()),
     })

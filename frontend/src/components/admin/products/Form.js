@@ -8,10 +8,12 @@ import { addProduct, updateProduct } from "@/apis/product.api";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const ProductForm = ({ product, categories }) => {
+const ProductForm = ({ product, categories, brands }) => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  // console.log("product >>>>>>>>>",product)
 
   const { register, handleSubmit, reset } = useForm();
   useEffect(() => {
@@ -21,6 +23,8 @@ const ProductForm = ({ product, categories }) => {
         active: product.isActive,
         brand: product.brand || "",
         category: product.categoryId?._id || "",
+        // brand: product.brandId?._id || "",
+        brand: product.brandId || "",
         price: product?.productPrice || "",
         stock: product?.productStock || "",
         description: product?.productDescription || "",
@@ -72,6 +76,7 @@ const ProductForm = ({ product, categories }) => {
     formData.append("isActive", data.active);
     formData.append("brand", data.brand);
     formData.append("categoryId", data.category);
+    formData.append("brandId", data.brand);
     formData.append("productPrice", parseInt(data.price) || 0);
     formData.append("productStock", parseInt(data.stock) || 1);
 
@@ -164,23 +169,6 @@ const ProductForm = ({ product, categories }) => {
         </div>
         <div className="w-full">
           <label
-            htmlFor="brand"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Brand *
-          </label>
-          <input
-            type="text"
-            name="brand"
-            id="brand"
-            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
-            placeholder="Product brand"
-            required
-            {...register("brand")}
-          />
-        </div>
-        <div className="w-full">
-          <label
             htmlFor="price"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
@@ -196,6 +184,24 @@ const ProductForm = ({ product, categories }) => {
             {...register("price")}
           />
         </div>
+
+        <div>
+          <label
+            htmlFor="stock"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Stock
+          </label>
+          <input
+            type="number"
+            id="stock"
+            min="0"
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+            placeholder="9"
+            {...register("stock")}
+          />
+        </div>
+
         {/* <div>
           <label
             htmlFor="category"
@@ -233,20 +239,23 @@ const ProductForm = ({ product, categories }) => {
 
         <div>
           <label
-            htmlFor="stock"
+            htmlFor="category"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
-            Stock
+            Brand *
           </label>
-          <input
-            type="number"
-            id="stock"
-            min="0"
-            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
-            placeholder="9"
-            {...register("stock")}
-          />
+          <select {...register("brand", { required: "Select a brand" })}
+            className="bg-[#07070729] border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white  focus:ring focus:outline-none  dark:focus:ring-primary dark:focus:border-primary"
+          >
+            <option value="">-- Select Brand --</option>
+            {brands?.map((brand) => (
+              <option key={brand._id} value={brand._id}>{brand.brandName}</option>
+            ))}
+          </select>
+          {/* {errors.brandId && <p>{errors.brandId.message}</p>} */}
         </div>
+
+
         <div className="sm:col-span-2">
           <div
             {...getRootProps()}

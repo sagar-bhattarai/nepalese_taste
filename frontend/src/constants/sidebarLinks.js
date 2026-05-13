@@ -6,6 +6,7 @@ import {
     ORDER_MANAGEMENT_ROUTE,
     CATEGORY_MANAGEMENT_ROUTE,
     MEDIA_MANAGEMENT_ROUTE,
+    BRAND_MANAGEMENT_ROUTE,
     SETTING_ROUTE
 } from "./routes";
 import {
@@ -17,6 +18,7 @@ import {
 import { BiSolidCategoryAlt } from "react-icons/bi";
 import { MdPermMedia } from "react-icons/md";
 import { TbSettingsStar } from "react-icons/tb"
+import { BsTagsFill } from "react-icons/bs";
 
 
 const adminSidebarLinks = [
@@ -29,6 +31,11 @@ const adminSidebarLinks = [
         Icon: BiSolidCategoryAlt,
         label: "Categories",
         route: CATEGORY_MANAGEMENT_ROUTE
+    },
+    {
+        Icon: BsTagsFill,
+        label: "Brands",
+        route: BRAND_MANAGEMENT_ROUTE
     },
     {
         Icon: FaShoppingBag,
