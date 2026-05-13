@@ -20,6 +20,7 @@ const updateProductSchema = z.object({
         .min(3, "productDescription must be at least 3 characters").optional(),
     // attributes: attributesSchema,
     categoryId: z.string({ required_error: "categoryId is required" }),
+    brandId: z.string({ required_error: "brandId is required" }),
     productStock: z
         .coerce.number().optional(),
     productPrice: z

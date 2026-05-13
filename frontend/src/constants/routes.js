@@ -26,6 +26,7 @@ export const PRODUCT_MANAGEMENT_ROUTE = "/product-management";
 export const USER_MANAGEMENT_ROUTE = "/user-management";
 export const ORDER_MANAGEMENT_ROUTE = "/order-management";
 export const CATEGORY_MANAGEMENT_ROUTE = "/category-management";
+export const BRAND_MANAGEMENT_ROUTE = "/brand-management";
 export const MEDIA_MANAGEMENT_ROUTE = "/media-management";
 export const SETTING_ROUTE = "/settings";
 

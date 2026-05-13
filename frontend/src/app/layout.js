@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
         <TimeUpdater />
           <MainLayout className="relative">
             <Header />
-            <main className="min-h-screen dark:text-white dark:bg-darkBackground light:bg-lightBackground">{children}</main>
+            <main className="min-h-screen dark:text-slate-400">{children}</main>
             <Footer />
             <ScrollToTop/>
             <ToastContainer

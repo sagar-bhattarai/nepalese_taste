@@ -21,6 +21,7 @@ const productSchema = z.object({
         .min(3, "productDescription must be at least 3 characters"),
     // attributes: attributesSchema,
     categoryId: z.string({ required_error: "categoryId is required" }),
+    brandId: z.string({ required_error: "brandId is required" }),
     productStock: z
         .coerce.number({ required_error: "productStock is required" }),
     // .number({ required_error: "productStock is required" }),

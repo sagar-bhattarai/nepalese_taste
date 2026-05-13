@@ -63,10 +63,12 @@ import starReviewRouter from "./routes/starReview.route.js";
 import favouriteRouter from "./routes/favourite.route.js";
 import dashboardRouter from "./routes/dashboard.route.js";
 import testimonialRouter from "./routes/testimonial.route.js";
+import brandRouter from "./routes/brand.route.js";
 
 server.use("/api/v1/users", userRouter);
 server.use("/api/v1/products", productRouter);
 server.use("/api/v1/categories", categoryRouter);
+server.use("/api/v1/brands", brandRouter);
 server.use("/api/v1/orders", auth, orderRouter);
 server.use("/api/v1/payments", auth, paymentRouter);
 // server.use("/api/v1/medias", auth , roleBasedAuth(ADMIN), mediaRouter);

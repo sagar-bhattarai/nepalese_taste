@@ -3,8 +3,8 @@ import config from "../configs/config.js";
 
 const options = {
     httpOnly: true,
-    // secure: true, // use this in Production
-    secure: false, // it is for localhost
+    secure: true, // use this in Production
+    // secure: false, // it is for localhost
     sameSite: "lax",
 };
 
