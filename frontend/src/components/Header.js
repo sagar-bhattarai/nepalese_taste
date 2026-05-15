@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { HOME_ROUTE, LOGIN_ROUTE, SIGN_UP_ROUTE } from "../constants/routes";
+import { HOME_ROUTE, LOGIN_ROUTE, MENS_FASHION, WOMENS_FASHION, HOME_AND_LIVING, ELECTRONICS, SIGN_UP_ROUTE } from "../constants/routes";
 import navlinks from "@/constants/navlinks";
 import { WiDaySunny } from "react-icons/wi";
 import { GiNightSky } from "react-icons/gi";
@@ -20,12 +20,103 @@ const Header = () => {
   const [toggle, setToggle] = useState(false);
   const [show, setShow] = useState(false);
 
+  const mensFashion = [
+    {
+      label: "T-Shirts",
+      route: "/t-shirts",
+    }, {
+      label: "Shirts",
+      route: "/shirts",
+    }, {
+      label: "Jeans",
+      route: "/jeans",
+    }, {
+      label: "Shoes",
+      route: "/shoes",
+    }, {
+      label: "Jackets",
+      route: "/jackets",
+    }, {
+      label: "Watches",
+      route: "/watches",
+    }
+  ]
+
+  const womensFashion = [
+    {
+      label: "Dresses",
+      route: "/dresses",
+    }, {
+      label: "Tops & Blouses",
+      route: "/tops-&-blouses",
+    }, {
+      label: "Handbags",
+      route: "/handbags",
+    }, {
+      label: "Heels",
+      route: "/heels",
+    }, {
+      label: "Skirts",
+      route: "/skirts",
+    }, {
+      label: "Jewelry",
+      route: "/jewelry",
+    }
+  ]
+
+  const electronics = [
+    {
+      label: "Smart Phones",
+      route: "/smartphones",
+    }, {
+      label: "Laptops",
+      route: "/laptops",
+    }, {
+      label: "Smart Watches",
+      route: "/smartwatches",
+    }, {
+      label: "Head Phones",
+      route: "/headphones",
+    }, {
+      label: "Cameras",
+      route: "/cameras",
+    }, {
+      label: "Accessories",
+      route: "/accessories",
+    }
+  ]
+
+  const homeAndLiving = [
+    {
+      label: "Furniture",
+      route: "/furniture",
+    }, {
+      label: "Lighting",
+      route: "/lighting",
+    }, {
+      label: "Decor",
+      route: "/decor",
+    }, {
+      label: "Kitchenware",
+      route: "/kitchenware",
+    }, {
+      label: "Bedding",
+      route: "/Bedding",
+    }, {
+      label: "Storage",
+      route: "/storage",
+    }
+  ]
+
   const toggleMode = () => {
     dispatch(toggleTheme());
   };
+
   return (
     <header className="shadow-md dark:bg-[#330d57] dark:text-gray light:bg-gray-200 tracking-wide z-50 !sticky top-0">
-      <section className="flex items-center lg:justify-between flex-wrap gap-5 relative py-3 sm:px-10 px-4 border-b border-gray-300 lg:min-h-[75px] max-lg:min-h-[60px]">
+      {/* header top */}
+      <section className="headerTop flex items-center lg:justify-between flex-wrap gap-5 relative py-3 sm:px-10 px-4 border-b border-gray-300 lg:min-h-[75px] max-lg:min-h-[60px]">
+        {/* logos f / in / x */}
         <div className="space-x-4 flex items-center">
           <div className="w-7 h-7 flex items-center justify-center rounded-md dark:text-gray text-gray-800 hover:bg-primary hover:text-white transition-all">
             <svg
@@ -76,6 +167,7 @@ const Header = () => {
           />
         </Link>
 
+        {/* login / signup / user */}
         <div className="flex items-center gap-2">
           {user ? (
             <div className="relative flex justify-center items-center gap-2">
@@ -133,8 +225,10 @@ const Header = () => {
         </div>
       </section>
 
-      <div className="flex max-w-screen-xl mx-auto w-full relative py-1.5">
+      {/* header Bottom */}
+      <div className="headerbottom flex max-w-screen-xl mx-auto w-full relative py-1.5">
         <div className="flex flex-wrap items-center lg:gap-y-2 gap-4 w-full">
+          {/* left navigations */}
           <div
             id="collapseMenu"
             className="lg:ml-6 h-full place-content-center max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50"
@@ -158,12 +252,12 @@ const Header = () => {
                 ></path>
               </svg>
             </button>
-
             <ul className="h-full lg:place-items-center lg:flex lg:gap-x-3 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:shadow-md max-lg:overflow-auto z-50">
               <li
                 className="transition-all lg:h-full cursor-pointer place-content-center border-b  border-primary  hover:text-white hover:bg-primary hover:rounded-xs py-3 px-3 max-lg:relative"
                 onMouseEnter={() => setToggle(true)}
               >
+                {/* shop collapseable Mega Menu  */}
                 Shop
                 {toggle && (
                   <div
@@ -174,226 +268,83 @@ const Header = () => {
                     <div className="max-w-screen-xl mx-auto flex max-lg:flex-col gap-x-12 gap-y-6">
                       <div className="grid lg:grid-cols-4 gap-6 w-full">
                         <div>
-                          <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4 ">
-                            Men's Fashion
-                          </h6>
+                          <Link href={MENS_FASHION}>
+                            <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4 ">
+                              Men's Fashion
+                            </h6>
+                          </Link>
                           <ul className="space-y-4">
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                T-Shirts
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Shirts
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Jeans
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Shoes
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Jackets
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Watches
-                              </Link>
-                            </li>
+                            {mensFashion.map((item) => (
+                              <li key={item.label}>
+                                <Link
+                                  href={MENS_FASHION + item.route}
+                                  className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
+                                >
+                                  {item.label}
+                                </Link>
+                              </li>
+                            ))}
                           </ul>
                         </div>
 
                         <div>
-                          <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4">
-                            Women's Fashion
-                          </h6>
+                          <Link href={WOMENS_FASHION}>
+                            <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4">
+                              Women's Fashion
+                            </h6>
+                          </Link>
                           <ul className="space-y-4">
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Dresses
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Tops & Blouses
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Handbags
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Heels
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Skirts
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Jewelry
-                              </Link>
-                            </li>
+                            {womensFashion.map((item) => (
+                              <li key={item.label}>
+                                <Link
+                                  href={WOMENS_FASHION + item.route}
+                                  className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
+                                >
+                                  {item.label}
+                                </Link>
+                              </li>
+                            ))}
                           </ul>
                         </div>
 
                         <div>
-                          <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4">
-                            Electronics
-                          </h6>
+                          <Link href={ELECTRONICS}>
+                            <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4">
+                              Electronics
+                            </h6>
+                          </Link>
                           <ul className="space-y-4">
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Smartphones
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Laptops
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Smart Watches
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Headphones
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Cameras
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Accessories
-                              </Link>
-                            </li>
+                            {electronics.map((item) => (
+                              <li key={item.label}>
+                                <Link
+                                  href={ELECTRONICS + item.route}
+                                  className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
+                                >
+                                  {item.label}
+                                </Link>
+                              </li>
+                            ))}
                           </ul>
                         </div>
 
                         <div>
-                          <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4">
-                            Home & Living
-                          </h6>
+                          <Link href={HOME_AND_LIVING}>
+                            <h6 className="dark:text-primary text-slate-900 text-base font-semibold mb-4">
+                              Home & Living
+                            </h6>
+                          </Link>
+
                           <ul className="space-y-4">
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Furniture
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Lighting
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Decor
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Kitchenware
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Bedding
-                              </Link>
-                            </li>
-                            <li>
-                              <Link
-                                href="javascript:void(0)"
-                                className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
-                              >
-                                Storage
-                              </Link>
-                            </li>
+                            {homeAndLiving.map((item) => (
+                              <li key={item.label}>
+                                <Link
+                                  href={HOME_AND_LIVING + item.route}
+                                  className="dark:text-gray text-slate-500 text-base dark:hover:text-primary hover:text-slate-900 text-sm font-medium"
+                                >
+                                  {item.label}
+                                </Link>
+                              </li>
+                            ))}
                           </ul>
                         </div>
                       </div>
@@ -410,18 +361,20 @@ const Header = () => {
                 )}
               </li>
               {navlinks.map((navlink, index) => (
-                <Link
-                  onMouseEnter={() => setToggle(false)}
-                  key={index}
-                  href={navlink.route}
-                  className={`dark:text-gray text-slate-600 hover:text-primary text-[15px] block font-medium`}
-                >
-                  {navlink.label}
-                </Link>
+                <li key={index}>
+                  <Link
+                    onMouseEnter={() => setToggle(false)}
+                    href={navlink.route}
+                    className={`dark:text-gray text-slate-600 hover:text-primary text-[15px] block font-medium`}
+                  >
+                    {navlink.label}
+                  </Link>
+                </li>
               ))}
             </ul>
           </div>
 
+          {/* right cart / theme*/}
           <div className="ml-auto flex items-center justify-center gap-2">
             <CartTotal />
             <div className="flex items-center cursor-pointer border-none rounded-full shadow hover:shadow-purple-600">
@@ -440,62 +393,3 @@ const Header = () => {
 };
 
 export default Header;
-
-{
-  /* <div className="flex flex-wrap py-3.5 px-10 overflow-x-auto">
-
-        <div id="collapseMenu"
-          className="w-full max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50">
-          <button id="toggleClose" className="lg:hidden fixed top-2 right-4 z-[100] rounded-full bg-white w-9 h-9 flex items-center justify-center border border-gray-200 cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 fill-black" viewBox="0 0 320.591 320.591">
-              <path
-                d="M30.391 318.583a30.37 30.37 0 0 1-21.56-7.288c-11.774-11.844-11.774-30.973 0-42.817L266.643 10.665c12.246-11.459 31.462-10.822 42.921 1.424 10.362 11.074 10.966 28.095 1.414 39.875L51.647 311.295a30.366 30.366 0 0 1-21.256 7.288z"
-                data-original="#000000"></path>
-              <path
-                d="M287.9 318.583a30.37 30.37 0 0 1-21.257-8.806L8.83 51.963C-2.078 39.225-.595 20.055 12.143 9.146c11.369-9.736 28.136-9.736 39.504 0l259.331 257.813c12.243 11.462 12.876 30.679 1.414 42.922-.456.487-.927.958-1.414 1.414a30.368 30.368 0 0 1-23.078 7.288z"
-                data-original="#000000"></path>
-            </svg>
-          </button>
-
-          <ul
-            className="lg:flex lg:justify-center lg:gap-x-10 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50">
-            <li className="mb-6 hidden max-lg:block">
-              <Link href="javascript:void(0)"><img src="https://readymadeui.com/readymadeui.svg" alt="logo" className="w-36" />
-              </Link>
-            </li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-blue-700 font-medium text-[15px] block">Home</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Team</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Feature</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Blog</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">About</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Contact</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Source</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Store</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Fashion</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">Partner</Link></li>
-            <li className="max-lg:border-b max-lg:border-gray-300 max-lg:py-3"><Link href='javascript:void(0)'
-              className="hover:text-blue-700 text-slate-900 font-medium text-[15px] block">More</Link></li>
-          </ul>
-        </div>
-
-        <div className="flex ml-auto lg:hidden">
-          <button id="toggleOpen" className="cursor-pointer">
-            <svg className="w-7 h-7" fill="#000" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path fillRule="evenodd"
-                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                clipRule="evenodd"></path>
-            </svg>
-          </button>
-        </div>
-      </div> */
-}

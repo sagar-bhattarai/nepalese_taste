@@ -52,8 +52,6 @@ const add = async (req) => {
 };
 
 const all = async (req) => {
-  // const categories = await CategoryModel.find({}, { _id: 1, categoryName: 1, categoryDescription: 1 }).limit(10);
-  //  const categories = await CategoryModel.find().select("categoryName categoryDescription -_id").limit(5);
 
   const page = Number(req.query.page) || 1;
   const size = Number(req.query.size) || 10;

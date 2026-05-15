@@ -6,17 +6,18 @@ const navlinks = [
     //     route: 'javascript:void(0)'
     // }, 
     {
-        label: "Products",
+        // label: "Products",
+        label: "Foods",
         route: PRODUCTS_ROUTE
     },
     {
         label: "Offers",
         route: OFFERS_ROUTE
     },
-    {
-        label: "Fashion",
-        route: FASHION_ROUTE
-    },
+    // {
+    //     label: "Fashion",
+    //     route: FASHION_ROUTE
+    // },
     {
         label: "Health Tips",
         route: HEALTH_TIPS_ROUTE

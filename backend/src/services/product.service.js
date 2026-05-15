@@ -183,7 +183,24 @@ const getProducts = async (req) => {
   }
 
   if (category) {
-    filters.categoryId = category;
+    // check if it's ObjectId or name
+    const isObjectId = category.match(/^[0-9a-fA-F]{24}$/);
+
+    if (isObjectId) {
+      filters.categoryId = category;
+    } else {
+      const cat = await CategoryModel.findOne({
+        // categoryName: { $regex: category, $options: "i" },  // It will match like (electro in every word): electronics, electro devices, my-electronics-store
+        categoryName: category,
+      }).lean();
+
+      if (cat) {
+        filters.categoryId = cat._id;
+      } else {
+        // no category found → return empty result
+        filters.categoryId = null;
+      }
+    }
   }
 
   // name search

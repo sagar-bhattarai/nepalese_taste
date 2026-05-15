@@ -2,7 +2,7 @@
 const Pagination = ({ page, setPage, overAllTotal, LIMIT }) => {
 
 
-    //  it is now only used in testinomial
+    //  it is now only used in testinomial, header category pages
 
 
     
