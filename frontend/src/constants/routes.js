@@ -34,3 +34,11 @@ export const CART_ROUTE = "/cart";
 export const CHECKOUT_ROUTE = "/checkout";
 export const PAYMENT_ROUTE = "/payment";
 export const ORDERS_ROUTE = "/orders";
+
+
+
+// header routes
+export const MENS_FASHION = "/mens-fashion";
+export const WOMENS_FASHION = "/womens-fashion";
+export const ELECTRONICS = "/electronics";
+export const HOME_AND_LIVING = "/home-&-living";

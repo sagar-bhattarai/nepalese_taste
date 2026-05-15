@@ -13,7 +13,6 @@ const ProductForm = ({ product, categories, brands }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // console.log("product >>>>>>>>>",product)
 
   const { register, handleSubmit, reset } = useForm();
   useEffect(() => {
