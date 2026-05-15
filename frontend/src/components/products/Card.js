@@ -18,8 +18,8 @@ const ProductCard = ({ product }) => {
         <p className="brand absolute rounded-xl text-sm right-[10px] bg-amber-600 dark:text-black text-white px-3 py-0.5 " >{product.brandName}</p>
       }
       <Link href={`/products/${product._id}`}>
-        <Image className="rounded-base mb-6 max-h-50" src={product.productImage ? product.productImage[0] : pimage} alt="product image" height={200} width={200} />
-        {/* <Image className="rounded-base mb-6 min-h-[10rem]" src={pimage} alt="product image" height={300} width={200} /> */}
+        <Image className="rounded-base mb-6 max-h-50" src={product.productImage ? product.productImage[0] : pimage.src} alt="product image" height={200} width={200} />
+        {/* <Image className="rounded-base mb-6 min-h-[10rem]" src={pimage.src} alt="product image" height={300} width={200} /> */}
       </Link>
       <div>
         <div className="flex flex-col md:flex-row md:items-center space-x-3 mb-2">
