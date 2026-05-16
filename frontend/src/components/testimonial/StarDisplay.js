@@ -2,7 +2,10 @@ const StarDisplay = ({ rating = 0, size = "54" }) => {
   const percentage = (rating / 5) * 100;
 
   return (
-    <div style={{ position: "relative", display: "inline-block", fontSize: size + "px" , lineHeight: size ? `${(size)}px` : "60px"}}>
+    <div 
+    className={`relative inline-block text-sm md:text-[28px] leaing-4 md:leading-[20px]`}
+    // style={{ position: "relative", display: "inline-block", fontSize: size + "px" , lineHeight: size ? `${(size)}px` : "60px"}}
+    >
       
       {/* empty stars */}
       <div style={{ color: "#898989" }}>

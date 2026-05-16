@@ -115,9 +115,9 @@ const Header = () => {
   return (
     <header className="shadow-md dark:bg-[#330d57] dark:text-gray light:bg-gray-200 tracking-wide z-50 !sticky top-0">
       {/* header top */}
-      <section className="headerTop flex items-center lg:justify-between flex-wrap gap-5 relative py-3 sm:px-10 px-4 border-b border-gray-300 lg:min-h-[75px] max-lg:min-h-[60px]">
+      <section className="headerTop flex items-center justify-between flex-wrap gap-5 relative py-3 sm:px-10 px-4 border-b border-gray-300 lg:min-h-[75px] max-lg:min-h-[60px]">
         {/* logos f / in / x */}
-        <div className="space-x-4 flex items-center">
+        <div className="hidden space-x-4 md:flex items-center">
           <div className="w-7 h-7 flex items-center justify-center rounded-md dark:text-gray text-gray-800 hover:bg-primary hover:text-white transition-all">
             <svg
               xmlns="http://www.w3.org/2000/svg"
