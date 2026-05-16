@@ -33,20 +33,20 @@ export default function HomePage() {
 
 
   return (
-    <div className="mx-auto pt-0">
+    <div className="mx-auto pt-0">    
       {/* <SwiperCarousel products={response?.products} itemsToShow={1} height={370} size={"big"}/> */}
       <SwiperCarousel products={false} itemsToShow={1} height={370} size={"big"} />
-      <section className="section1 mx-auto max-w-4/5 my-5">
+      <section className="section1 mx-5 md:mx-auto w-full md:max-w-4/5 my-5">       
         <h1 className="text-3xl mb-4">Hot Deals</h1>
-        <div className="flex flex-wrap lg:flex-nowrap justify-between gap-2 py-1">
+        <div className="flex flex-wrap justify-center xl:flex-nowrap xl:justify-between gap-2 py-1">
           {response?.products.map((product) => (
             <Card key={product._id} product={product} />
           ))}
         </div>
       </section>
-      <section className="section2 mx-auto max-w-4/5 my-5">
+      <section className="section2 mx-5 md:mx-auto w-full md:max-w-4/5 my-5">
         <h1 className="text-3xl mb-4">Most Liked</h1>
-        <div className="flex flex-wrap lg:flex-nowrap  gap-2 py-1">
+        <div className="flex flex-wrap justify-center xl:flex-nowrap xl:justify-between gap-2 py-1">
           {response?.products.map((product) => (
             <Card key={product._id} product={product} />
           ))}
@@ -61,15 +61,15 @@ export default function HomePage() {
           width={700}
         />
       </section>
-      <section className="section2 mx-auto max-w-4/5 my-5">
+      <section className="section3 mx-5 md:mx-auto w-full md:max-w-4/5 my-5">
         <h1 className="text-3xl mb-4">testimonials</h1>
-        <div className="mx-auto mb-14">
-          <TestimonialCarousel testimonials={testimonials} />
-        </div>
+        <div className="mx-auto mb-14">                        
+          <TestimonialCarousel testimonials={testimonials} />                           
+        </div>                      
       </section>
-      <section className="section2 mx-auto max-w-4/5 my-5">
-        <h1 className="text-3xl mb-4">Recommended</h1>
-        <div className="flex flex-wrap lg:flex-nowrap gap-2 py-1">
+      <section className="section4 mx-5 md:mx-auto w-full md:max-w-4/5 my-5">     
+        <h1 className="text-3xl mb-4">Recommended</h1>    
+        <div className="flex flex-wrap justify-center xl:flex-nowrap xl:justify-between gap-2 py-1"> 
           {response?.products.map((product) => (
             <Card key={product._id} product={product} />
           ))}

@@ -74,7 +74,7 @@ const HeaderCatPage = ({
                     />
                 </>
             ) : (
-                <div className="text-center p-5 border border-slate-600 rounded-md"> Not Found. </div>
+                <div className="text-center p-5 border border-slate-600 rounded-md"> Products Not Found. </div>
             )}
         </div>
     );

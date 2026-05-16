@@ -22,21 +22,21 @@ const TestimonialCarousel = ({
 
   function CarouselImage({ item }) {
     return (
-      <div className="group cursor-pointer w-full border border-slate-600 rounded-2xl p-5 transition-all duration-300 hover:border-primary h-full bg-white dark:bg-[#101828]">
+      <div className="group cursor-pointer w-full border border-slate-600 rounded-2xl p-2 md:p-5 transition-all duration-300 hover:border-primary h-full bg-white dark:bg-[#101828]">
         
         <Link
           className="block"
           href={testimonialS_ROUTE + "#" + item._id}
         >
           
-          <div className="flex items-center justify-center mb-6 w-full h-50">
+          <div className="flex items-center justify-center p-2  md:p-0 mb-6 w-full h-30 md:h-50 object-cover">
             <Image
               src={
                 item?.customer?.profileImage ||
                 userPlaceHolder
               }
               alt={`${item?.customer?.userName} profile image`}
-              className="rounded-lg object-cover text-[8px] text-slate-600"
+              className="rounded-lg text-[8px] text-slate-600"
               width={200}
               height={200}
             />
@@ -47,12 +47,12 @@ const TestimonialCarousel = ({
               {item?.testimonialTitle}
             </h6>
 
-            <h4 className="dark:text-slate-500 text-gray-900 font-medium leading-8 mb-2">
+            <h4 className="dark:text-slate-500 text-gray-900 text-sm font-medium md:leading-8 md:mb-2">
               {item?.testimonialDescription}
             </h4>
 
             <div className="flex items-center justify-between font-medium">
-              <h6 className="text-sm text-gray-500">
+              <h6 className="text-xs md:text-sm text-gray-500">
                 {item?.customer?.userName}
               </h6>
 
@@ -99,7 +99,8 @@ const TestimonialCarousel = ({
 
         breakpoints={{
           320: {
-            slidesPerView: 1,
+            // slidesPerView: 1,
+            slidesPerView: 2,
           },
           640: {
             slidesPerView: 2,
@@ -126,7 +127,7 @@ const TestimonialCarousel = ({
       </button>
 
       {/* Custom Pagination */}
-      <div className="custom-pagination mt-8 flex justify-center gap-2"></div>
+      <div className="custom-pagination mt-4 md:mt-8 flex justify-center gap-2"></div>
     </div>
   );
 };
