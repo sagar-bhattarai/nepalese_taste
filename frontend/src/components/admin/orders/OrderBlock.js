@@ -31,7 +31,7 @@ const OrderBlock = ({ orders }) => {
     }
 
     return (
-        <section className="py-5 relative">
+        <section className="md:py-5 relative">
             <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
 
                 {orders?.map((orderItems, index) => (
@@ -74,10 +74,10 @@ const OrderBlock = ({ orders }) => {
 
                         {orderItems?.items?.map((item, index) => (
                             <div key={index} className="w-full px-3 min-[400px]:px-6">
-                                <div className="flex flex-col lg:flex-row items-center py-3  gap-6 w-full">
-                                    <div className="img-box max-lg:w-full">
+                                <div className="flex flex-row-reverse md:flex-row md:items-center py-3 gap-2 md:gap-6 w-full">
+                                    <div className="img-box h-max lg:w-full">
                                         <img src={item.productImage} alt="Premium Watch image"
-                                            className="aspect-square w-full lg:max-w-24 rounded-xl object-cover text-gray-500 text-xs" />
+                                            className="aspect-square w-full md:max-w-24 rounded-xl object-cover text-gray-500 text-xs" />
                                     </div>
                                     <div className="flex flex-row items-center w-full ">
                                         <div className="grid grid-cols-1 lg:grid-cols-2 w-full">
@@ -147,14 +147,14 @@ const OrderBlock = ({ orders }) => {
                         ))}
 
 
-                        <div className="w-full border-t dark:border-gray-700 border-gray-200 pr-6 flex flex-col lg:flex-row items-center justify-between ">
-                            <div className="flex flex-col sm:flex-row items-center max-lg:border-b border-gray-200">
+                        <div className="w-full border-t dark:border-gray-700 border-gray-200 md:pr-6 flex flex-col lg:flex-row items-center justify-between ">
+                            <div className="w-full md:w-auto flex flex-col sm:flex-row items-center max-lg:border-b border-gray-200">
 
                                 {(orderItems.orderStatus == ALL___ORDER___PENDING)
                                     ?
                                     <>
                                         <button
-                                            className="flex outline-0 py-4 sm:pr-6 cursor-pointer pl-6 border rounded-bl-xl sm:border-r dark:border-gray-700 border-gray-200 bg-red-400 hover:bg-red-500 whitespace-nowrap gap-2 items-center justify-center font-semibold group text-xs text-black transition-all duration-500 ">
+                                            className="w-full md:w-auto flex outline-0 py-4 sm:pr-6 cursor-pointer pl-6 border md:rounded-bl-xl sm:border-r dark:border-gray-700 border-gray-200 bg-red-400 hover:bg-red-500 whitespace-nowrap gap-2 items-center justify-center font-semibold group text-xs text-black transition-all duration-500 ">
                                             <svg className="stroke-black transition-all duration-300  " xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22"
                                                 fill="none">
                                                 <path d="M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5" stroke="" strokeWidth="1.6"
@@ -162,7 +162,7 @@ const OrderBlock = ({ orders }) => {
                                             </svg>
                                             Cancel Order
                                         </button>
-                                        <div>
+                                        <div className="w-full md:w-auto">
                                             <div className="flex flex-col lg:flex-row lg:items-center  dark:border-gray-700 border-b border-gray-200">
                                                 {/* <PayViaStripe/> */}
                                                 <PayViaStripe id={orderItems._id} />
@@ -180,7 +180,7 @@ const OrderBlock = ({ orders }) => {
                                     </>
                                 }
                             </div>
-                            <p className="font-medium text-base text-black dark:text-gray-600 ml-2">Total Price <span className="text-[10px]">(Tax inc) </span>: <span className="text-indigo-600">Rs.{orderItems.totalPrice}</span></p>
+                            <p className="font-medium text-base text-black dark:text-gray-600 py-2 md:py-0 md:ml-2">Total Price <span className="text-[10px]">(Tax inc) </span>: <span className="text-indigo-600">Rs.{orderItems.totalPrice}</span></p>
                         </div>
 
                     </div>

@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
        <Link href={`/products/${product._id}`}>
         <Image
           className="rounded-base"
-          src={product?.productImage[0] ? product?.productImage[0] : pimage.src}
+          src={product.productImage ? product?.productImage[0] : pimage.src}
           alt={product.productName}
           height={300} width={300} />
         {/* <Image className="rounded-base mb-6 min-h-[10rem]" src={pimage.src} alt="product image" height={300} width={200} /> */}

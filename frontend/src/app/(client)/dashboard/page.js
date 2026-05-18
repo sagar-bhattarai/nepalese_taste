@@ -420,35 +420,35 @@ const Dashboard = () => {
                   favourites?.products?.map((item) => (
                     <div key={item._id} className="mb-4 main-box border dark:border-gray-700 border-gray-200 rounded-xl ">
                       <div className="w-full px-3 min-[400px]:px-6">
-                        <div className="flex flex-col lg:flex-row items-center py-3  gap-6 w-full">
-                          <div className="img-box max-lg:w-full">
+                        <div className="relative flex flex-col lg:flex-row lg:items-center py-3 gap-4 md:gap-6 w-full">
+                          <div className="img-box w-28 lg:w-auto">
                             <img src={item.product.productImage || productPlaceHolder.src} alt="Premium Watch image"
                               className="aspect-square w-full lg:max-w-18 rounded-xl object-cover text-gray-500 text-xs" />
                           </div>
-                          <div className="flex flex-row items-center w-full ">
+                          <div className="flex flex-row items-start md:items-center w-full ">
                             <div className="grid grid-cols-1 lg:grid-cols-12 w-full">
-                              <div className="col-span-3 ">
+                              <div className="absolute top-3 left-[130px] lg:left-0 lg:top-0 lg:relative col-span-3 ">
                                 <h2 className="font-semibold text-base leading-5 text-black dark:text-gray-500 ">
                                   {item.product.productName}</h2>
                                 <p className="font-normal text-xs leading-5 text-cyan-700 ">
                                   {item.category.categoryName}</p>
-                                <p className="font-normal text-base leading-5 text-gray-500">
+                                <p className="font-semibold text-xs leading-5 text-gray-500">
                                   {item.product.productDescription}</p>
                               </div>
 
                               <div className="grid col-span-8">
-                                <div className="flex gap-4 lg:gap-8">
-                                  <div className=" flex items-center m-auto">
+                                <div className="flex flex-col md:flex-row md:gap-4 lg:gap-8">
+                                  <div className=" flex items-center md:m-auto">
                                     <div className="flex gap-3 lg:block">
                                       <p className="font-medium text-sm leading-7 text-black dark:text-gray-600">Price</p>
                                       <p className=" font-medium text-sm leading-7 text-indigo-600">Rs. {item.product.productPrice}</p>
                                     </div>
                                   </div>
 
-                                  <div className=" flex items-center flex-col m-auto">
+                                  <div className=" flex items-start md:items-center flex-col md:m-auto">
                                     <p className="font-medium text-sm leading-7 text-black dark:text-gray-600">
                                       Quantity</p>
-                                    <div className="mt-auto pt-2">
+                                    <div className="mt-auto md:pt-2 pb-1 md:pb-0">
                                       <IncDecInput
                                         key={item._id}
                                         quantity={quantities[item._id] || 1}
@@ -457,7 +457,7 @@ const Dashboard = () => {
                                     </div>
                                   </div>
 
-                                  <div className="flex items-center flex-col m-auto">
+                                  <div className="flex items-start md:items-center flex-col md:m-auto">
                                     <p className="font-medium text-sm leading-7 text-black dark:text-gray-600 ">Delivery Type:</p>
                                     <select
                                       className=" p-1 w-max text-sm border cursor-pointer dark:text-gray-600 light:text-black dark:border-gray-600 light:border-gray-300 rounded-md"
@@ -471,7 +471,7 @@ const Dashboard = () => {
                                     </select>
                                   </div>
 
-                                  <div className=" flex items-center m-auto">
+                                  <div className=" flex items-start md:items-center md:m-auto">
                                     <div className="flex gap-3 lg:block">
                                       <p className="font-medium text-sm  whitespace-nowrap leading-7 text-black dark:text-gray-600">
                                         Expected Delivery Time</p>
@@ -492,7 +492,7 @@ const Dashboard = () => {
 
                             <button
                               onClick={() => buyHandler(item)}
-                              className="transition-all duration-500  bg-green-100 text-green-600 hover:text-gray-200 hover:bg-green-700 border border-green-600 cursor-pointer  text-xs text-success-600 dark:bg-success-500/15 dark:text-success-500 rounded-full px-4 py-1 font-medium">
+                              className="md:absolute lg:relative top-3 right-3 transition-all duration-500  bg-green-100 text-green-600 hover:text-gray-200 hover:bg-green-700 border border-green-600 cursor-pointer  text-xs text-success-600 dark:bg-success-500/15 dark:text-success-500 rounded-full px-4 py-1 font-medium">
                               Buy
                             </button>
                           </div>
@@ -500,10 +500,10 @@ const Dashboard = () => {
                       </div>
 
 
-                      <div className="w-full border-t dark:border-gray-700 border-gray-200 pr-6 flex flex-col lg:flex-row items-center justify-between ">
+                      <div className="w-full border-t dark:border-gray-700 border-gray-200 pr-2 md:pr-6 flex  md:flex-row items-center justify-between ">
                         <button
                           onClick={() => removeHandler(item._id)}
-                          className="flex py-2 pl-6 sm:pr-6 cursor-pointer  border rounded-bl-xl sm:border-r border-red-300 dark:border-red-900 text-red-500 hover:text-white  hover:bg-red-500 whitespace-nowrap gap-2 items-center justify-center font-medium group text-xs transition-all duration-500 ">
+                          className="flex py-1 px-2 md:py-2 md:pl-6 sm:pr-6 cursor-pointer  border rounded-bl-xl sm:border-r border-red-300 dark:border-red-900 text-red-500 hover:text-white  hover:bg-red-500 whitespace-nowrap gap-1 md:gap-2 items-center justify-center font-medium group text-xs transition-all duration-500 ">
                           <svg className="stroke-red-700 hover:stroke-white transition-all duration-300  " xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 22 22"
                             fill="">
                             <path d="M5.5 5.5L16.5 16.5M16.5 5.5L5.5 16.5" stroke="" strokeWidth="1.6"
@@ -511,7 +511,7 @@ const Dashboard = () => {
                           </svg>
                           Remove
                         </button>
-                        <p className="font-medium text-base text-black dark:text-gray-600 ml-2">Total Price <span className="text-[10px]">(Tax inc) </span>: <span className="text-indigo-600">Rs. {(quantities[item._id] * item.product.productPrice) || item.product.productPrice} </span></p>
+                        <p className="font-medium text-sm md:text-base text-black dark:text-gray-600 ml-2">Total Price <span className="text-[10px]">(Tax inc) </span>: <span className="text-indigo-600">Rs. {(quantities[item._id] * item.product.productPrice) || item.product.productPrice} </span></p>
                       </div>
 
                     </div>
