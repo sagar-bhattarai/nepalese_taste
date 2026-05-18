@@ -20,7 +20,7 @@ const ClientLayout = ({ children }) => {
     return (
         <div className="">
             <Sidebar />
-           <div className="p-4 ml-64">{children}</div>
+           <div className="p-4 md:ml-64">{children}</div>
         </div>
     )
 }

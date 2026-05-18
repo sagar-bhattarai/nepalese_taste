@@ -17,7 +17,7 @@ const Pagination = ({ page, setPage, overAllTotal, LIMIT }) => {
                 of
                 <span className="font-semibold text-gray-900 dark:text-white"> {overAllTotal}</span>
             </span>
-            <ul className="flex items-center gap-3 cursor-pointer ">
+            <ul className="flex items-center gap-3 cursor-pointer self-end">
                 <li
                     className={`${page == 1 ? "text-gray-500" : "hover:text-primary"}`}
                     onClick={page != 1 ? () => setPage(page - 1) : null}
